@@ -1,8 +1,7 @@
-"use client"
+"use server"
 
-import { use } from "react"
 import Link from "next/link"
-import { ArrowLeft, Share2, Heart } from "lucide-react"
+import { ArrowLeft, Share2, Heart } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,20 +9,18 @@ import { Header } from "@/components/header"
 import { LiveShowPlayer } from "@/components/live-show-player"
 import { ShowSidebar } from "@/components/show-sidebar"
 import { ShowProductCarousel } from "@/components/show-product-carousel"
-import { useShows } from "@/contexts/show-context"
-import { useProducts } from "@/contexts/product-context"
 import { format } from "date-fns"
+import { mockShows } from "@/lib/mock-data"
+import { mockProducts } from "@/lib/mock-data"
 
-export default function ShowPage({
+export default async function ShowPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = use(params)
-  const { getShowById } = useShows()
-  const { getProductById } = useProducts()
-
-  const show = getShowById(id)
+  const { id } = params
+  const show = mockShows.find((s) => s.id === id)
+  const getProductById = (productId: string) => mockProducts.find((p) => p.id === productId)
 
   if (!show) {
     return (
