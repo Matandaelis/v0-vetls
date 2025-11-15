@@ -3,12 +3,12 @@
 import type React from "react"
 
 import Link from "next/link"
-import { ShoppingCart, Search, Menu, Heart, User } from "lucide-react"
+import { ShoppingCart, Search, Menu, Heart, User, Podcast as Broadcast } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useCart } from "@/contexts/cart-context"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from 'next/navigation'
 import { NotificationPanel } from "@/components/notification-panel"
 
 export function Header() {
@@ -50,8 +50,14 @@ export function Header() {
 
           {/* Right Navigation */}
           <div className="flex items-center gap-2">
-            {/* Desktop Icons */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-3">
+              <Link href="/host">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Broadcast className="w-4 h-4" />
+                  Host
+                </Button>
+              </Link>
               <Button variant="ghost" size="icon">
                 <Heart className="w-5 h-5" />
               </Button>
@@ -91,6 +97,23 @@ export function Header() {
             />
           </div>
         </form>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden pb-4 space-y-2">
+            <Link href="/host">
+              <Button variant="ghost" className="w-full justify-start gap-2">
+                <Broadcast className="w-4 h-4" />
+                Host Dashboard
+              </Button>
+            </Link>
+            <Link href="/shows">
+              <Button variant="ghost" className="w-full justify-start">
+                Browse Shows
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   )

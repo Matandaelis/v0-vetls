@@ -1,15 +1,14 @@
 "use server"
 
 import Link from "next/link"
-import { ArrowLeft, Share2, Heart } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Header } from "@/components/header"
-import { LiveShowPlayer } from "@/components/live-show-player"
+import { AntMediaPlayer } from "@/components/ant-media-player"
 import { ShowSidebar } from "@/components/show-sidebar"
 import { ShowProductCarousel } from "@/components/show-product-carousel"
-import { format } from "date-fns"
+import { ShowChat } from "@/components/show-chat"
+import { ShowProductSidebar } from "@/components/show-product-sidebar"
 import { mockShows } from "@/lib/mock-data"
 import { mockProducts } from "@/lib/mock-data"
 
@@ -46,104 +45,65 @@ export default async function ShowPage({
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="w-full">
         {/* Back Button */}
-        <Link href="/">
-          <Button variant="ghost" size="sm" className="gap-2 mb-6">
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
-        </Link>
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <Link href="/shows">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
+          </Link>
+        </div>
 
-        {/* Main Layout - Player and Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Player Section */}
-          <div className="lg:col-span-2">
-            <LiveShowPlayer show={show} isLive={isLive} />
+        {/* Main Live Shopping Layout - Flex responsive */}
+        <div className="flex flex-col lg:flex-row gap-4 px-4 pb-8 max-w-7xl mx-auto">
+          
+          {/* Left: Video + Products Section */}
+          <div className="flex flex-col flex-1 gap-4">
+            {/* Live Video Player */}
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <AntMediaPlayer show={show} isLive={isLive} />
+            </div>
 
-            {/* Show Description */}
-            <Card className="mt-6 p-6">
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex-1">
-                  <h1 className="text-3xl font-bold mb-2">{show.title}</h1>
-                  <div className="flex items-center gap-2 mb-4">
-                    <img
-                      src={show.hostAvatar || "/placeholder.svg"}
-                      alt={show.hostName}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="font-semibold text-sm">{show.hostName}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {isLive ? "LIVE NOW" : format(show.startTime, "MMM d, h:mm a")}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon">
-                    <Heart className="w-5 h-5" />
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Show Info Grid */}
-              <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-border">
-                <div>
-                  <p className="text-sm text-muted-foreground">Status</p>
-                  <Badge className={isLive ? "bg-destructive mt-1" : "bg-primary mt-1"}>
-                    {show.status.toUpperCase()}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Category</p>
-                  <p className="font-semibold mt-1">{show.category}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Viewers</p>
-                  <p className="font-semibold mt-1">{show.viewerCount?.toLocaleString() || "N/A"}</p>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div>
-                <h3 className="font-semibold mb-2">About this show</h3>
-                <p className="text-muted-foreground leading-relaxed">{show.description}</p>
-              </div>
-
-              {/* Tags */}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {show.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    #{tag}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
-
-            {/* Featured Products */}
+            {/* Featured Products Carousel - Below video on mobile */}
             {featuredProducts.length > 0 && (
-              <Card className="mt-6 p-6">
-                <h3 className="text-2xl font-bold mb-6">Products Featured in This Show</h3>
-                <ShowProductCarousel products={featuredProducts} isLive={isLive} />
-              </Card>
+              <div className="lg:hidden rounded-2xl bg-white p-6 shadow-lg">
+                <h3 className="text-xl font-bold mb-4">Featured Products</h3>
+                <div className="space-y-3">
+                  {featuredProducts.map((product) => (
+                    <div key={product.id} className="flex items-center gap-3 pb-3 border-b last:border-0">
+                      <img 
+                        src={product.image || "/placeholder.svg"} 
+                        alt={product.name}
+                        className="w-16 h-16 rounded-xl object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm line-clamp-1">{product.name}</p>
+                        <p className="text-lg font-bold text-primary mt-1">${product.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="hidden lg:block">
-            <ShowSidebar hostName={show.hostName} hostAvatar={show.hostAvatar} />
-          </div>
-        </div>
+          {/* Right: Sidebar (Chat + Products on desktop) */}
+          <div className="w-full lg:w-80 flex flex-col gap-4">
+            {/* Chat Section */}
+            <div className="rounded-2xl bg-white shadow-lg flex flex-col h-96 lg:h-[500px] overflow-hidden">
+              <ShowChat hostName={show.hostName} hostAvatar={show.hostAvatar} />
+            </div>
 
-        {/* Mobile Sidebar - Below on mobile */}
-        <div className="lg:hidden mb-8">
-          <ShowSidebar hostName={show.hostName} hostAvatar={show.hostAvatar} />
+            {/* Featured Products - Desktop only sidebar */}
+            {featuredProducts.length > 0 && (
+              <div className="hidden lg:block rounded-2xl bg-white p-6 shadow-lg max-h-96 overflow-y-auto">
+                <h3 className="text-lg font-bold mb-4">Featured</h3>
+                <ShowProductSidebar products={featuredProducts} isLive={isLive} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -32,6 +32,12 @@ export interface Show {
   tags: string[]
   products: string[] // Array of product IDs featured in show
   maxViewers: number
+  streamId?: string
+  streamUrl?: string
+  rtmpUrl?: string
+  hlsUrl?: string
+  dashUrl?: string
+  tokenId?: string
 }
 
 export interface User {
@@ -60,6 +66,13 @@ export interface ViewerMetrics {
   peakViewers: number
   averageWatchTime: number
   engagementRate: number
+}
+
+export interface StreamingMetrics {
+  totalViewers: number
+  bitrate: number
+  fps: number
+  timestamp: Date
 }
 
 export interface SearchFilters {

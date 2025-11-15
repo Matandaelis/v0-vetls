@@ -130,6 +130,10 @@ export const mockShows: Show[] = [
     tags: ["gadgets", "tech", "deals"],
     products: ["1", "3", "5", "8"],
     maxViewers: 5000,
+    streamId: "stream_tech_gadgets_show1",
+    hlsUrl: "http://localhost:5080/app/streams/stream_tech_gadgets_show1.m3u8",
+    dashUrl: "http://localhost:5080/app/streams/stream_tech_gadgets_show1.mpd",
+    rtmpUrl: "rtmp://localhost:5080/app/",
   },
   {
     id: "show2",
@@ -147,6 +151,10 @@ export const mockShows: Show[] = [
     tags: ["makeup", "beauty", "tutorial"],
     products: ["4", "9"],
     maxViewers: 3000,
+    streamId: "stream_beauty_tutorial_show2",
+    hlsUrl: "http://localhost:5080/app/streams/stream_beauty_tutorial_show2.m3u8",
+    dashUrl: "http://localhost:5080/app/streams/stream_beauty_tutorial_show2.mpd",
+    rtmpUrl: "rtmp://localhost:5080/app/",
   },
   {
     id: "show3",
@@ -163,6 +171,10 @@ export const mockShows: Show[] = [
     tags: ["fashion", "style", "designers"],
     products: ["2", "7", "10"],
     maxViewers: 4000,
+    streamId: "stream_fashion_show3",
+    hlsUrl: "http://localhost:5080/app/streams/stream_fashion_show3.m3u8",
+    dashUrl: "http://localhost:5080/app/streams/stream_fashion_show3.mpd",
+    rtmpUrl: "rtmp://localhost:5080/app/",
   },
   {
     id: "show4",
@@ -179,6 +191,10 @@ export const mockShows: Show[] = [
     tags: ["home", "comfort", "lifestyle"],
     products: ["6"],
     maxViewers: 2500,
+    streamId: "stream_home_show4",
+    hlsUrl: "http://localhost:5080/app/streams/stream_home_show4.m3u8",
+    dashUrl: "http://localhost:5080/app/streams/stream_home_show4.mpd",
+    rtmpUrl: "rtmp://localhost:5080/app/",
   },
   {
     id: "show5",
@@ -195,6 +211,10 @@ export const mockShows: Show[] = [
     tags: ["tech", "setup", "productivity"],
     products: ["1", "3", "5", "8"],
     maxViewers: 3500,
+    streamId: "stream_tech_setup_show5",
+    hlsUrl: "http://localhost:5080/app/streams/stream_tech_setup_show5.m3u8",
+    dashUrl: "http://localhost:5080/app/streams/stream_tech_setup_show5.mpd",
+    rtmpUrl: "rtmp://localhost:5080/app/",
   },
 ]
 

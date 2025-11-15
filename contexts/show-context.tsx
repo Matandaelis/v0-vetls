@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState } from "react"
-import type { Show } from "@/lib/types"
+import type { Show, StreamingMetrics } from "@/lib/types"
 import { mockShows } from "@/lib/mock-data"
 
 interface ShowContextType {
@@ -13,6 +13,9 @@ interface ShowContextType {
   getLiveShows: () => Show[]
   getUpcomingShows: () => Show[]
   updateShowViewerCount: (id: string, count: number) => void
+  initializeShow: (showId: string) => Promise<void>
+  getStreamingMetrics: (streamId: string) => Promise<StreamingMetrics | null>
+  updateShowStream: (showId: string, streamData: Partial<Show>) => void
 }
 
 const ShowContext = createContext<ShowContextType | undefined>(undefined)
@@ -44,6 +47,44 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     setShows((prevShows) => prevShows.map((show) => (show.id === id ? { ...show, viewerCount: count } : show)))
   }
 
+  const initializeShow = async (showId: string) => {
+    try {
+      const show = getShowById(showId)
+      if (!show) throw new Error("Show not found")
+
+      const response = await fetch("/api/streams/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ showId, hostName: show.hostName }),
+      })
+
+      if (!response.ok) throw new Error("Failed to initialize stream")
+
+      const streamData = await response.json()
+      updateShowStream(showId, streamData)
+    } catch (error) {
+      console.error("[v0] Error initializing show stream:", error)
+      throw error
+    }
+  }
+
+  const getStreamingMetrics = async (streamId: string): Promise<StreamingMetrics | null> => {
+    try {
+      const response = await fetch(`/api/streams/metrics?streamId=${streamId}`)
+      if (!response.ok) return null
+      return await response.json()
+    } catch (error) {
+      console.error("[v0] Error fetching streaming metrics:", error)
+      return null
+    }
+  }
+
+  const updateShowStream = (showId: string, streamData: Partial<Show>) => {
+    setShows((prevShows) =>
+      prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show))
+    )
+  }
+
   const value: ShowContextType = {
     shows,
     getShowById,
@@ -52,6 +93,9 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     getLiveShows,
     getUpcomingShows,
     updateShowViewerCount,
+    initializeShow,
+    getStreamingMetrics,
+    updateShowStream,
   }
 
   return <ShowContext.Provider value={value}>{children}</ShowContext.Provider>
