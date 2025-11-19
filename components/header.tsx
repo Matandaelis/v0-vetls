@@ -2,7 +2,7 @@
 
 import type React from "react"
 import Link from "next/link"
-import { ShoppingCart, Search, Menu, Heart, User, Podcast as Broadcast, LogOut } from 'lucide-react'
+import { ShoppingCart, Search, Menu, Heart, User, Podcast as Broadcast, LogOut, ShieldCheck } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useCart } from "@/contexts/cart-context"
@@ -22,7 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function Header() {
   const { getCartItemCount } = useCart()
-  const { currentUser, isAuthenticated, logout } = useAuth()
+  const { currentUser, isAuthenticated, isSeller, isAdmin, logout } = useAuth()
   const cartCount = getCartItemCount()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -67,12 +67,22 @@ export function Header() {
           <div className="flex items-center gap-2">
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-3">
-              <Link href="/host">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Broadcast className="w-4 h-4" />
-                  Host
-                </Button>
-              </Link>
+              {isAdmin && (
+                <Link href="/admin">
+                  <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                    <ShieldCheck className="w-4 h-4" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
+              {isSeller && (
+                <Link href="/host">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <Broadcast className="w-4 h-4" />
+                    Host
+                  </Button>
+                </Link>
+              )}
               <Button variant="ghost" size="icon">
                 <Heart className="w-5 h-5" />
               </Button>
@@ -163,6 +173,7 @@ export function Header() {
                 <div className="px-3 py-2 text-sm">
                   <p className="font-medium">{currentUser?.name}</p>
                   <p className="text-xs text-muted-foreground">{currentUser?.email}</p>
+                  <p className="text-xs text-muted-foreground capitalize">Role: {currentUser?.role}</p>
                 </div>
                 <Link href={`/profile/${currentUser?.id}`}>
                   <Button variant="ghost" className="w-full justify-start">
@@ -190,12 +201,22 @@ export function Header() {
                 </Link>
               </>
             )}
-            <Link href="/host">
-              <Button variant="ghost" className="w-full justify-start gap-2">
-                <Broadcast className="w-4 h-4" />
-                Host Dashboard
-              </Button>
-            </Link>
+            {isSeller && (
+              <Link href="/host">
+                <Button variant="ghost" className="w-full justify-start gap-2">
+                  <Broadcast className="w-4 h-4" />
+                  Host Dashboard
+                </Button>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link href="/admin">
+                <Button variant="ghost" className="w-full justify-start gap-2 text-destructive">
+                  <ShieldCheck className="w-4 h-4" />
+                  Admin Dashboard
+                </Button>
+              </Link>
+            )}
             <Link href="/shows">
               <Button variant="ghost" className="w-full justify-start">
                 Browse Shows

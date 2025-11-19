@@ -49,6 +49,7 @@ export interface User {
   followers: number
   following: number
   isFollowing?: boolean
+  role: "buyer" | "seller" | "admin"
 }
 
 export interface ShowComment {

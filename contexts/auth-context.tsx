@@ -8,8 +8,10 @@ import { mockUsers } from "@/lib/mock-data"
 interface AuthContextType {
   currentUser: User | null
   isAuthenticated: boolean
+  isSeller: boolean
+  isAdmin: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  register: (name: string, email: string, password: string, role: "buyer" | "seller") => Promise<{ success: boolean; error?: string }>
   logout: () => void
 }
 
@@ -63,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true }
   }
 
-  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const register = async (name: string, email: string, password: string, role: "buyer" | "seller"): Promise<{ success: boolean; error?: string }> => {
     // Check if user already exists
     const registeredUsers = localStorage.getItem(USERS_STORAGE_KEY)
     let allUsers = [...mockUsers]
@@ -81,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, error: "Email already registered" }
     }
 
-    // Create new user
+    // Create new user with role
     const newUser: User = {
       id: `user-${Date.now()}`,
       name,
@@ -91,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       followers: 0,
       following: 0,
       isFollowing: false,
+      role,
     }
 
     // Save to registered users
@@ -112,6 +115,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value: AuthContextType = {
     currentUser,
     isAuthenticated: !!currentUser,
+    isSeller: currentUser?.role === "seller" || currentUser?.role === "admin",
+    isAdmin: currentUser?.role === "admin",
     login,
     register,
     logout,

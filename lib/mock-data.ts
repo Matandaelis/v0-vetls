@@ -228,6 +228,7 @@ export const mockUsers: User[] = [
     followers: 1250,
     following: 342,
     isFollowing: false,
+    role: "seller",
   },
   {
     id: "user2",
@@ -238,6 +239,7 @@ export const mockUsers: User[] = [
     followers: 3450,
     following: 180,
     isFollowing: false,
+    role: "seller",
   },
   {
     id: "user3",
@@ -248,6 +250,7 @@ export const mockUsers: User[] = [
     followers: 2100,
     following: 520,
     isFollowing: false,
+    role: "buyer",
   },
   {
     id: "user4",
@@ -258,6 +261,18 @@ export const mockUsers: User[] = [
     followers: 5600,
     following: 280,
     isFollowing: true,
+    role: "seller",
+  },
+  {
+    id: "admin1",
+    name: "Super Admin",
+    email: "admin@talkshop.live",
+    avatar: "/placeholder-user.jpg",
+    bio: "Platform Administrator",
+    followers: 0,
+    following: 0,
+    isFollowing: false,
+    role: "admin",
   },
 ]
 

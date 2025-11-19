@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useAuth } from "@/contexts/auth-context"
 import { Header } from "@/components/header"
 
@@ -15,6 +16,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [role, setRole] = useState<"buyer" | "seller">("buyer")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { register } = useAuth()
@@ -36,7 +38,7 @@ export default function RegisterPage() {
 
     setIsLoading(true)
 
-    const result = await register(name, email, password)
+    const result = await register(name, email, password, role)
     
     if (result.success) {
       router.push("/")
@@ -106,6 +108,25 @@ export default function RegisterPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
+              </div>
+              <div className="space-y-3">
+                <Label>Account Type</Label>
+                <RadioGroup value={role} onValueChange={(value) => setRole(value as "buyer" | "seller")}>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-accent" onClick={() => setRole("buyer")}>
+                    <RadioGroupItem value="buyer" id="buyer" />
+                    <Label htmlFor="buyer" className="cursor-pointer flex-1">
+                      <div className="font-medium">Buyer</div>
+                      <div className="text-xs text-muted-foreground">Shop and watch live shows</div>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-accent" onClick={() => setRole("seller")}>
+                    <RadioGroupItem value="seller" id="seller" />
+                    <Label htmlFor="seller" className="cursor-pointer flex-1">
+                      <div className="font-medium">Seller</div>
+                      <div className="text-xs text-muted-foreground">Host shows and sell products</div>
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
