@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ProductProvider } from "@/contexts/product-context"
@@ -10,6 +10,7 @@ import { ShowProvider } from "@/contexts/show-context"
 import { SearchProvider } from "@/contexts/search-context"
 import { SocialProvider } from "@/contexts/social-context"
 import { NotificationProvider } from "@/contexts/notification-context"
+import { AuthProvider } from "@/contexts/auth-context"
 import { Suspense } from "react"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -47,22 +48,24 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
-          <ProductProvider>
-            <CartProvider>
-              <OrderProvider>
-                <ShowProvider>
-                  <SearchProvider>
-                    <SocialProvider>
-                      <NotificationProvider>
-                        {children}
-                        <Analytics />
-                      </NotificationProvider>
-                    </SocialProvider>
-                  </SearchProvider>
-                </ShowProvider>
-              </OrderProvider>
-            </CartProvider>
-          </ProductProvider>
+          <AuthProvider>
+            <ProductProvider>
+              <CartProvider>
+                <OrderProvider>
+                  <ShowProvider>
+                    <SearchProvider>
+                      <SocialProvider>
+                        <NotificationProvider>
+                          {children}
+                          <Analytics />
+                        </NotificationProvider>
+                      </SocialProvider>
+                    </SearchProvider>
+                  </ShowProvider>
+                </OrderProvider>
+              </CartProvider>
+            </ProductProvider>
+          </AuthProvider>
         </Suspense>
       </body>
     </html>
