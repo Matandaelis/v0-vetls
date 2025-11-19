@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import type { Show } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Share2, Volume2, Volume1, X, ShoppingCart, Users } from 'lucide-react'
+import { Heart, Share2, Volume2, Volume1, X, ShoppingCart, Users, Eye } from 'lucide-react'
 import { ShowProductCarousel } from "@/components/show-product-carousel"
 import { useProducts } from "@/contexts/product-context"
 
@@ -51,14 +51,14 @@ export function AntMediaPlayer({ show, isLive = true }: AntMediaPlayerProps) {
   const featuredProducts = show.products.map((productId) => getProductById(productId)).filter(Boolean)
 
   return (
-    <div className="relative w-full bg-black rounded-2xl overflow-hidden shadow-xl">
+    <div className="relative w-full bg-black overflow-hidden shadow-xl aspect-video">
       {/* HLS Video Player */}
-      <div className="relative w-full aspect-video bg-gradient-to-br from-gray-900 to-black flex items-center justify-center group">
+      <div className="relative w-full h-full bg-black flex items-center justify-center group">
         <video
           ref={videoRef}
           className="w-full h-full object-contain"
-          controls
-          controlsList="nodownload"
+          controls={false} // Hide default controls to match clean look
+          playsInline
           poster={show.image}
         />
 
@@ -71,15 +71,10 @@ export function AntMediaPlayer({ show, isLive = true }: AntMediaPlayerProps) {
           </div>
         )}
 
-        {/* Live Badge and Viewer Count */}
-        <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-          {isLive && (
-            <Badge className="bg-gradient-to-r from-pink-600 to-red-600 text-white animate-pulse">
-              LIVE
-            </Badge>
-          )}
-          <div className="bg-black/60 backdrop-blur text-white px-3 py-1 rounded-full flex items-center gap-1 text-xs font-semibold">
-            <Users className="w-3 h-3" />
+        {/* Viewer Count - Top Right to match screenshot */}
+        <div className="absolute top-4 right-4 z-10">
+          <div className="text-white flex items-center gap-1.5 text-sm font-medium drop-shadow-md">
+            <Eye className="w-4 h-4" />
             {viewers.toLocaleString()}
           </div>
         </div>
