@@ -8,7 +8,9 @@ import { useSocial } from "@/contexts/social-context"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
-import { Heart, Users, Play } from "lucide-react"
+import { Heart, Users, Play, Film } from "lucide-react"
+import { mockClips } from "@/lib/mock-data"
+import { ClipCard } from "@/components/clip-card"
 
 export default function FeedPage() {
   const { shows } = useShows()
@@ -38,8 +40,12 @@ export default function FeedPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <Tabs defaultValue="following" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+        <Tabs defaultValue="clips" className="space-y-6">
+          <TabsList className="grid w-full max-w-md grid-cols-4">
+            <TabsTrigger value="clips" className="gap-2">
+              <Film className="w-4 h-4" />
+              <span className="hidden sm:inline">Clips</span>
+            </TabsTrigger>
             <TabsTrigger value="following" className="gap-2">
               <Play className="w-4 h-4" />
               <span className="hidden sm:inline">Following</span>
@@ -53,6 +59,18 @@ export default function FeedPage() {
               <span className="hidden sm:inline">Suggested</span>
             </TabsTrigger>
           </TabsList>
+
+          {/* Clips Tab */}
+          <TabsContent value="clips" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Trending Clips</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {mockClips.map((clip) => (
+                  <ClipCard key={clip.id} clip={clip} />
+                ))}
+              </div>
+            </div>
+          </TabsContent>
 
           {/* Following Shows Tab */}
           <TabsContent value="following" className="space-y-6">

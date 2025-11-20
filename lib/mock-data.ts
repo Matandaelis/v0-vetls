@@ -1,4 +1,4 @@
-import type { Product, Show, User, Rating, Notification } from "./types"
+import type { Product, Show, User, Rating, Notification, Clip } from "./types"
 
 export const mockProducts: Product[] = [
   {
@@ -110,6 +110,42 @@ export const mockProducts: Product[] = [
     sellerName: "Fashion Forward",
     category: "Fashion",
     stock: 12,
+  },
+]
+
+export const mockClips: Clip[] = [
+  {
+    id: "clip-1",
+    thumbnail: "/wireless-headphones.png",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    title: "These headphones are insane! 🎧",
+    hostName: "Tech Reviewer",
+    hostAvatar: "/tech-expert-host.jpg",
+    productId: "1",
+    views: 1205,
+    likes: 342,
+  },
+  {
+    id: "clip-2",
+    thumbnail: "/designer-sunglasses.png",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    title: "Summer style must-haves ☀️",
+    hostName: "Fashion Icon",
+    hostAvatar: "/fashion-stylist-host.jpg",
+    productId: "2",
+    views: 892,
+    likes: 156,
+  },
+  {
+    id: "clip-3",
+    thumbnail: "/smartwatch-lifestyle.png",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    title: "Track your fitness like a pro 💪",
+    hostName: "Fitness Guru",
+    hostAvatar: "/tech-expert-host.jpg",
+    productId: "3",
+    views: 2341,
+    likes: 890,
   },
 ]
 

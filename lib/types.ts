@@ -108,6 +108,18 @@ export interface Rating {
   helpful: number
 }
 
+export interface Clip {
+  id: string
+  thumbnail: string
+  videoUrl: string
+  title: string
+  hostName: string
+  hostAvatar: string
+  productId: string
+  views: number
+  likes: number
+}
+
 export interface Notification {
   id: string
   type: "follow" | "show_starting" | "restock" | "rating" | "comment"
