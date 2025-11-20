@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
-import { Eye, Share2, Square } from 'lucide-react'
+import { Eye, Share2, Square } from "lucide-react"
 
 const mockStreams = [
   {
@@ -33,12 +33,16 @@ const mockStreams = [
   },
 ]
 
-export function ActiveStreams() {
+interface ActiveStreamsProps {
+  onCreateShow: () => void
+}
+
+export function ActiveStreams({ onCreateShow }: ActiveStreamsProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold">My Shows</h3>
-        <Button>Create New Show</Button>
+        <Button onClick={onCreateShow}>Create New Show</Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4">
@@ -74,7 +78,7 @@ export function ActiveStreams() {
               <div className="flex gap-2">
                 {stream.status === "live" && (
                   <>
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button variant="outline" size="sm" className="gap-2 bg-transparent">
                       <Share2 className="w-4 h-4" />
                       Share
                     </Button>
@@ -84,9 +88,7 @@ export function ActiveStreams() {
                     </Button>
                   </>
                 )}
-                {stream.status === "scheduled" && (
-                  <Button size="sm">Go Live</Button>
-                )}
+                {stream.status === "scheduled" && <Button size="sm">Go Live</Button>}
                 {stream.status === "ended" && (
                   <Button variant="outline" size="sm">
                     View Replay

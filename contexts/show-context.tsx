@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState } from "react"
 import type { Show, StreamingMetrics } from "@/lib/types"
 import { mockShows } from "@/lib/mock-data"
+import type { ShowFormData } from "@/components/host/create-show-modal"
 
 interface ShowContextType {
   shows: Show[]
@@ -16,6 +17,7 @@ interface ShowContextType {
   initializeShow: (showId: string) => Promise<void>
   getStreamingMetrics: (streamId: string) => Promise<StreamingMetrics | null>
   updateShowStream: (showId: string, streamData: Partial<Show>) => void
+  createShow: (showData: ShowFormData) => Promise<Show>
 }
 
 const ShowContext = createContext<ShowContextType | undefined>(undefined)
@@ -80,9 +82,33 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateShowStream = (showId: string, streamData: Partial<Show>) => {
-    setShows((prevShows) =>
-      prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show))
-    )
+    setShows((prevShows) => prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show)))
+  }
+
+  const createShow = async (showData: ShowFormData): Promise<Show> => {
+    // Generate a new show ID
+    const newId = String(shows.length + 1)
+
+    const newShow: Show = {
+      id: newId,
+      title: showData.title,
+      description: showData.description,
+      hostId: "1", // This should come from auth context in production
+      hostName: "Current User", // This should come from auth context
+      hostAvatar: "/event-host-stage.png",
+      scheduledFor: showData.scheduledFor,
+      status: "scheduled",
+      thumbnail:
+        showData.thumbnail || `/placeholder.svg?height=400&width=600&query=${encodeURIComponent(showData.title)}`,
+      category: showData.category,
+      viewerCount: 0,
+      products: [],
+      streamId: undefined,
+      rtmpUrl: undefined,
+    }
+
+    setShows((prevShows) => [...prevShows, newShow])
+    return newShow
   }
 
   const value: ShowContextType = {
@@ -96,6 +122,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     initializeShow,
     getStreamingMetrics,
     updateShowStream,
+    createShow,
   }
 
   return <ShowContext.Provider value={value}>{children}</ShowContext.Provider>
