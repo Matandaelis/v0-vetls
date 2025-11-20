@@ -67,6 +67,11 @@ export function Header() {
           <div className="flex items-center gap-2">
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-3">
+              <Link href="/categories">
+                <Button variant="ghost" size="sm">
+                  Categories
+                </Button>
+              </Link>
               {isAdmin && (
                 <Link href="/admin">
                   <Button variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive">
@@ -213,6 +218,11 @@ export function Header() {
                 </Button>
               </Link>
             )}
+            <Link href="/categories">
+              <Button variant="ghost" className="w-full justify-start">
+                Categories
+              </Button>
+            </Link>
             <Link href="/shows">
               <Button variant="ghost" className="w-full justify-start">
                 Browse Shows
