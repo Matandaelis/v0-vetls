@@ -18,12 +18,14 @@ interface ShowContextType {
   getStreamingMetrics: (streamId: string) => Promise<StreamingMetrics | null>
   updateShowStream: (showId: string, streamData: Partial<Show>) => void
   createShow: (showData: ShowFormData) => Promise<Show>
+  error: Error | null
 }
 
 const ShowContext = createContext<ShowContextType | undefined>(undefined)
 
 export function ShowProvider({ children }: { children: React.ReactNode }) {
   const [shows, setShows] = useState<Show[]>(mockShows)
+  const [error, setError] = useState<Error | null>(null)
 
   const getShowById = (id: string) => {
     return shows.find((s) => s.id === id)
@@ -66,6 +68,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
       updateShowStream(showId, streamData)
     } catch (error) {
       console.error("[v0] Error initializing show stream:", error)
+      setError(error)
       throw error
     }
   }
@@ -77,6 +80,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
       return await response.json()
     } catch (error) {
       console.error("[v0] Error fetching streaming metrics:", error)
+      setError(error)
       return null
     }
   }
@@ -86,15 +90,14 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
   }
 
   const createShow = async (showData: ShowFormData): Promise<Show> => {
-    // Generate a new show ID
     const newId = String(shows.length + 1)
 
     const newShow: Show = {
       id: newId,
       title: showData.title,
       description: showData.description,
-      hostId: "1", // This should come from auth context in production
-      hostName: "Current User", // This should come from auth context
+      hostId: "1",
+      hostName: "Current User",
       hostAvatar: "/event-host-stage.png",
       scheduledFor: showData.scheduledFor,
       status: "scheduled",
@@ -123,6 +126,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     getStreamingMetrics,
     updateShowStream,
     createShow,
+    error,
   }
 
   return <ShowContext.Provider value={value}>{children}</ShowContext.Provider>
@@ -131,7 +135,21 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
 export function useShows() {
   const context = useContext(ShowContext)
   if (context === undefined) {
-    throw new Error("useShows must be used within a ShowProvider")
+    console.error("[v0] useShows must be used within a ShowProvider")
+    return {
+      shows: [],
+      getShowById: () => undefined,
+      getShowsByStatus: () => [],
+      getShowsByCategory: () => [],
+      getLiveShows: () => [],
+      getUpcomingShows: () => [],
+      updateShowViewerCount: () => {},
+      initializeShow: async () => {},
+      getStreamingMetrics: async () => null,
+      updateShowStream: () => {},
+      createShow: async () => ({}) as Show,
+      error: new Error("useShows must be used within a ShowProvider"),
+    }
   }
   return context
 }

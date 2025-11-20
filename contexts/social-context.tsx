@@ -14,6 +14,7 @@ interface SocialContextType {
   toggleFollow: (userId: string) => void
   isFollowing: (userId: string) => boolean
   addRating: (rating: Omit<Rating, "id" | "createdAt">) => void
+  error: Error | null
 }
 
 const SocialContext = createContext<SocialContextType | undefined>(undefined)
@@ -25,6 +26,7 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
   const [ratings, setRatings] = useState<Rating[]>(mockRatings)
   const [userFollows, setUserFollows] = useState<UserFollow[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const savedFollows = localStorage.getItem(FOLLOWS_STORAGE_KEY)
@@ -33,6 +35,7 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
         setUserFollows(JSON.parse(savedFollows))
       } catch (error) {
         console.error("Failed to load follows:", error)
+        setError(error)
       }
     }
     setIsLoaded(true)
@@ -87,6 +90,7 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
     toggleFollow,
     isFollowing,
     addRating,
+    error,
   }
 
   return <SocialContext.Provider value={value}>{children}</SocialContext.Provider>
@@ -95,7 +99,18 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
 export function useSocial() {
   const context = useContext(SocialContext)
   if (context === undefined) {
-    throw new Error("useSocial must be used within a SocialProvider")
+    console.error("[v0] useSocial must be used within a SocialProvider")
+    return {
+      users: [],
+      ratings: [],
+      userFollows: [],
+      getUserById: () => undefined,
+      getRatingsByProductId: () => [],
+      toggleFollow: () => {},
+      isFollowing: () => false,
+      addRating: () => {},
+      error: new Error("useSocial must be used within a SocialProvider"),
+    }
   }
   return context
 }
