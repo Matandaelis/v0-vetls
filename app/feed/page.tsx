@@ -13,8 +13,16 @@ import { mockClips } from "@/lib/mock-data"
 import { ClipCard } from "@/components/clip-card"
 
 export default function FeedPage() {
-  const { shows } = useShows()
-  const { users } = useSocial()
+  const { shows, error: showsError } = useShows()
+  const { users, error: usersError } = useSocial()
+
+  if (showsError) {
+    return <div>Error loading shows: {showsError.message}</div>
+  }
+
+  if (usersError) {
+    return <div>Error loading users: {usersError.message}</div>
+  }
 
   const upcomingShows = shows.filter((s) => s.status === "scheduled").slice(0, 6)
   const suggestedUsers = users.filter((u) => !u.isFollowing).slice(0, 4)
