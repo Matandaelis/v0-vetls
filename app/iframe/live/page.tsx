@@ -1,135 +1,128 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { Room, RoomEvent, VideoPresets, Track } from "livekit-client"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { Send } from "lucide-react"
+import { LiveKitRoom, VideoConference, RoomAudioRenderer, useTracks } from "@livekit/components-react"
+import "@livekit/components-styles"
+import { Track } from "livekit-client"
 
 export default function LiveKitIframePage() {
   const searchParams = useSearchParams()
   const roomName = searchParams.get("room")
   const username = searchParams.get("username") || "Guest"
 
-  const [room, setRoom] = useState<Room | null>(null)
-  const [isConnected, setIsConnected] = useState(false)
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([])
-  const [inputValue, setInputValue] = useState("")
-  const videoContainerRef = useRef<HTMLDivElement>(null)
+  const [token, setToken] = useState<string>("")
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (!roomName) return
+    if (!roomName) {
+      setIsLoading(false)
+      return
+    }
 
-    const connectToRoom = async () => {
+    const fetchToken = async () => {
       try {
-        // Fetch token
-        const resp = await fetch(`/api/livekit/token?room=${roomName}&username=${username}`)
+        const resp = await fetch(`/api/livekit/token?room=${encodeURIComponent(roomName)}&username=${username}`)
         const data = await resp.json()
 
         if (data.error) {
-          console.error("Token error:", data.error)
+          console.error("[v0] Token error:", data.error)
+          setIsLoading(false)
           return
         }
 
-        const newRoom = new Room({
-          adaptiveStream: true,
-          dynacast: true,
-          videoCaptureDefaults: {
-            resolution: VideoPresets.h720.resolution,
-          },
-        })
-
-        setRoom(newRoom)
-
-        // Handle tracks
-        newRoom.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
-          if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
-            const element = track.attach()
-            if (track.kind === Track.Kind.Video && videoContainerRef.current) {
-              videoContainerRef.current.appendChild(element)
-              element.style.width = "100%"
-              element.style.height = "100%"
-              element.style.objectFit = "cover"
-            }
-          }
-        })
-
-        // Handle chat messages (using data channel)
-        newRoom.on(RoomEvent.DataReceived, (payload, participant) => {
-          const decoder = new TextDecoder()
-          const strData = decoder.decode(payload)
-          try {
-            const msg = JSON.parse(strData)
-            if (msg.type === "chat") {
-              setMessages((prev) => [...prev, { sender: participant?.identity || "Unknown", text: msg.text }])
-            }
-          } catch (e) {
-            console.error("Failed to parse message", e)
-          }
-        })
-
-        await newRoom.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL || "", data.token)
-        setIsConnected(true)
-        console.log("Connected to LiveKit room:", roomName)
+        setToken(data.token)
+        setIsLoading(false)
       } catch (error) {
-        console.error("Failed to connect to LiveKit:", error)
+        console.error("[v0] Failed to fetch token:", error)
+        setIsLoading(false)
       }
     }
 
-    connectToRoom()
-
-    return () => {
-      if (room) {
-        room.disconnect()
-      }
-    }
+    fetchToken()
   }, [roomName, username])
 
-  const sendMessage = async () => {
-    if (!inputValue.trim() || !room) return
+  if (!roomName) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        <p>No room specified</p>
+      </div>
+    )
+  }
 
-    const msg = { type: "chat", text: inputValue }
-    const encoder = new TextEncoder()
-    const data = encoder.encode(JSON.stringify(msg))
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        <div className="animate-pulse">Connecting to stream...</div>
+      </div>
+    )
+  }
 
-    await room.localParticipant.publishData(data, { reliable: true })
-    setMessages((prev) => [...prev, { sender: "Me", text: inputValue }])
-    setInputValue("")
+  if (!token) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        <p>Failed to connect. Please try again.</p>
+      </div>
+    )
   }
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white overflow-hidden">
-      {/* Video Area */}
-      <div className="flex-1 relative bg-gray-900">
-        <div ref={videoContainerRef} className="absolute inset-0 flex items-center justify-center">
-          {!isConnected && <div className="animate-pulse">Connecting to stream...</div>}
-        </div>
+    <div className="h-screen bg-black text-white overflow-hidden">
+      <LiveKitRoom
+        video={false}
+        audio={false}
+        token={token}
+        serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
+        data-lk-theme="default"
+        style={{ height: "100vh" }}
+        connect={true}
+      >
+        <LiveStreamViewer />
+        <RoomAudioRenderer />
+      </LiveKitRoom>
+    </div>
+  )
+}
 
-        {/* Overlay Chat for Mobile/Fullscreen feel */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent pointer-events-none">
-          <div className="h-32 overflow-y-auto flex flex-col justify-end pointer-events-auto space-y-2 mask-image-linear-gradient">
-            {messages.map((msg, idx) => (
-              <div key={idx} className="bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-lg self-start max-w-[80%]">
-                <span className="font-bold text-yellow-400 text-xs mr-2">{msg.sender}</span>
-                <span className="text-sm">{msg.text}</span>
-              </div>
-            ))}
+function LiveStreamViewer() {
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false },
+  )
+
+  const hasVideoTracks = tracks.some((track) => track.publication)
+
+  return (
+    <div className="relative h-full w-full flex flex-col">
+      {/* Video Display Area */}
+      <div className="flex-1 relative bg-gray-900 flex items-center justify-center">
+        {hasVideoTracks ? (
+          <VideoConference
+            chatMessageFormatter={(msg) => {
+              return msg
+            }}
+          />
+        ) : (
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto">
+              <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-lg font-medium text-gray-300">Waiting for stream to start...</p>
+              <p className="text-sm text-gray-500 mt-1">The host will appear here when they go live</p>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Input Area */}
-      <div className="h-14 bg-black border-t border-gray-800 flex items-center px-4 gap-2">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="Say something..."
-          className="flex-1 bg-gray-800 border-none rounded-full px-4 py-2 text-sm focus:ring-1 focus:ring-white outline-none"
-        />
-        <button onClick={sendMessage} className="p-2 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors">
-          <Send className="w-4 h-4" />
-        </button>
+        )}
       </div>
     </div>
   )

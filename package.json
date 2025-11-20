@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@livekit/components-react": "latest",
+    "@livekit/components-styles": "latest",
+    "@livekit/krisp-noise-filter": "latest",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -60,6 +63,7 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "tslib": "latest",
     "vaul": "^0.9.9",
     "zod": "3.25.76"
   },
