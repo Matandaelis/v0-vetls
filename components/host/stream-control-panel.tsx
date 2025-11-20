@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Radio, Square, Volume2, Share2, Settings, Users, Clock, Activity } from "lucide-react"
-import { LiveKitRoom, useLocalParticipant, VideoTrack, ControlBar, Track } from "@livekit/components-react"
+import { LiveKitRoom, useLocalParticipant, VideoTrack, ControlBar } from "@livekit/components-react"
+import { Track } from "livekit-client"
 import "@livekit/components-styles"
 
 export function StreamControlPanel() {
