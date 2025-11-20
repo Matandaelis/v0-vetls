@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Radio, Square, Volume2, Share2, Mic, MicOff, Video, VideoOff } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Radio, Square, Volume2, Share2, Mic, MicOff, Video, VideoOff, Settings } from "lucide-react"
 import {
   Room,
   createLocalVideoTrack,
@@ -20,6 +22,7 @@ export function StreamControlPanel() {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack | null>(null)
   const [isMicOn, setIsMicOn] = useState(true)
   const [isCameraOn, setIsCameraOn] = useState(true)
+  const [roomName, setRoomName] = useState("default-room")
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -38,10 +41,15 @@ export function StreamControlPanel() {
   }, [room, videoTrack, audioTrack])
 
   const startStream = async () => {
+    if (!roomName) {
+      alert("Please enter a room name")
+      return
+    }
+
     try {
       // 1. Get token
       const response = await fetch(
-        `/api/livekit/token?room=default-room&username=host-${Math.floor(Math.random() * 1000)}`,
+        `/api/livekit/token?room=${encodeURIComponent(roomName)}&username=host-${Math.floor(Math.random() * 1000)}`,
       )
       const data = await response.json()
 
@@ -59,6 +67,7 @@ export function StreamControlPanel() {
       setRoom(newRoom)
 
       // 3. Create and publish tracks
+      // Create video track first to ensure permissions
       const vTrack = await createLocalVideoTrack({
         resolution: { width: 1280, height: 720 },
         facingMode: "user",
@@ -131,6 +140,29 @@ export function StreamControlPanel() {
               {isStreaming ? "LIVE" : "OFFLINE"}
             </Badge>
           </div>
+
+          {/* Room Configuration - Only visible when not streaming */}
+          {!isStreaming && (
+            <div className="mb-4 p-4 bg-secondary/20 rounded-lg border border-border">
+              <div className="grid gap-2">
+                <Label htmlFor="room-name">Room Name</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="room-name"
+                    value={roomName}
+                    onChange={(e) => setRoomName(e.target.value)}
+                    placeholder="Enter room name (e.g. show-123)"
+                  />
+                  <Button variant="outline" size="icon">
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Enter the ID of the show you want to stream to (e.g. "1" for the first product page).
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Video Preview Area */}
           <div className="bg-muted rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-border overflow-hidden relative">
