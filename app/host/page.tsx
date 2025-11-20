@@ -10,7 +10,7 @@ import { ActiveStreams } from "@/components/host/active-streams"
 import { LiveChatModeration } from "@/components/host/live-chat-moderation"
 import { ProductManagement } from "@/components/host/product-management"
 import { HostAnalytics } from "@/components/host/host-analytics"
-import { Plus, BarChart3, MessageSquare, ShoppingCart, Radio } from 'lucide-react'
+import { Plus, BarChart3, MessageSquare, ShoppingCart, Radio } from "lucide-react"
 
 export default function HostDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -58,7 +58,6 @@ export default function HostDashboard() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <HostOverviewStats />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <StreamControlPanel />
@@ -67,15 +66,15 @@ export default function HostDashboard() {
                 <Card className="p-6 h-full">
                   <h3 className="font-bold text-lg mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start bg-transparent">
                       <Plus className="w-4 h-4 mr-2" />
                       New Show
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start bg-transparent">
                       <Radio className="w-4 h-4 mr-2" />
                       Go Live
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start bg-transparent">
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       Add Products
                     </Button>
@@ -83,6 +82,7 @@ export default function HostDashboard() {
                 </Card>
               </div>
             </div>
+            <HostOverviewStats />
           </TabsContent>
 
           <TabsContent value="streams" className="space-y-6">
