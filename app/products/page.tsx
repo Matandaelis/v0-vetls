@@ -11,6 +11,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import type { SearchFilters } from "@/lib/types"
+import { Footer } from "@/components/footer"
 
 export default function ProductsPage() {
   const searchParams = useSearchParams()
@@ -96,6 +97,7 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

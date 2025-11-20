@@ -6,6 +6,7 @@ import { Header } from "@/components/header"
 import { ShowCard } from "@/components/show-card"
 import { useShows } from "@/contexts/show-context"
 import { useState } from "react"
+import { Footer } from "@/components/footer"
 
 export default function ShowsPage() {
   const { shows } = useShows()
@@ -100,6 +101,7 @@ export default function ShowsPage() {
           </Card>
         )}
       </div>
+      <Footer />
     </div>
   )
 }

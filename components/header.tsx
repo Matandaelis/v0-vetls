@@ -2,13 +2,13 @@
 
 import type React from "react"
 import Link from "next/link"
-import { ShoppingCart, Search, Menu, Heart, User, Podcast as Broadcast, LogOut, ShieldCheck } from 'lucide-react'
+import { ShoppingCart, Search, Menu, Heart, User, Podcast as Broadcast, LogOut, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useState } from "react"
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation"
 import { NotificationPanel } from "@/components/notification-panel"
 import {
   DropdownMenu,
@@ -50,7 +50,7 @@ export function Header() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
               TS
             </div>
-            <span className="hidden sm:inline">TalkShop Live</span>
+            <span className="hidden sm:inline">JB Live Shopping</span>
           </Link>
 
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-2">
@@ -87,7 +87,7 @@ export function Header() {
                 <Heart className="w-5 h-5" />
               </Button>
               <NotificationPanel />
-              
+
               {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -127,9 +127,7 @@ export function Header() {
                     </Button>
                   </Link>
                   <Link href="/register">
-                    <Button size="sm">
-                      Sign up
-                    </Button>
+                    <Button size="sm">Sign up</Button>
                   </Link>
                 </div>
               )}
@@ -195,9 +193,7 @@ export function Header() {
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="w-full justify-start">
-                    Sign up
-                  </Button>
+                  <Button className="w-full justify-start">Sign up</Button>
                 </Link>
               </>
             )}

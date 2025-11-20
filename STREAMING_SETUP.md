@@ -1,6 +1,6 @@
 # Ant Media StreamApp Integration Guide
 
-This guide explains how to set up and use Ant Media StreamApp for live shopping streams on TalkShop Live.
+This guide explains how to set up and use Ant Media StreamApp for live shopping streams on JB Live Shopping.
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ This guide explains how to set up and use Ant Media StreamApp for live shopping 
 ### 3. Start Broadcasting
 
 1. Click "Start Streaming" in your broadcasting software
-2. Your live stream will appear on TalkShop Live
+2. Your live stream will appear on JB Live Shopping
 3. Viewers can watch in real-time with HLS/DASH playback
 
 ## Architecture

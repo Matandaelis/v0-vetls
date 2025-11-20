@@ -266,7 +266,7 @@ export const mockUsers: User[] = [
   {
     id: "admin1",
     name: "Super Admin",
-    email: "admin@talkshop.live",
+    email: "admin@jbliveshopping.com",
     avatar: "/placeholder-user.jpg",
     bio: "Platform Administrator",
     followers: 0,
