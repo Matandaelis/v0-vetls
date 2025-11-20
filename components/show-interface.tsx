@@ -22,84 +22,83 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
   const { addItem } = useCart()
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto pb-8">
-      {/* Left Column: Video & Info */}
-      <div className="flex-1 flex flex-col gap-4">
-        {/* Video Player - Replaced AntMediaPlayer with LiveKitIframeEmbed */}
+    <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-8">
+      {/* Video Player - Replaced AntMediaPlayer with LiveKitIframeEmbed */}
+      <div className="w-full">
         <LiveKitIframeEmbed roomName={show.id} />
+      </div>
 
-        {/* Show Info Section */}
-        <div className="px-4 md:px-0 space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex gap-3">
-              {/* Channel Avatar */}
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <img
-                  src={show.hostAvatar || "/placeholder.svg"}
-                  alt={show.hostName}
-                  className="w-full h-full rounded-full object-cover"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <span className="bg-gray-100 px-1.5 py-0.5 rounded">
-                    {isLive ? "Live Now" : "Aired Today at 1:00am"}
-                  </span>
-                </div>
-                <h1 className="font-bold text-lg leading-tight">{show.title}</h1>
-                <p className="text-sm text-gray-500 font-medium">{show.hostName}</p>
-              </div>
+      {/* Show Info Section */}
+      <div className="px-4 md:px-0 space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex gap-3">
+            {/* Channel Avatar */}
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+              <img
+                src={show.hostAvatar || "/placeholder.svg"}
+                alt={show.hostName}
+                className="w-full h-full rounded-full object-cover"
+              />
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full gap-1.5 h-8 text-xs font-semibold shadow-sm bg-transparent"
-            >
-              <Bell className="w-3.5 h-3.5" />
-              Notify
-            </Button>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <span className="bg-gray-100 px-1.5 py-0.5 rounded">
+                  {isLive ? "Live Now" : "Aired Today at 1:00am"}
+                </span>
+              </div>
+              <h1 className="font-bold text-lg leading-tight">{show.title}</h1>
+              <p className="text-sm text-gray-500 font-medium">{show.hostName}</p>
+            </div>
           </div>
 
-          {/* Action Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-            <TabButton
-              active={activeTab === "shop"}
-              onClick={() => setActiveTab("shop")}
-              icon={<ShoppingBag className="w-4 h-4" />}
-              label="Shop"
-            />
-            <TabButton
-              active={activeTab === "chat"}
-              onClick={() => setActiveTab("chat")}
-              icon={<MessageSquare className="w-4 h-4" />}
-              label="Chat"
-            />
-            <TabButton
-              active={activeTab === "more"}
-              onClick={() => setActiveTab("more")}
-              icon={<MoreHorizontal className="w-4 h-4" />}
-              label="More"
-            />
-            <TabButton
-              active={activeTab === "about"}
-              onClick={() => setActiveTab("about")}
-              icon={<Info className="w-4 h-4" />}
-              label="About"
-            />
-            <TabButton
-              active={activeTab === "share"}
-              onClick={() => setActiveTab("share")}
-              icon={<Share2 className="w-4 h-4" />}
-              label="Share"
-            />
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full gap-1.5 h-8 text-xs font-semibold shadow-sm bg-transparent"
+          >
+            <Bell className="w-3.5 h-3.5" />
+            Notify
+          </Button>
+        </div>
+
+        {/* Action Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <TabButton
+            active={activeTab === "shop"}
+            onClick={() => setActiveTab("shop")}
+            icon={<ShoppingBag className="w-4 h-4" />}
+            label="Shop"
+          />
+          <TabButton
+            active={activeTab === "chat"}
+            onClick={() => setActiveTab("chat")}
+            icon={<MessageSquare className="w-4 h-4" />}
+            label="Chat"
+          />
+          <TabButton
+            active={activeTab === "more"}
+            onClick={() => setActiveTab("more")}
+            icon={<MoreHorizontal className="w-4 h-4" />}
+            label="More"
+          />
+          <TabButton
+            active={activeTab === "about"}
+            onClick={() => setActiveTab("about")}
+            icon={<Info className="w-4 h-4" />}
+            label="About"
+          />
+          <TabButton
+            active={activeTab === "share"}
+            onClick={() => setActiveTab("share")}
+            icon={<Share2 className="w-4 h-4" />}
+            label="Share"
+          />
         </div>
       </div>
 
-      {/* Right Column: Content Area (Shop/Chat) */}
-      <div className="w-full lg:w-[400px] px-4 md:px-0">
+      {/* Content Area (Shop/Chat) */}
+      <div className="w-full px-4 md:px-0">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px] overflow-hidden relative">
           {/* Shop Tab Content */}
           {activeTab === "shop" && (
