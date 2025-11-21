@@ -1,5 +1,5 @@
-import { AccessToken } from "livekit-server-sdk"
 import { type NextRequest, NextResponse } from "next/server"
+import { SignJWT } from "jose"
 
 export async function GET(req: NextRequest) {
   const room = req.nextUrl.searchParams.get("room")
@@ -20,9 +20,26 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 })
   }
 
-  const at = new AccessToken(apiKey, apiSecret, { identity: username })
+  try {
+    const at = new SignJWT({
+      sub: username,
+      video: {
+        room,
+        roomJoin: true,
+        canPublish: admin === "true",
+        canSubscribe: true,
+      },
+    })
+      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+      .setIssuedAt()
+      .setExpirationTime("2h")
+      .setIssuer(apiKey)
 
-  at.addGrant({ room, roomJoin: true, canPublish: admin === "true", canSubscribe: true })
+    const token = await at.sign(new TextEncoder().encode(apiSecret))
 
-  return NextResponse.json({ token: await at.toJwt() })
+    return NextResponse.json({ token })
+  } catch (error) {
+    console.error("Error generating token:", error)
+    return NextResponse.json({ error: "Failed to generate token" }, { status: 500 })
+  }
 }
