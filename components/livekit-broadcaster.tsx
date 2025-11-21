@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { LiveKitRoom, VideoTrack, useTracks, useLocalParticipant } from "@livekit/components-react"
+import { LiveKitRoom, VideoTrack, useTracks, useLocalParticipant, useRoomContext } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -54,6 +54,7 @@ export function LiveKitBroadcaster({ roomName, username, onLeave }: LiveKitBroad
 
 function BroadcasterControls({ onLeave }: { onLeave?: () => void }) {
   const { localParticipant } = useLocalParticipant()
+  const room = useRoomContext()
   const [isCameraEnabled, setIsCameraEnabled] = useState(true)
   const [isMicEnabled, setIsMicEnabled] = useState(true)
 
@@ -71,6 +72,13 @@ function BroadcasterControls({ onLeave }: { onLeave?: () => void }) {
       await localParticipant.setMicrophoneEnabled(enabled)
       setIsMicEnabled(enabled)
     }
+  }
+
+  const handleLeave = async () => {
+    if (room) {
+      await room.disconnect()
+    }
+    onLeave?.()
   }
 
   return (
@@ -105,7 +113,7 @@ function BroadcasterControls({ onLeave }: { onLeave?: () => void }) {
             {isCameraEnabled ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </Button>
 
-          <Button variant="destructive" onClick={onLeave} className="gap-2 rounded-full px-6">
+          <Button variant="destructive" onClick={handleLeave} className="gap-2 rounded-full px-6">
             <Square className="w-4 h-4" />
             End Stream
           </Button>
