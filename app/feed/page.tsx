@@ -13,42 +13,8 @@ import { mockClips } from "@/lib/mock-data"
 import { ClipCard } from "@/components/clip-card"
 
 export default function FeedPage() {
-  const { shows, error: showsError } = useShows()
-  const { users, error: usersError } = useSocial()
-
-  if (showsError) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Unable to load shows</h2>
-            <p className="text-muted-foreground mb-6">{showsError.message}</p>
-            <Link href="/">
-              <Button>Go Home</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (usersError) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Unable to load users</h2>
-            <p className="text-muted-foreground mb-6">{usersError.message}</p>
-            <Link href="/">
-              <Button>Go Home</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const { shows } = useShows()
+  const { users } = useSocial()
 
   const upcomingShows = shows.filter((s) => s.status === "scheduled").slice(0, 6)
   const suggestedUsers = users.filter((u) => !u.isFollowing).slice(0, 4)

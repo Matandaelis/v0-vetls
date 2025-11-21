@@ -4,7 +4,6 @@ import type React from "react"
 import { createContext, useContext, useState } from "react"
 import type { Show, StreamingMetrics } from "@/lib/types"
 import { mockShows } from "@/lib/mock-data"
-import type { ShowFormData } from "@/components/host/create-show-modal"
 
 interface ShowContextType {
   shows: Show[]
@@ -17,15 +16,12 @@ interface ShowContextType {
   initializeShow: (showId: string) => Promise<void>
   getStreamingMetrics: (streamId: string) => Promise<StreamingMetrics | null>
   updateShowStream: (showId: string, streamData: Partial<Show>) => void
-  createShow: (showData: ShowFormData) => Promise<Show>
-  error: Error | null
 }
 
 const ShowContext = createContext<ShowContextType | undefined>(undefined)
 
 export function ShowProvider({ children }: { children: React.ReactNode }) {
   const [shows, setShows] = useState<Show[]>(mockShows)
-  const [error, setError] = useState<Error | null>(null)
 
   const getShowById = (id: string) => {
     return shows.find((s) => s.id === id)
@@ -68,7 +64,6 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
       updateShowStream(showId, streamData)
     } catch (error) {
       console.error("[v0] Error initializing show stream:", error)
-      setError(error)
       throw error
     }
   }
@@ -80,38 +75,14 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
       return await response.json()
     } catch (error) {
       console.error("[v0] Error fetching streaming metrics:", error)
-      setError(error)
       return null
     }
   }
 
   const updateShowStream = (showId: string, streamData: Partial<Show>) => {
-    setShows((prevShows) => prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show)))
-  }
-
-  const createShow = async (showData: ShowFormData): Promise<Show> => {
-    const newId = String(shows.length + 1)
-
-    const newShow: Show = {
-      id: newId,
-      title: showData.title,
-      description: showData.description,
-      hostId: "1",
-      hostName: "Current User",
-      hostAvatar: "/event-host-stage.png",
-      scheduledFor: showData.scheduledFor,
-      status: "scheduled",
-      thumbnail:
-        showData.thumbnail || `/placeholder.svg?height=400&width=600&query=${encodeURIComponent(showData.title)}`,
-      category: showData.category,
-      viewerCount: 0,
-      products: [],
-      streamId: undefined,
-      rtmpUrl: undefined,
-    }
-
-    setShows((prevShows) => [...prevShows, newShow])
-    return newShow
+    setShows((prevShows) =>
+      prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show))
+    )
   }
 
   const value: ShowContextType = {
@@ -125,8 +96,6 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     initializeShow,
     getStreamingMetrics,
     updateShowStream,
-    createShow,
-    error,
   }
 
   return <ShowContext.Provider value={value}>{children}</ShowContext.Provider>
@@ -135,21 +104,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
 export function useShows() {
   const context = useContext(ShowContext)
   if (context === undefined) {
-    console.error("[v0] useShows must be used within a ShowProvider")
-    return {
-      shows: [],
-      getShowById: () => undefined,
-      getShowsByStatus: () => [],
-      getShowsByCategory: () => [],
-      getLiveShows: () => [],
-      getUpcomingShows: () => [],
-      updateShowViewerCount: () => {},
-      initializeShow: async () => {},
-      getStreamingMetrics: async () => null,
-      updateShowStream: () => {},
-      createShow: async () => ({}) as Show,
-      error: new Error("useShows must be used within a ShowProvider"),
-    }
+    throw new Error("useShows must be used within a ShowProvider")
   }
   return context
 }

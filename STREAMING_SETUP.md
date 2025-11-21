@@ -1,72 +1,75 @@
-# LiveKit Streaming Setup
+# Ant Media StreamApp Integration Guide
 
-This project uses LiveKit for real-time video and chat integration with sub-100ms latency.
+This guide explains how to set up and use Ant Media StreamApp for live shopping streams on JB Live Shopping.
 
 ## Prerequisites
 
-1.  **LiveKit Project**: Sign up at [LiveKit Cloud](https://livekit.io/cloud) or host your own.
-2.  **API Credentials**: Get your `API URL`, `API Key`, and `API Secret` from your project settings.
+1. **Ant Media Server** - Deployed and running
+   - Download: https://github.com/ant-media/StreamApp
+   - Recommended: Docker deployment or standalone installation
 
-## Environment Variables
+2. **Broadcasting Software** - One of:
+   - OBS Studio (Open Broadcaster Software)
+   - Streamlabs Desktop
+   - XSplit Broadcaster
+   - Any RTMP-compatible streaming software
 
-Add the following to your `.env.local` file or in Vercel's environment variables:
+3. **Environment Variables** - Set in `.env.local`:
+   \`\`\`
+   NEXT_PUBLIC_ANT_MEDIA_SERVER=http://your-ant-media-server:5080
+   ANT_MEDIA_APP_NAME=LiveApp
+   ANT_MEDIA_API_KEY=your_api_key
+   \`\`\`
 
-\`\`\`bash
-NEXT_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
-LIVEKIT_API_KEY=your_api_key
-LIVEKIT_API_SECRET=your_api_secret
-\`\`\`
+## Getting Started
 
-## How it works
+### 1. Start a Live Show
 
-### Architecture Overview
+1. Navigate to `/shows/[showId]` for a scheduled show
+2. Click "Start Streaming" button (for hosts)
+3. A modal will appear with streaming credentials
 
-1.  **Token Generation**: The backend (`/api/livekit/token`) generates JWT access tokens with appropriate permissions.
-2.  **Host Broadcasting**: Hosts use `/host` dashboard with `StreamControlPanel` to broadcast using `@livekit/components-react`.
-3.  **Iframe Integration**: Viewers see the stream via iframe (`/iframe/live`) embedded in show pages.
-4.  **Video & Chat**: LiveKit handles video streaming and chat messaging using data channels.
+### 2. Configure Your Broadcasting Software (OBS Example)
 
-### Components
+1. **Get Streaming Credentials:**
+   - RTMP URL: `rtmp://your-ant-media-server:5080/app/`
+   - Stream ID: Provided in the setup modal
 
-#### Host Dashboard (`/host`)
-- **StreamControlPanel**: Broadcasting interface with camera/mic controls
-- **Permissions**: Tokens generated with `canPublish=true`
-- **Features**: Live preview, duration tracking, stream controls
+2. **OBS Configuration:**
+   - Go to Settings → Stream
+   - Service: Custom RTMP Server
+   - Server: `rtmp://your-ant-media-server:5080/app/`
+   - Stream Key: Your Stream ID
 
-#### Viewer Interface (`/shows/[id]`)
-- **LiveKitIframeEmbed**: Wrapper with fullscreen toggle
-- **Permissions**: Tokens with `canPublish=false` (subscribe-only)
-- **Features**: Video playback, chat overlay, fullscreen mode
+3. **Recommended Settings:**
+   - Resolution: 1920x1080 or 1280x720
+   - Bitrate: 4500-6000 kbps
+   - FPS: 30 or 60
+   - Encoder: H.264
 
-#### Iframe Page (`/iframe/live`)
-- **LiveKitRoom**: Auto-connects to room based on URL params
-- **VideoConference**: Displays broadcaster's stream
-- **Chat**: Real-time messaging overlay
+### 3. Start Broadcasting
 
-### Room Naming Convention
+1. Click "Start Streaming" in your broadcasting software
+2. Your live stream will appear on JB Live Shopping
+3. Viewers can watch in real-time with HLS/DASH playback
 
-- Each show has a unique room name (typically the show ID)
-- Host enters room name in Stream Control Panel
-- Viewers auto-connect based on show ID
-- **Example**: Show at `/shows/1` uses room name "1"
+## Architecture
 
-## Usage
+### Client-Side Playback
+- **Format:** HLS (HTTP Live Streaming) for web browsers
+- **URL:** `http://your-ant-media-server:5080/app/streams/{streamId}.m3u8`
+- **Fallback:** DASH format available
 
-### For Hosts (Broadcasting)
+### Broadcasting
+- **Protocol:** RTMP (Real Time Messaging Protocol)
+- **Endpoint:** `rtmp://your-ant-media-server:5080/app/`
+- **Authentication:** Via Stream ID
 
-1. Navigate to `/host` dashboard
-2. Enter the room name matching your show ID (e.g., "1")
-3. Click "Go Live"
-4. Grant browser camera and microphone permissions
-5. Your stream is now broadcasting!
-
-### For Viewers (Watching)
-
-1. Navigate to a show page (e.g., `/shows/1`)
-2. Video player loads in iframe
-3. If host is live, stream displays automatically
-4. If not live, shows "Waiting for stream" message
-5. Click fullscreen button to expand
+### Metrics & Analytics
+- Real-time viewer counts
+- Bitrate monitoring
+- FPS tracking
+- Stream duration
 
 ## API Endpoints
 
@@ -74,136 +77,76 @@ LIVEKIT_API_SECRET=your_api_secret
 \`\`\`
 POST /api/streams/initialize
 Body: { showId, hostName }
-Response: { streamId }
+Response: { streamId, hlsUrl, dashUrl, rtmpUrl }
 \`\`\`
 
-### Get LiveKit Token
+### Get Streaming Metrics
 \`\`\`
-GET /api/livekit/token?room={roomName}&username={username}&canPublish={true|false}
-Response: { token: "eyJhbGc..." }
+GET /api/streams/metrics?streamId={streamId}
+Response: { totalViewers, bitrate, fps, timestamp }
 \`\`\`
 
-**Query Parameters:**
-- `room` (required): Room name to join
-- `username` (required): Participant identity
-- `canPublish` (optional): "true" for hosts, omit for viewers
-
-## Features
-
-### Video Streaming
-- Sub-100ms latency using WebRTC
-- Adaptive bitrate streaming
-- Automatic quality adjustment
-- Dynacast for optimal bandwidth usage
-
-### Chat
-- Real-time messaging via LiveKit data channels
-- Chat overlay on video player
-- Synchronized with video stream
-
-### Fullscreen Mode
-- Click enlarge button or "Click to fullscreen" text
-- Press ESC to exit
-- Header with logo and close button in fullscreen
+### Stop Stream
+\`\`\`
+POST /api/streams/stop
+Body: { streamId }
+Response: { success: true }
+\`\`\`
 
 ## Troubleshooting
 
-### Stream Not Connecting
+### No Video Stream Appearing
+- Verify Ant Media Server is running
+- Check RTMP URL is correct
+- Ensure firewall allows RTMP traffic (port 1935)
+- Check broadcaster software connection status
 
-**Check Environment Variables:**
-- Verify `NEXT_PUBLIC_LIVEKIT_URL` starts with `wss://`
-- Ensure `LIVEKIT_API_KEY` and `LIVEKIT_API_SECRET` are correct
-- Restart dev server after adding env vars
+### Playback Issues (Black Screen)
+- Verify HLS URL is correct
+- Check CORS settings on Ant Media Server
+- Try refreshing the page
+- Switch to DASH format if available
 
-**Check Browser Permissions:**
-- Allow camera and microphone when prompted
-- Check browser settings if denied
-- Try incognito mode to reset permissions
-
-**Check Room Names:**
-- Host and viewers must use matching room names
-- Room names are case-sensitive
-- Use simple names (numbers or alphanumeric)
-
-### Video Not Displaying
-
-**Check Console Logs:**
-- Look for `[v0]` prefixed messages
-- Check for WebRTC connection errors
-- Verify token fetch succeeded
-
-**Verify Token Endpoint:**
-- Test: `/api/livekit/token?room=test&username=testuser`
-- Should return `{ "token": "..." }`
-
-**Check LiveKit Dashboard:**
-- Go to [LiveKit Cloud Dashboard](https://cloud.livekit.io)
-- Navigate to "Rooms" section
-- Verify participants are connected
-- Check for any error messages
-
-### Camera/Microphone Issues
-
-**Browser Compatibility:**
-- Use Chrome, Firefox, Safari, or Edge (latest versions)
-- WebRTC may not work in some mobile browsers
-- Update browser to latest version
-
-**HTTPS Required:**
-- Camera/mic requires HTTPS in production
-- `localhost` works for development
-- Deploy to Vercel for HTTPS
-
-**Device Conflicts:**
-- Close other apps using camera/mic
-- Check system privacy settings
-- Try different browser if issues persist
-
-### Connection Timeouts
-
-**Firewall/Network:**
-- Ensure WebRTC traffic is allowed
-- Check corporate firewall settings
-- Try different network (mobile hotspot)
-
-**LiveKit Server:**
-- Verify LiveKit Cloud is operational
-- Check [status page](https://status.livekit.io)
-- Test with different regions if self-hosting
+### High Latency
+- Reduce bitrate in broadcaster settings
+- Check network connection quality
+- Consider lower resolution (720p instead of 1080p)
+- Verify server is geographically close
 
 ## Security Considerations
 
 1. **API Key Protection:**
-   - Never expose `LIVEKIT_API_KEY` or `LIVEKIT_API_SECRET` in client code
-   - Use environment variables only
-   - Only expose `NEXT_PUBLIC_LIVEKIT_URL` to client
+   - Never expose `ANT_MEDIA_API_KEY` in client code
+   - Use environment variables
+   - Rotate keys regularly
 
-2. **Token Management:**
-   - Tokens generated server-side only
-   - Tokens have expiration times
-   - Permissions controlled via `canPublish` flag
-   - Each token bound to specific room and identity
+2. **Stream ID Rotation:**
+   - Generate unique Stream IDs per show
+   - Don't reuse Stream IDs across shows
 
-3. **Room Security:**
-   - Implement room access control in production
-   - Validate user permissions before issuing tokens
-   - Consider adding room passwords for private streams
+3. **RTMP Authentication:**
+   - Implement token-based auth if available
+   - Restrict RTMP endpoints to authorized hosts only
 
-## Dependencies
+## Performance Optimization
 
-\`\`\`json
-{
-  "livekit-client": "^2.15.14",
-  "livekit-server-sdk": "^2.14.1",
-  "@livekit/components-react": "^2.7.0",
-  "@livekit/components-styles": "^1.1.7"
-}
-\`\`\`
+1. **Bitrate Optimization:**
+   - Start at 4500 kbps
+   - Monitor viewer feedback
+   - Adjust based on network conditions
+
+2. **Server Configuration:**
+   - Enable adaptive bitrate streaming
+   - Configure server-side transcoding if needed
+   - Set up CDN for geographic distribution
+
+3. **Client-Side:**
+   - Use HLS over HTTP for better compatibility
+   - Implement video quality selector
+   - Add buffering indicators
 
 ## Additional Resources
 
-- [LiveKit Documentation](https://docs.livekit.io/)
-- [LiveKit React Components](https://docs.livekit.io/reference/components/react/)
-- [LiveKit Examples Repository](https://github.com/livekit-examples)
-- [LiveKit Livestream Example](https://github.com/livekit-examples/livestream)
-- [WebRTC Troubleshooting](https://webrtc.github.io/samples/)
+- [Ant Media GitHub](https://github.com/ant-media/StreamApp)
+- [OBS Documentation](https://obsproject.com/wiki)
+- [HLS Specification](https://tools.ietf.org/html/rfc8216)

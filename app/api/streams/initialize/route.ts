@@ -1,20 +1,21 @@
-import { NextResponse } from "next/server"
+import { initializeAntMediaStream } from "@/lib/ant-media-config"
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { showId, hostName } = await req.json()
+    const { showId, hostName } = await request.json()
 
-    // With LiveKit, we don't necessarily need to "create" a stream via API if we use dynamic room creation.
-    // But we can return the room name which will be used to generate tokens.
+    if (!showId || !hostName) {
+      return Response.json({ error: "Missing showId or hostName" }, { status: 400 })
+    }
 
-    return NextResponse.json({
-      streamId: showId, // Using showId as the room name
-      rtmpUrl: "", // Not needed for LiveKit WebRTC
-      hlsUrl: "", // Not needed for LiveKit WebRTC
-      dashUrl: "", // Not needed for LiveKit WebRTC
-    })
+    const streamData = await initializeAntMediaStream(showId, hostName)
+
+    return Response.json(streamData, { status: 200 })
   } catch (error) {
-    console.error("Error initializing stream:", error)
-    return NextResponse.json({ error: "Failed to initialize stream" }, { status: 500 })
+    console.error("[v0] Stream initialization error:", error)
+    return Response.json(
+      { error: "Failed to initialize stream" },
+      { status: 500 }
+    )
   }
 }
