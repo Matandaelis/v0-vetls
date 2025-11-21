@@ -32,12 +32,7 @@ export interface Show {
   tags: string[]
   products: string[] // Array of product IDs featured in show
   maxViewers: number
-  streamId?: string
-  streamUrl?: string
-  rtmpUrl?: string
-  hlsUrl?: string
-  dashUrl?: string
-  tokenId?: string
+  roomName?: string
 }
 
 export interface User {

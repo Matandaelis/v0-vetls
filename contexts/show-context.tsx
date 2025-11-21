@@ -48,41 +48,26 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
   }
 
   const initializeShow = async (showId: string) => {
-    try {
-      const show = getShowById(showId)
-      if (!show) throw new Error("Show not found")
+    const show = getShowById(showId)
+    if (!show) throw new Error("Show not found")
 
-      const response = await fetch("/api/streams/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ showId, hostName: show.hostName }),
-      })
-
-      if (!response.ok) throw new Error("Failed to initialize stream")
-
-      const streamData = await response.json()
-      updateShowStream(showId, streamData)
-    } catch (error) {
-      console.error("[v0] Error initializing show stream:", error)
-      throw error
-    }
+    // In a real app, you might want to create the room on the server or verify permissions
+    // For LiveKit, the room is created automatically when the first participant joins
+    const roomName = `show-${showId}`
+    updateShowStream(showId, { roomName, status: "live" })
   }
 
   const getStreamingMetrics = async (streamId: string): Promise<StreamingMetrics | null> => {
-    try {
-      const response = await fetch(`/api/streams/metrics?streamId=${streamId}`)
-      if (!response.ok) return null
-      return await response.json()
-    } catch (error) {
-      console.error("[v0] Error fetching streaming metrics:", error)
-      return null
+    return {
+      totalViewers: 0,
+      bitrate: 0,
+      fps: 0,
+      timestamp: new Date(),
     }
   }
 
   const updateShowStream = (showId: string, streamData: Partial<Show>) => {
-    setShows((prevShows) =>
-      prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show))
-    )
+    setShows((prevShows) => prevShows.map((show) => (show.id === showId ? { ...show, ...streamData } : show)))
   }
 
   const value: ShowContextType = {

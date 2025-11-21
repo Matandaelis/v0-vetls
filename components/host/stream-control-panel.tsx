@@ -4,7 +4,8 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Radio, Square, Volume2, Share2 } from 'lucide-react'
+import { Radio, Volume2, Share2 } from "lucide-react"
+import { LiveKitBroadcaster } from "@/components/livekit-broadcaster"
 
 export function StreamControlPanel() {
   const [isStreaming, setIsStreaming] = useState(false)
@@ -19,11 +20,15 @@ export function StreamControlPanel() {
               {isStreaming ? "LIVE" : "OFFLINE"}
             </Badge>
           </div>
-          <div className="bg-muted rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-border">
-            <div className="text-center">
-              <Radio className="w-12 h-12 mx-auto text-muted-foreground mb-2 opacity-50" />
-              <p className="text-sm text-muted-foreground">Stream Preview</p>
-            </div>
+          <div className="bg-muted rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-border overflow-hidden">
+            {isStreaming ? (
+              <LiveKitBroadcaster roomName="demo-room" username="Host" onLeave={() => setIsStreaming(false)} />
+            ) : (
+              <div className="text-center">
+                <Radio className="w-12 h-12 mx-auto text-muted-foreground mb-2 opacity-50" />
+                <p className="text-sm text-muted-foreground">Stream Preview</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -43,22 +48,12 @@ export function StreamControlPanel() {
         </div>
 
         <div className="flex gap-3">
-          <Button
-            onClick={() => setIsStreaming(!isStreaming)}
-            className={`flex-1 gap-2 ${isStreaming ? "bg-destructive hover:bg-destructive/90" : ""}`}
-          >
-            {isStreaming ? (
-              <>
-                <Square className="w-4 h-4" />
-                Stop Stream
-              </>
-            ) : (
-              <>
-                <Radio className="w-4 h-4" />
-                Go Live
-              </>
-            )}
-          </Button>
+          {!isStreaming && (
+            <Button onClick={() => setIsStreaming(true)} className="flex-1 gap-2">
+              <Radio className="w-4 h-4" />
+              Go Live
+            </Button>
+          )}
           <Button variant="outline" size="icon">
             <Volume2 className="w-4 h-4" />
           </Button>
