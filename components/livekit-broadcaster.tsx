@@ -1,8 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { LiveKitRoom, VideoTrack, useTracks, useLocalParticipant, useRoomContext } from "@livekit/components-react"
-import { Track } from "livekit-client"
+import {
+  LiveKitRoom,
+  VideoTrack,
+  useTracks,
+  useLocalParticipant,
+  useRoomContext,
+  useConnectionState,
+} from "@livekit/components-react"
+import { Track, ConnectionState, RoomEvent } from "livekit-client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Mic, MicOff, Video, VideoOff, Square } from "lucide-react"
@@ -12,9 +19,10 @@ interface LiveKitBroadcasterProps {
   roomName: string
   username: string
   onLeave?: () => void
+  onMetricsUpdate?: (metrics: any) => void
 }
 
-export function LiveKitBroadcaster({ roomName, username, onLeave }: LiveKitBroadcasterProps) {
+export function LiveKitBroadcaster({ roomName, username, onLeave, onMetricsUpdate }: LiveKitBroadcasterProps) {
   const [token, setToken] = useState("")
 
   useEffect(() => {
@@ -47,16 +55,47 @@ export function LiveKitBroadcaster({ roomName, username, onLeave }: LiveKitBroad
       style={{ height: "100%" }}
       onDisconnected={onLeave}
     >
-      <BroadcasterControls onLeave={onLeave} />
+      <BroadcasterControls onLeave={onLeave} onMetricsUpdate={onMetricsUpdate} />
     </LiveKitRoom>
   )
 }
 
-function BroadcasterControls({ onLeave }: { onLeave?: () => void }) {
+function BroadcasterControls({
+  onLeave,
+  onMetricsUpdate,
+}: { onLeave?: () => void; onMetricsUpdate?: (metrics: any) => void }) {
   const { localParticipant } = useLocalParticipant()
   const room = useRoomContext()
+  const connectionState = useConnectionState()
   const [isCameraEnabled, setIsCameraEnabled] = useState(true)
   const [isMicEnabled, setIsMicEnabled] = useState(true)
+  const [metrics, setMetrics] = useState({
+    ingressBitrate: 0,
+    egressBitrate: 0,
+    ingressPackets: 0,
+    egressPackets: 0,
+  })
+
+  useEffect(() => {
+    if (!room) return
+
+    const handleStatsUpdate = () => {
+      // This will be populated with actual LiveKit stats in production
+      const stats = {
+        ingressBitrate: Math.random() * 8000 + 2000,
+        egressBitrate: Math.random() * 6000 + 1500,
+        ingressPackets: Math.floor(Math.random() * 10000),
+        egressPackets: Math.floor(Math.random() * 10000),
+      }
+      setMetrics(stats)
+      onMetricsUpdate?.(stats)
+    }
+
+    const interval = setInterval(handleStatsUpdate, 1000)
+    room.on(RoomEvent.Disconnected, () => clearInterval(interval))
+
+    return () => clearInterval(interval)
+  }, [room, onMetricsUpdate])
 
   const toggleCamera = async () => {
     if (localParticipant) {
@@ -80,6 +119,8 @@ function BroadcasterControls({ onLeave }: { onLeave?: () => void }) {
     }
     onLeave?.()
   }
+
+  const isConnected = connectionState === ConnectionState.Connected
 
   return (
     <div className="relative h-full w-full bg-black rounded-lg overflow-hidden group">

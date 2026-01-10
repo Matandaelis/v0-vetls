@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Radio, Volume2, Share2 } from "lucide-react"
 import { LiveKitBroadcaster } from "@/components/livekit-broadcaster"
+import { StreamMetrics } from "@/components/stream-metrics"
 
 export function StreamControlPanel() {
   const [isStreaming, setIsStreaming] = useState(false)
+
+  const handleMetricsUpdate = (metrics: any) => {
+    // Metrics are being tracked in real-time
+    console.log("[v0] Stream metrics updated:", metrics)
+  }
 
   return (
     <Card className="p-6">
@@ -22,7 +28,12 @@ export function StreamControlPanel() {
           </div>
           <div className="bg-muted rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-border overflow-hidden">
             {isStreaming ? (
-              <LiveKitBroadcaster roomName="demo-room" username="Host" onLeave={() => setIsStreaming(false)} />
+              <LiveKitBroadcaster
+                roomName="demo-room"
+                username="Host"
+                onLeave={() => setIsStreaming(false)}
+                onMetricsUpdate={handleMetricsUpdate}
+              />
             ) : (
               <div className="text-center">
                 <Radio className="w-12 h-12 mx-auto text-muted-foreground mb-2 opacity-50" />
@@ -31,6 +42,8 @@ export function StreamControlPanel() {
             )}
           </div>
         </div>
+
+        {isStreaming && <StreamMetrics isStreaming={isStreaming} onMetricsUpdate={handleMetricsUpdate} />}
 
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-secondary/50 rounded-lg p-3">
