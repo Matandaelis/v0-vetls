@@ -1,27 +1,30 @@
 "use client"
 
 import type React from "react"
-
 import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useCart } from "@/contexts/cart-context"
-import { useOrders } from "@/contexts/order-context"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, ChevronRight, AlertCircle, CheckCircle } from "lucide-react"
+import { loadStripe } from "@stripe/js"
+import { Elements } from "@stripe/react-stripe-js"
+import { StripePaymentForm } from "@/components/stripe-payment-form"
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, getCartTotal, clearCart } = useCart()
-  const { createOrder } = useOrders()
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping")
   const [isProcessing, setIsProcessing] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
 
-  // Form state
   const [customerInfo, setCustomerInfo] = useState({
     email: "",
     fullName: "",
@@ -35,8 +38,6 @@ export default function CheckoutPage() {
     zipCode: "",
     country: "United States",
   })
-
-  const [paymentMethod, setPaymentMethod] = useState("card")
 
   if (items.length === 0) {
     return (
@@ -73,30 +74,38 @@ export default function CheckoutPage() {
     }
   }
 
-  const handlePaymentSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setStep("review")
-  }
-
-  const handlePlaceOrder = async () => {
+  const handlePaymentSuccess = async (paymentIntentId: string) => {
+    setPaymentSuccess(true)
     setIsProcessing(true)
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items,
+          subtotal,
+          tax,
+          shipping,
+          total,
+          customerInfo,
+          shippingAddress,
+          paymentIntentId,
+          status: "completed",
+        }),
+      })
 
-    const order = createOrder({
-      items,
-      subtotal,
-      tax,
-      shipping,
-      total,
-      customerInfo,
-      shippingAddress,
-      status: "processing",
-    })
+      if (!response.ok) throw new Error("Failed to create order")
 
-    clearCart()
-    router.push(`/order-confirmation/${order.id}`)
+      const order = await response.json()
+      clearCart()
+      router.push(`/order-confirmation/${order.id}`)
+    } catch (error: any) {
+      setPaymentError(error.message || "Failed to complete order")
+      setPaymentSuccess(false)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -109,12 +118,14 @@ export default function CheckoutPage() {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Checkout Form */}
           <div className="lg:col-span-2">
-            {/* Step Indicator */}
             <div className="flex items-center gap-2 mb-8">
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${step === "shipping" || step === "payment" || step === "review" ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                  step === "shipping" || step === "payment" || step === "review"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary"
+                }`}
               >
                 1
               </div>
@@ -122,19 +133,22 @@ export default function CheckoutPage() {
                 className={`h-1 flex-1 ${step === "payment" || step === "review" ? "bg-primary" : "bg-secondary"}`}
               />
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${step === "payment" || step === "review" ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                  step === "payment" || step === "review" ? "bg-primary text-primary-foreground" : "bg-secondary"
+                }`}
               >
                 2
               </div>
               <div className={`h-1 flex-1 ${step === "review" ? "bg-primary" : "bg-secondary"}`} />
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full ${step === "review" ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                  step === "review" ? "bg-primary text-primary-foreground" : "bg-secondary"
+                }`}
               >
                 3
               </div>
             </div>
 
-            {/* Shipping Information */}
             {step === "shipping" && (
               <Card className="p-6 mb-6">
                 <h2 className="text-2xl font-bold mb-6">Shipping Information</h2>
@@ -183,12 +197,7 @@ export default function CheckoutPage() {
                         id="street"
                         required
                         value={shippingAddress.street}
-                        onChange={(e) =>
-                          setShippingAddress({
-                            ...shippingAddress,
-                            street: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
                         placeholder="123 Main St"
                       />
                     </div>
@@ -200,12 +209,7 @@ export default function CheckoutPage() {
                           id="city"
                           required
                           value={shippingAddress.city}
-                          onChange={(e) =>
-                            setShippingAddress({
-                              ...shippingAddress,
-                              city: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
                           placeholder="New York"
                         />
                       </div>
@@ -215,12 +219,7 @@ export default function CheckoutPage() {
                           id="state"
                           required
                           value={shippingAddress.state}
-                          onChange={(e) =>
-                            setShippingAddress({
-                              ...shippingAddress,
-                              state: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
                           placeholder="NY"
                         />
                       </div>
@@ -232,12 +231,7 @@ export default function CheckoutPage() {
                         id="zipCode"
                         required
                         value={shippingAddress.zipCode}
-                        onChange={(e) =>
-                          setShippingAddress({
-                            ...shippingAddress,
-                            zipCode: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, zipCode: e.target.value })}
                         placeholder="10001"
                       />
                     </div>
@@ -250,79 +244,44 @@ export default function CheckoutPage() {
               </Card>
             )}
 
-            {/* Payment Information */}
             {step === "payment" && (
-              <Card className="p-6 mb-6">
-                <h2 className="text-2xl font-bold mb-6">Payment Method</h2>
-                <form onSubmit={handlePaymentSubmit}>
-                  <div className="space-y-3 mb-6">
-                    <label className="flex items-center p-4 border border-border rounded-lg cursor-pointer hover:bg-secondary/50">
-                      <input
-                        type="radio"
-                        name="payment"
-                        value="card"
-                        checked={paymentMethod === "card"}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <span className="ml-3 font-semibold">Credit or Debit Card</span>
-                    </label>
-                    <label className="flex items-center p-4 border border-border rounded-lg cursor-pointer hover:bg-secondary/50">
-                      <input
-                        type="radio"
-                        name="payment"
-                        value="paypal"
-                        checked={paymentMethod === "paypal"}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <span className="ml-3 font-semibold">PayPal</span>
-                    </label>
+              <div className="space-y-6">
+                {paymentError && (
+                  <div className="flex items-center gap-2 p-4 bg-destructive/10 border border-destructive rounded-lg">
+                    <AlertCircle className="w-5 h-5 text-destructive" />
+                    <p className="text-destructive">{paymentError}</p>
                   </div>
+                )}
 
-                  {paymentMethod === "card" && (
-                    <div className="space-y-4 mb-6">
-                      <div>
-                        <Label htmlFor="cardName">Cardholder Name</Label>
-                        <Input id="cardName" placeholder="John Doe" required />
-                      </div>
-                      <div>
-                        <Label htmlFor="cardNumber">Card Number</Label>
-                        <Input id="cardNumber" placeholder="1234 5678 9012 3456" required />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="expiry">Expiration Date</Label>
-                          <Input id="expiry" placeholder="MM/YY" required />
-                        </div>
-                        <div>
-                          <Label htmlFor="cvc">CVC</Label>
-                          <Input id="cvc" placeholder="123" required />
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                <Elements stripe={stripePromise}>
+                  <StripePaymentForm
+                    amount={total}
+                    orderId={`order-${Date.now()}`}
+                    onSuccess={() => setStep("review")}
+                    onError={setPaymentError}
+                  />
+                </Elements>
 
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="lg"
-                      className="flex-1 bg-transparent"
-                      onClick={() => setStep("shipping")}
-                    >
-                      Back
-                    </Button>
-                    <Button type="submit" size="lg" className="flex-1">
-                      Review Order <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </form>
-              </Card>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="w-full bg-transparent"
+                  onClick={() => setStep("shipping")}
+                >
+                  Back
+                </Button>
+              </div>
             )}
 
-            {/* Order Review */}
             {step === "review" && (
               <Card className="p-6 mb-6">
-                <h2 className="text-2xl font-bold mb-6">Review Your Order</h2>
+                <div className="flex items-center gap-2 mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <p className="text-green-700 font-semibold">Payment Successful</p>
+                </div>
+
+                <h2 className="text-2xl font-bold mb-6">Order Confirmed</h2>
 
                 <div className="space-y-6">
                   <div>
@@ -351,27 +310,14 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold mb-2">Payment Method</h3>
-                    <p className="text-muted-foreground">
-                      {paymentMethod === "card" ? "Credit or Debit Card" : "PayPal"}
-                    </p>
+                    <h3 className="font-semibold mb-2">Order Total</h3>
+                    <p className="text-2xl font-bold">${total.toFixed(2)}</p>
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="lg"
-                    className="flex-1 bg-transparent"
-                    onClick={() => setStep("payment")}
-                  >
-                    Back
-                  </Button>
-                  <Button size="lg" className="flex-1" onClick={handlePlaceOrder} disabled={isProcessing}>
-                    {isProcessing ? "Processing..." : "Place Order"}
-                  </Button>
-                </div>
+                <Button size="lg" className="w-full mt-6" onClick={() => router.push("/")} disabled={isProcessing}>
+                  {isProcessing ? "Processing..." : "Back to Home"}
+                </Button>
               </Card>
             )}
           </div>

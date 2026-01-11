@@ -20,6 +20,21 @@ export const metadata: Metadata = {
   title: "JB Live Shopping",
   description: "Created with v0",
   generator: "v0.app",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Live Auction",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
   icons: {
     icon: [
       {
@@ -46,6 +61,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch((err) => {
+                    console.log('SW registration failed:', err)
+                  })
+                })
+              }
+            `,
+          }}
+        />
+      </head>
       <body className={`font-sans antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           <AuthProvider>
