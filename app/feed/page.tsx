@@ -11,7 +11,7 @@ import Link from "next/link"
 import { Heart, Users, Play, Film } from "lucide-react"
 import { ClipCard } from "@/components/clip-card"
 import { useState, useEffect } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 import type { Clip } from "@/lib/types"
 
 export default function FeedPage() {
@@ -19,7 +19,7 @@ export default function FeedPage() {
   const { users } = useSocial()
   const [clips, setClips] = useState<Clip[]>([])
   const [clipsLoading, setClipsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const loadClips = async () => {

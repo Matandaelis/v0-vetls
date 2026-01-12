@@ -7,14 +7,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, StopCircle, Eye } from "lucide-react"
 import { useState, useEffect } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 import type { Show } from "@/lib/types"
 
 export default function AdminShowsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [shows, setShows] = useState<Show[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const loadShows = async () => {
@@ -31,7 +31,7 @@ export default function AdminShowsPage() {
     }
 
     loadShows()
-  }, [supabase])
+  }, [])
 
   const filteredShows = shows.filter(
     (show) =>

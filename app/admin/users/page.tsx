@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Shield, Ban } from "lucide-react"
 import { useState, useEffect } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 import type { User } from "@/lib/types"
 import {
   DropdownMenu,
@@ -23,7 +23,7 @@ export default function AdminUsersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -40,7 +40,7 @@ export default function AdminUsersPage() {
     }
 
     loadUsers()
-  }, [supabase])
+  }, [])
 
   const filteredUsers = users.filter(
     (user) =>

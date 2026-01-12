@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState } from "react"
 import type { Product, Show, SearchFilters, SearchResult } from "@/lib/types"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 
 interface SearchContextType {
   searchAll: (filters: SearchFilters) => Promise<SearchResult[]>
@@ -16,7 +16,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined)
 
 export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const normalizeQuery = (query: string) => query.toLowerCase().trim()
 

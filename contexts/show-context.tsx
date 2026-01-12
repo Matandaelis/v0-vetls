@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { Show, StreamingMetrics } from "@/lib/types"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 
 interface ShowContextType {
   shows: Show[]
@@ -24,7 +24,7 @@ const ShowContext = createContext<ShowContextType | undefined>(undefined)
 export function ShowProvider({ children }: { children: React.ReactNode }) {
   const [shows, setShows] = useState<Show[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   // Load shows from Supabase on mount
   useEffect(() => {

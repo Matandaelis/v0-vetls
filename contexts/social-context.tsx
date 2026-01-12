@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { User, Rating, UserFollow } from "@/lib/types"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 
 interface SocialContextType {
   users: User[]
@@ -25,7 +25,7 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
   const [ratings, setRatings] = useState<Rating[]>([])
   const [userFollows, setUserFollows] = useState<UserFollow[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     loadData()

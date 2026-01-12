@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, Video, DollarSign, AlertTriangle } from "lucide-react"
 import { useState, useEffect } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -13,7 +13,7 @@ export default function AdminDashboard() {
     pendingReports: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const loadStats = async () => {
