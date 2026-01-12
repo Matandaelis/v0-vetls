@@ -45,6 +45,7 @@
     "@stripe/js": "latest",
     "@stripe/react-stripe-js": "5.4.1",
     "@stripe/stripe-js": "latest",
+    "@supabase/auth-helpers-nextjs": "0.15.0",
     "@supabase/ssr": "0.8.0",
     "@supabase/supabase-js": "2.90.1",
     "@types/dom-mediacapture-record": "latest",

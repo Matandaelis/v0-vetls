@@ -9,12 +9,39 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { Heart, Users, Play, Film } from "lucide-react"
-import { mockClips } from "@/lib/mock-data"
 import { ClipCard } from "@/components/clip-card"
+import { useState, useEffect } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import type { Clip } from "@/lib/types"
 
 export default function FeedPage() {
   const { shows } = useShows()
   const { users } = useSocial()
+  const [clips, setClips] = useState<Clip[]>([])
+  const [clipsLoading, setClipsLoading] = useState(true)
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    const loadClips = async () => {
+      try {
+        setClipsLoading(true)
+        const { data, error } = await supabase
+          .from("clips")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(20)
+
+        if (error) throw error
+        setClips(data || [])
+      } catch (error) {
+        console.error("[v0] Error loading clips:", error)
+      } finally {
+        setClipsLoading(false)
+      }
+    }
+
+    loadClips()
+  }, [supabase])
 
   const upcomingShows = shows.filter((s) => s.status === "scheduled").slice(0, 6)
   const suggestedUsers = users.filter((u) => !u.isFollowing).slice(0, 4)
@@ -64,11 +91,23 @@ export default function FeedPage() {
           <TabsContent value="clips" className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold mb-4">Trending Clips</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {mockClips.map((clip) => (
-                  <ClipCard key={clip.id} clip={clip} />
-                ))}
-              </div>
+              {clipsLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="bg-muted h-40 rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : clips.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {clips.map((clip) => (
+                    <ClipCard key={clip.id} clip={clip} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No clips available yet</p>
+                </div>
+              )}
             </div>
           </TabsContent>
 

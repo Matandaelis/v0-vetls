@@ -1,24 +1,45 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import type { Product } from "@/lib/types"
-import { mockProducts } from "@/lib/mock-data"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface ProductContextType {
   products: Product[]
   getProductById: (id: string) => Product | undefined
   getProductsByCategory: (category: string) => Product[]
   getCategories: () => string[]
-  addProduct: (product: Omit<Product, "id">) => void
-  updateProduct: (id: string, product: Partial<Product>) => void
-  deleteProduct: (id: string) => void
+  addProduct: (product: Omit<Product, "id">) => Promise<void>
+  updateProduct: (id: string, product: Partial<Product>) => Promise<void>
+  deleteProduct: (id: string) => Promise<void>
+  loadProducts: () => Promise<void>
+  isLoading: boolean
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined)
 
 export function ProductProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(mockProducts)
+  const [products, setProducts] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    loadProducts()
+  }, [])
+
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true)
+      const { data, error } = await supabase.from("products").select("*")
+      if (error) throw error
+      setProducts(data || [])
+    } catch (error) {
+      console.error("[v0] Error loading products:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const getProductById = (id: string) => {
     return products.find((p) => p.id === id)
@@ -32,20 +53,37 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     return Array.from(new Set(products.map((p) => p.category)))
   }
 
-  const addProduct = (product: Omit<Product, "id">) => {
-    const newProduct = {
-      ...product,
-      id: Math.random().toString(36).substr(2, 9),
+  const addProduct = async (product: Omit<Product, "id">) => {
+    try {
+      const { error } = await supabase.from("products").insert([product])
+      if (error) throw error
+      await loadProducts()
+    } catch (error) {
+      console.error("[v0] Error adding product:", error)
+      throw error
     }
-    setProducts([...products, newProduct])
   }
 
-  const updateProduct = (id: string, product: Partial<Product>) => {
-    setProducts(products.map((p) => (p.id === id ? { ...p, ...product } : p)))
+  const updateProduct = async (id: string, updates: Partial<Product>) => {
+    try {
+      const { error } = await supabase.from("products").update(updates).eq("id", id)
+      if (error) throw error
+      await loadProducts()
+    } catch (error) {
+      console.error("[v0] Error updating product:", error)
+      throw error
+    }
   }
 
-  const deleteProduct = (id: string) => {
-    setProducts(products.filter((p) => p.id !== id))
+  const deleteProduct = async (id: string) => {
+    try {
+      const { error } = await supabase.from("products").delete().eq("id", id)
+      if (error) throw error
+      await loadProducts()
+    } catch (error) {
+      console.error("[v0] Error deleting product:", error)
+      throw error
+    }
   }
 
   const value: ProductContextType = {
@@ -56,6 +94,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     addProduct,
     updateProduct,
     deleteProduct,
+    loadProducts,
+    isLoading,
   }
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>
@@ -63,8 +103,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
 export function useProducts() {
   const context = useContext(ProductContext)
-  if (context === undefined) {
-    throw new Error("useProducts must be used within a ProductProvider")
+  if (!context) {
+    throw new Error("useProducts must be used within ProductProvider")
   }
   return context
 }

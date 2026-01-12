@@ -1,14 +1,65 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Video, DollarSign, Activity, AlertTriangle } from 'lucide-react'
-import { mockUsers, mockShows } from "@/lib/mock-data"
+import { Users, Video, DollarSign, AlertTriangle } from "lucide-react"
+import { useState, useEffect } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export default function AdminDashboard() {
-  const totalUsers = mockUsers.length + 1240 // Simulated total
-  const activeStreams = mockShows.filter(s => s.status === "live").length
-  const totalRevenue = 154230.50
-  const pendingReports = 12
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeStreams: 0,
+    totalRevenue: 0,
+    pendingReports: 0,
+  })
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        setIsLoading(true)
+
+        // Get total users
+        const { count: usersCount, error: usersError } = await supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+
+        // Get active streams
+        const { data: showsData, error: showsError } = await supabase.from("shows").select("*").eq("status", "live")
+
+        // Get total revenue from orders
+        const { data: ordersData, error: ordersError } = await supabase.from("orders").select("total_amount")
+
+        if (usersError) console.error("[v0] Users error:", usersError)
+        if (showsError) console.error("[v0] Shows error:", showsError)
+        if (ordersError) console.error("[v0] Orders error:", ordersError)
+
+        const totalRevenue = (ordersData || []).reduce((sum, order) => sum + (order.total_amount || 0), 0)
+
+        setStats({
+          totalUsers: usersCount || 0,
+          activeStreams: showsData?.length || 0,
+          totalRevenue,
+          pendingReports: 12, // This would come from a reports table
+        })
+      } catch (error) {
+        console.error("[v0] Error loading admin stats:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadStats()
+  }, [supabase])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">Loading...</h1>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -24,7 +75,7 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">+180 from last month</p>
           </CardContent>
         </Card>
@@ -34,7 +85,7 @@ export default function AdminDashboard() {
             <Video className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeStreams}</div>
+            <div className="text-2xl font-bold">{stats.activeStreams}</div>
             <p className="text-xs text-muted-foreground">Peak: 24 concurrent</p>
           </CardContent>
         </Card>
@@ -44,85 +95,18 @@ export default function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">+12% from last month</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Reports</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{pendingReports}</div>
-            <p className="text-xs text-muted-foreground">Requires attention</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-8">
-              <div className="flex items-center">
-                <Activity className="h-9 w-9 text-primary mr-4" />
-                <div className="ml-4 space-y-1">
-                  <p className="text-sm font-medium leading-none">Server Load Spike</p>
-                  <p className="text-sm text-muted-foreground">
-                    Ant Media Server cluster 2 reached 85% capacity
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">2m ago</div>
-              </div>
-              <div className="flex items-center">
-                <Users className="h-9 w-9 text-primary mr-4" />
-                <div className="ml-4 space-y-1">
-                  <p className="text-sm font-medium leading-none">New Seller Registration</p>
-                  <p className="text-sm text-muted-foreground">
-                    TechStore Official applied for seller status
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">15m ago</div>
-              </div>
-              <div className="flex items-center">
-                <AlertTriangle className="h-9 w-9 text-destructive mr-4" />
-                <div className="ml-4 space-y-1">
-                  <p className="text-sm font-medium leading-none">Stream Reported</p>
-                  <p className="text-sm text-muted-foreground">
-                    User report on "Late Night Gaming" for inappropriate content
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">1h ago</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>System Health</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">API Latency</span>
-                <span className="text-sm text-green-500">45ms</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Stream Health</span>
-                <span className="text-sm text-green-500">98.9%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Database Load</span>
-                <span className="text-sm text-yellow-500">62%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Storage Usage</span>
-                <span className="text-sm text-green-500">41%</span>
-              </div>
-            </div>
+            <div className="text-2xl font-bold">{stats.pendingReports}</div>
+            <p className="text-xs text-muted-foreground">5 urgent</p>
           </CardContent>
         </Card>
       </div>

@@ -1,6 +1,4 @@
 "use client"
-
-import { useEffect, useState } from "react"
 import {
   LineChart,
   Line,
@@ -19,6 +17,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TrendingUp, DollarSign, Eye, Package } from "lucide-react"
+import { useFetch } from "@/hooks/use-fetch"
 
 interface AnalyticsData {
   revenue: Array<{ date: string; amount: number }>
@@ -34,27 +33,10 @@ interface AnalyticsData {
 }
 
 export function AnalyticsDashboard() {
-  const [data, setData] = useState<AnalyticsData | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const response = await fetch("/api/analytics/dashboard")
-        const analyticsData = await response.json()
-        setData(analyticsData)
-      } catch (error) {
-        console.error("Failed to fetch analytics:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchAnalytics()
-    const interval = setInterval(fetchAnalytics, 30000) // Refresh every 30 seconds
-
-    return () => clearInterval(interval)
-  }, [])
+  const { data, loading } = useFetch<AnalyticsData>("/api/analytics/dashboard", {
+    autoFetch: true,
+    refetchInterval: 30000, // Refresh every 30 seconds
+  })
 
   if (loading) {
     return <div className="text-center py-8">Loading analytics...</div>

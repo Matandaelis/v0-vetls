@@ -1,5 +1,8 @@
 "use client"
 
+import type React from "react"
+
+import { useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import type { SearchFilters } from "@/lib/types"
 
@@ -22,6 +25,34 @@ export function ProductFilters({
   sortBy,
   onSortChange,
 }: ProductFiltersProps) {
+  const handleSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      onSortChange(e.target.value as SearchFilters["sortBy"])
+    },
+    [onSortChange],
+  )
+
+  const handleCategorySelect = useCallback(
+    (category: string | undefined) => {
+      onCategoryChange(category)
+    },
+    [onCategoryChange],
+  )
+
+  const handlePriceMinChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onPriceChange([Number(e.target.value), priceRange[1]])
+    },
+    [onPriceChange, priceRange],
+  )
+
+  const handlePriceMaxChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onPriceChange([priceRange[0], Number(e.target.value)])
+    },
+    [onPriceChange, priceRange],
+  )
+
   return (
     <div className="space-y-6">
       {/* Sort */}
@@ -29,7 +60,7 @@ export function ProductFilters({
         <h3 className="font-semibold text-foreground mb-3">Sort</h3>
         <select
           value={sortBy || "relevance"}
-          onChange={(e) => onSortChange(e.target.value as SearchFilters["sortBy"])}
+          onChange={handleSortChange}
           className="w-full px-3 py-2 text-sm rounded border bg-background"
         >
           <option value="relevance">Relevance</option>
@@ -46,7 +77,7 @@ export function ProductFilters({
           <Button
             variant={selectedCategory ? "outline" : "default"}
             size="sm"
-            onClick={() => onCategoryChange(undefined)}
+            onClick={() => handleCategorySelect(undefined)}
             className="w-full justify-start bg-transparent"
           >
             All Categories
@@ -56,7 +87,7 @@ export function ProductFilters({
               key={category}
               variant={selectedCategory === category ? "default" : "outline"}
               size="sm"
-              onClick={() => onCategoryChange(category)}
+              onClick={() => handleCategorySelect(category)}
               className="w-full justify-start bg-transparent"
             >
               {category}
@@ -75,7 +106,7 @@ export function ProductFilters({
               min="0"
               max="1000"
               value={priceRange[0]}
-              onChange={(e) => onPriceChange([Number(e.target.value), priceRange[1]])}
+              onChange={handlePriceMinChange}
               placeholder="Min"
               className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
             />
@@ -84,7 +115,7 @@ export function ProductFilters({
               min="0"
               max="1000"
               value={priceRange[1]}
-              onChange={(e) => onPriceChange([priceRange[0], Number(e.target.value)])}
+              onChange={handlePriceMaxChange}
               placeholder="Max"
               className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
             />

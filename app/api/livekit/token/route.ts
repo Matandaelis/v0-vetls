@@ -16,8 +16,17 @@ export async function GET(req: NextRequest) {
   const apiSecret = process.env.LIVEKIT_API_SECRET
   const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
 
-  if (!apiKey || !apiSecret || !wsUrl) {
-    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 })
+  if (!apiKey) {
+    console.error("[v0] LIVEKIT_API_KEY is not configured")
+    return NextResponse.json({ error: "Server misconfigured: Missing API Key" }, { status: 500 })
+  }
+  if (!apiSecret) {
+    console.error("[v0] LIVEKIT_API_SECRET is not configured")
+    return NextResponse.json({ error: "Server misconfigured: Missing API Secret" }, { status: 500 })
+  }
+  if (!wsUrl) {
+    console.error("[v0] NEXT_PUBLIC_LIVEKIT_URL is not configured")
+    return NextResponse.json({ error: "Server misconfigured: Missing WebSocket URL" }, { status: 500 })
   }
 
   try {
@@ -39,7 +48,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ token })
   } catch (error) {
-    console.error("Error generating token:", error)
+    console.error("[v0] Error generating LiveKit token:", error)
     return NextResponse.json({ error: "Failed to generate token" }, { status: 500 })
   }
 }

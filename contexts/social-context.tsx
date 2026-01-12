@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { User, Rating, UserFollow } from "@/lib/types"
-import { mockUsers, mockRatings } from "@/lib/mock-data"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface SocialContextType {
   users: User[]
@@ -11,71 +11,109 @@ interface SocialContextType {
   userFollows: UserFollow[]
   getUserById: (id: string) => User | undefined
   getRatingsByProductId: (productId: string) => Rating[]
-  toggleFollow: (userId: string) => void
+  toggleFollow: (userId: string) => Promise<void>
   isFollowing: (userId: string) => boolean
-  addRating: (rating: Omit<Rating, "id" | "createdAt">) => void
+  addRating: (rating: Omit<Rating, "id" | "createdAt">) => Promise<void>
+  loadData: () => Promise<void>
+  isLoading: boolean
 }
 
 const SocialContext = createContext<SocialContextType | undefined>(undefined)
 
-const FOLLOWS_STORAGE_KEY = "talkshop-follows"
-
 export function SocialProvider({ children }: { children: React.ReactNode }) {
-  const [users, setUsers] = useState<User[]>(mockUsers)
-  const [ratings, setRatings] = useState<Rating[]>(mockRatings)
+  const [users, setUsers] = useState<User[]>([])
+  const [ratings, setRatings] = useState<Rating[]>([])
   const [userFollows, setUserFollows] = useState<UserFollow[]>([])
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const savedFollows = localStorage.getItem(FOLLOWS_STORAGE_KEY)
-    if (savedFollows) {
-      try {
-        setUserFollows(JSON.parse(savedFollows))
-      } catch (error) {
-        console.error("Failed to load follows:", error)
-      }
-    }
-    setIsLoaded(true)
+    loadData()
   }, [])
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(FOLLOWS_STORAGE_KEY, JSON.stringify(userFollows))
+  const loadData = async () => {
+    try {
+      setIsLoading(true)
+
+      // Load users from profiles table
+      const { data: usersData, error: usersError } = await supabase.from("profiles").select("*")
+      if (usersError) throw usersError
+      setUsers(usersData || [])
+
+      // Load ratings
+      const { data: ratingsData, error: ratingsError } = await supabase.from("ratings").select("*")
+      if (ratingsError) throw ratingsError
+      setRatings(ratingsData || [])
+
+      // Load follows
+      const { data: followsData, error: followsError } = await supabase.from("user_follows").select("*")
+      if (followsError) throw followsError
+      setUserFollows(followsData || [])
+    } catch (error) {
+      console.error("[v0] Error loading social data:", error)
+    } finally {
+      setIsLoading(false)
     }
-  }, [userFollows, isLoaded])
+  }
 
   const getUserById = (id: string) => {
     return users.find((u) => u.id === id)
   }
 
   const getRatingsByProductId = (productId: string) => {
-    return ratings.filter((r) => r.productId === productId)
+    return ratings.filter((r) => r.product_id === productId)
   }
 
-  const toggleFollow = (userId: string) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((u) => {
-        if (u.id === userId) {
-          const newFollowing = u.isFollowing ? u.followers - 1 : u.followers + 1
-          return { ...u, isFollowing: !u.isFollowing, followers: newFollowing }
-        }
-        return u
-      }),
-    )
+  const toggleFollow = async (userId: string) => {
+    try {
+      const { data: session } = await supabase.auth.getSession()
+      if (!session?.user) throw new Error("Not authenticated")
+
+      const existingFollow = userFollows.find((f) => f.follower_id === session.user.id && f.following_id === userId)
+
+      if (existingFollow) {
+        // Unfollow
+        const { error } = await supabase.from("user_follows").delete().eq("id", existingFollow.id)
+        if (error) throw error
+      } else {
+        // Follow
+        const { error } = await supabase.from("user_follows").insert([
+          {
+            follower_id: session.user.id,
+            following_id: userId,
+          },
+        ])
+        if (error) throw error
+      }
+
+      await loadData()
+    } catch (error) {
+      console.error("[v0] Error toggling follow:", error)
+      throw error
+    }
   }
 
   const isFollowing = (userId: string) => {
-    const user = users.find((u) => u.id === userId)
-    return user?.isFollowing || false
+    return userFollows.some((f) => f.following_id === userId)
   }
 
-  const addRating = (ratingData: Omit<Rating, "id" | "createdAt">) => {
-    const newRating: Rating = {
-      ...ratingData,
-      id: `rating-${Date.now()}`,
-      createdAt: new Date(),
+  const addRating = async (rating: Omit<Rating, "id" | "created_at">) => {
+    try {
+      const { data: session } = await supabase.auth.getSession()
+      if (!session?.user) throw new Error("Not authenticated")
+
+      const { error } = await supabase.from("ratings").insert([
+        {
+          ...rating,
+          user_id: session.user.id,
+        },
+      ])
+      if (error) throw error
+      await loadData()
+    } catch (error) {
+      console.error("[v0] Error adding rating:", error)
+      throw error
     }
-    setRatings((prev) => [newRating, ...prev])
   }
 
   const value: SocialContextType = {
@@ -87,6 +125,8 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
     toggleFollow,
     isFollowing,
     addRating,
+    loadData,
+    isLoading,
   }
 
   return <SocialContext.Provider value={value}>{children}</SocialContext.Provider>
@@ -94,8 +134,8 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
 
 export function useSocial() {
   const context = useContext(SocialContext)
-  if (context === undefined) {
-    throw new Error("useSocial must be used within a SocialProvider")
+  if (!context) {
+    throw new Error("useSocial must be used within SocialProvider")
   }
   return context
 }

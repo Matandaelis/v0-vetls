@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import type { Show, StreamingMetrics } from "@/lib/types"
-import { mockShows } from "@/lib/mock-data"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface ShowContextType {
   shows: Show[]
@@ -16,12 +16,33 @@ interface ShowContextType {
   initializeShow: (showId: string) => Promise<void>
   getStreamingMetrics: (streamId: string) => Promise<StreamingMetrics | null>
   updateShowStream: (showId: string, streamData: Partial<Show>) => void
+  loadShows: () => Promise<void>
 }
 
 const ShowContext = createContext<ShowContextType | undefined>(undefined)
 
 export function ShowProvider({ children }: { children: React.ReactNode }) {
-  const [shows, setShows] = useState<Show[]>(mockShows)
+  const [shows, setShows] = useState<Show[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
+
+  // Load shows from Supabase on mount
+  useEffect(() => {
+    loadShows()
+  }, [])
+
+  const loadShows = async () => {
+    try {
+      setIsLoading(true)
+      const { data, error } = await supabase.from("shows").select("*")
+      if (error) throw error
+      setShows(data || [])
+    } catch (error) {
+      console.error("[v0] Error loading shows:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const getShowById = (id: string) => {
     return shows.find((s) => s.id === id)
@@ -81,6 +102,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     initializeShow,
     getStreamingMetrics,
     updateShowStream,
+    loadShows,
   }
 
   return <ShowContext.Provider value={value}>{children}</ShowContext.Provider>
@@ -88,8 +110,8 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
 
 export function useShows() {
   const context = useContext(ShowContext)
-  if (context === undefined) {
-    throw new Error("useShows must be used within a ShowProvider")
+  if (!context) {
+    throw new Error("useShows must be used within ShowProvider")
   }
   return context
 }

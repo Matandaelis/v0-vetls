@@ -1,7 +1,8 @@
 import { Header } from "@/components/header"
 import { ShowInterface } from "@/components/show-interface"
-import { mockShows, mockProducts } from "@/lib/mock-data"
-import { notFound } from 'next/navigation'
+import { notFound } from "next/navigation"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { cookies } from "next/headers"
 
 export default async function ShowPage({
   params,
@@ -9,24 +10,29 @@ export default async function ShowPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const show = mockShows.find((s) => s.id === id)
-  
-  if (!show) {
+  const supabase = createServerComponentClient({ cookies })
+
+  const { data: show, error: showError } = await supabase.from("shows").select("*").eq("id", id).single()
+
+  if (showError || !show) {
     notFound()
   }
 
-  const getProductById = (productId: string) => mockProducts.find((p) => p.id === productId)
-  const featuredProducts = show.products.map((productId) => getProductById(productId)).filter(Boolean) as any[]
+  const { data: products, error: productsError } = await supabase
+    .from("products")
+    .select("*")
+    .in("id", show.products || [])
+
+  if (productsError) {
+    console.error("[v0] Error loading products:", productsError)
+  }
+
   const isLive = show.status === "live"
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <ShowInterface 
-        show={show} 
-        featuredProducts={featuredProducts} 
-        isLive={isLive} 
-      />
+      <ShowInterface show={show} featuredProducts={products || []} isLive={isLive} />
     </div>
   )
 }

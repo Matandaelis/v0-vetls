@@ -1,20 +1,42 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Search, MoreHorizontal, StopCircle, Eye } from 'lucide-react'
-import { mockShows } from "@/lib/mock-data"
-import { useState } from "react"
+import { Search, StopCircle, Eye } from "lucide-react"
+import { useState, useEffect } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import type { Show } from "@/lib/types"
 
 export default function AdminShowsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [shows, setShows] = useState<Show[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
 
-  const filteredShows = mockShows.filter(show => 
-    show.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    show.hostName.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    const loadShows = async () => {
+      try {
+        setIsLoading(true)
+        const { data, error } = await supabase.from("shows").select("*")
+        if (error) throw error
+        setShows(data || [])
+      } catch (error) {
+        console.error("[v0] Error loading shows:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadShows()
+  }, [supabase])
+
+  const filteredShows = shows.filter(
+    (show) =>
+      show.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      show.host_name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   return (
@@ -41,49 +63,56 @@ export default function AdminShowsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Show Details</TableHead>
-                <TableHead>Host</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Viewers</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredShows.map((show) => (
-                <TableRow key={show.id}>
-                  <TableCell>
-                    <div className="font-medium">{show.title}</div>
-                    <div className="text-xs text-muted-foreground">{show.category}</div>
-                  </TableCell>
-                  <TableCell>{show.hostName}</TableCell>
-                  <TableCell>
-                    <Badge variant={show.status === "live" ? "destructive" : show.status === "scheduled" ? "secondary" : "outline"}>
-                      {show.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{show.viewerCount?.toLocaleString() || 0}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" title="Watch Stream">
-                        <Eye className="h-4 w-4" />
+          {isLoading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading shows...</div>
+          ) : filteredShows.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">No shows found</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Show Details</TableHead>
+                  <TableHead>Host</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Viewers</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredShows.map((show) => (
+                  <TableRow key={show.id}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{show.title}</p>
+                        <p className="text-xs text-muted-foreground">{show.category}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{show.host_name}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          show.status === "live" ? "default" : show.status === "scheduled" ? "outline" : "secondary"
+                        }
+                      >
+                        {show.status.toUpperCase()}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{show.viewer_count?.toLocaleString() || 0}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" className="gap-2">
+                        <Eye className="w-4 h-4" />
                       </Button>
                       {show.status === "live" && (
-                        <Button variant="ghost" size="icon" className="text-destructive" title="Force Stop Stream">
-                          <StopCircle className="h-4 w-4" />
+                        <Button variant="destructive" size="sm" className="gap-2">
+                          <StopCircle className="w-4 h-4" />
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

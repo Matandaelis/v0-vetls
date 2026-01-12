@@ -80,15 +80,32 @@ function BroadcasterControls({
     if (!room) return
 
     const handleStatsUpdate = () => {
-      // This will be populated with actual LiveKit stats in production
-      const stats = {
-        ingressBitrate: Math.random() * 8000 + 2000,
-        egressBitrate: Math.random() * 6000 + 1500,
-        ingressPackets: Math.floor(Math.random() * 10000),
-        egressPackets: Math.floor(Math.random() * 10000),
+      try {
+        // Collect actual stats from room participants
+        if (room.participants.size > 0) {
+          for (const [, participant] of room.participants) {
+            if (participant.videoTracks.size > 0) {
+              const videoTrack = Array.from(participant.videoTracks)[0]
+              if (videoTrack.track) {
+                videoTrack.track.getStats().then((stats) => {
+                  if (stats && stats.bytesSent !== undefined) {
+                    const newMetrics = {
+                      ingressBitrate: (stats.bytesSent * 8) / 1000, // Convert to kbps
+                      egressBitrate: (stats.bytesReceived * 8) / 1000,
+                      ingressPackets: stats.packetsSent || 0,
+                      egressPackets: stats.packetsReceived || 0,
+                    }
+                    setMetrics(newMetrics)
+                    onMetricsUpdate?.(newMetrics)
+                  }
+                })
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("[v0] Error collecting LiveKit stats:", error)
       }
-      setMetrics(stats)
-      onMetricsUpdate?.(stats)
     }
 
     const interval = setInterval(handleStatsUpdate, 1000)

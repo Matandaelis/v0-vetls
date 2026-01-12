@@ -6,13 +6,17 @@ import { Header } from "@/components/header"
 import { ShowCard } from "@/components/show-card"
 import { ProductCard } from "@/components/product-card"
 import { useProducts } from "@/contexts/product-context"
-import { mockShows } from "@/lib/mock-data"
+import { useShows } from "@/contexts/show-context"
 import { ArrowRight, Play } from "lucide-react"
 import { Footer } from "@/components/footer"
 
 export default function HomePage() {
   const { products, getCategories } = useProducts()
+  const { shows } = useShows()
   const categories = getCategories()
+
+  const liveShows = shows.filter((s) => s.status === "live").slice(0, 3)
+  const featuredProducts = products.slice(0, 6)
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,11 +65,17 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {mockShows.slice(0, 2).map((show) => (
-              <ShowCard key={show.id} show={show} />
-            ))}
-          </div>
+          {liveShows.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {liveShows.map((show) => (
+                <ShowCard key={show.id} show={show} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 border rounded-lg bg-secondary/20">
+              <p className="text-muted-foreground">No live shows right now. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -84,9 +94,11 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mockShows.slice(1).map((show) => (
-              <ShowCard key={show.id} show={show} />
-            ))}
+            {shows
+              .filter((s) => s.status === "upcoming")
+              .map((show) => (
+                <ShowCard key={show.id} show={show} />
+              ))}
           </div>
         </div>
       </section>
@@ -106,7 +118,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.slice(0, 4).map((product) => (
+            {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

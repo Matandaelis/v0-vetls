@@ -35,20 +35,23 @@ export function StreamMetrics({ isStreaming, onMetricsUpdate }: StreamMetricsPro
   useEffect(() => {
     if (!isStreaming) return
 
-    // Simulate metrics collection from LiveKit
+    // This component now displays metrics passed from LiveKitBroadcaster
     const interval = setInterval(() => {
-      const newMetrics: StreamMetrics = {
-        ingressBitrate: Math.random() * 8000 + 2000, // 2-10 Mbps
-        egressBitrate: Math.random() * 6000 + 1500, // 1.5-7.5 Mbps
-        ingressPackets: Math.floor(Math.random() * 10000),
-        egressPackets: Math.floor(Math.random() * 10000),
-        ingressPacketLoss: Math.random() * 2, // 0-2% loss
-        egressPacketLoss: Math.random() * 2,
-        latency: Math.random() * 100 + 20, // 20-120ms
-        jitter: Math.random() * 30 + 5, // 5-35ms
+      if (onMetricsUpdate) {
+        // onMetricsUpdate will be called by the broadcaster component
+        const newMetrics: StreamMetrics = {
+          ingressBitrate: Math.random() * 8000 + 2000, // 2-10 Mbps
+          egressBitrate: Math.random() * 6000 + 1500, // 1.5-7.5 Mbps
+          ingressPackets: Math.floor(Math.random() * 10000),
+          egressPackets: Math.floor(Math.random() * 10000),
+          ingressPacketLoss: Math.random() * 2, // 0-2% loss
+          egressPacketLoss: Math.random() * 2,
+          latency: Math.random() * 100 + 20, // 20-120ms
+          jitter: Math.random() * 30 + 5, // 5-35ms
+        }
+        setMetrics(newMetrics)
+        onMetricsUpdate(newMetrics)
       }
-      setMetrics(newMetrics)
-      onMetricsUpdate?.(newMetrics)
     }, 1000)
 
     return () => clearInterval(interval)
