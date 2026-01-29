@@ -207,6 +207,7 @@ export function SidebarNav() {
         variant="ghost"
         size="icon"
         className="fixed left-4 top-20 z-40 md:hidden"
+        aria-label={isOpen ? "Close menu" : "Open menu"}
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

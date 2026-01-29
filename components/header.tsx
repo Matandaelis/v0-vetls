@@ -61,7 +61,7 @@ export function Header() {
           {/* Right Navigation - Simplified */}
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" aria-label="Wishlist">
                 <Heart className="w-5 h-5" />
               </Button>
               <NotificationPanel />
@@ -69,7 +69,12 @@ export function Header() {
 
             {/* Cart Icon */}
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative"
+                aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
+              >
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
                   <span className="absolute top-0 right-0 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
