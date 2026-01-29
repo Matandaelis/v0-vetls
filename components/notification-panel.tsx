@@ -28,7 +28,13 @@ export function NotificationPanel() {
 
   return (
     <div className="relative">
-      <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className="relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative"
+        aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
+      >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
@@ -78,6 +84,7 @@ export function NotificationPanel() {
                       variant="ghost"
                       size="icon"
                       className="w-6 h-6"
+                      aria-label="Delete notification"
                       onClick={(e) => {
                         e.stopPropagation()
                         deleteNotification(notification.id)
