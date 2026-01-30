@@ -1,7 +1,8 @@
 import { Header } from "@/components/header"
 import { ShowInterface } from "@/components/show-interface"
 import { notFound } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { cookies } from "next/headers"
 
 export default async function ShowPage({
   params,
@@ -9,7 +10,7 @@ export default async function ShowPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const supabase = await createClient()
+  const supabase = createServerComponentClient({ cookies })
 
   const { data: show, error: showError } = await supabase.from("shows").select("*").eq("id", id).single()
 
