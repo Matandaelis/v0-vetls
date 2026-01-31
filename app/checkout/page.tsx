@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, ChevronRight, AlertCircle, CheckCircle } from "lucide-react"
-import { loadStripe } from "@stripe/js"
+import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { StripePaymentForm } from "@/components/stripe-payment-form"
 

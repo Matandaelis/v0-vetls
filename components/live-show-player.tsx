@@ -61,10 +61,16 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
                 variant="ghost"
                 className="text-white hover:bg-white/20"
                 onClick={() => setIsLiked(!isLiked)}
+                aria-label={isLiked ? "Unlike show" : "Like show"}
               >
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
               </Button>
-              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-white hover:bg-white/20"
+                aria-label="Share show"
+              >
                 <Share2 className="w-5 h-5" />
               </Button>
             </div>
@@ -73,6 +79,7 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
               variant="ghost"
               className="text-white hover:bg-white/20"
               onClick={() => setIsMuted(!isMuted)}
+              aria-label={isMuted ? "Unmute video" : "Mute video"}
             >
               {isMuted ? <Volume1 className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </Button>
