@@ -97,7 +97,10 @@ export function ShowChat({ hostName, hostAvatar, initialComments = [], viewerCou
                     </span>
                   </div>
                   <p className="text-sm text-gray-700 break-words">{comment.content}</p>
-                  <button className="mt-1 text-xs text-gray-500 hover:text-pink-600 flex items-center gap-1 transition">
+                  <button
+                    className="mt-1 text-xs text-gray-500 hover:text-pink-600 flex items-center gap-1 transition"
+                    aria-label={comment.likes > 0 ? `Like comment, ${comment.likes} likes` : "Like comment"}
+                  >
                     <Heart className="w-3 h-3" />
                     {comment.likes > 0 && <span>{comment.likes}</span>}
                   </button>
@@ -118,11 +121,12 @@ export function ShowChat({ hostName, hostAvatar, initialComments = [], viewerCou
             onChange={(e) => setMessageText(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <Button 
-            size="icon" 
-            className="h-10 w-10 rounded-full bg-pink-600 hover:bg-pink-700 text-white" 
-            onClick={handleSendMessage} 
+          <Button
+            size="icon"
+            className="h-10 w-10 rounded-full bg-pink-600 hover:bg-pink-700 text-white"
+            onClick={handleSendMessage}
             disabled={!messageText.trim()}
+            aria-label="Send message"
           >
             <Send className="w-4 h-4" />
           </Button>
