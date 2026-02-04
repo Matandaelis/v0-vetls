@@ -149,6 +149,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
                 <Button
                   size="icon"
                   className="rounded-full bg-[#0057B8] hover:bg-[#004494] text-white shadow-lg h-10 w-10"
+                  aria-label="Accessibility options"
                 >
                   <Accessibility className="w-5 h-5" />
                 </Button>
