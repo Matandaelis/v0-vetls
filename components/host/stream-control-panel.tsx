@@ -67,10 +67,10 @@ export function StreamControlPanel() {
               Go Live
             </Button>
           )}
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" aria-label="Stream volume">
             <Volume2 className="w-4 h-4" />
           </Button>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" aria-label="Share stream">
             <Share2 className="w-4 h-4" />
           </Button>
         </div>
