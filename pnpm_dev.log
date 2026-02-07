@@ -1,0 +1,36 @@
+
+> my-v0-project@0.1.0 dev /app
+> next dev
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+- Environments: .env.local
+
+✓ Starting...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+✓ Ready in 1298ms
+○ Compiling /palette-test ...
+⚠ Unsupported metadata viewport is configured in metadata export in /palette-test. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /palette-test 200 in 6.1s (compile: 4.8s, proxy.ts: 243ms, render: 1033ms)
+[v0] LIVEKIT_API_KEY is not configured
+ GET /api/livekit/token?room=test-room&username=Viewer 500 in 1585ms (compile: 1530ms, proxy.ts: 18ms, render: 37ms)
+⚠ Unsupported metadata viewport is configured in metadata export in /_not-found. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 3.2s (compile: 2.8s, proxy.ts: 54ms, render: 286ms)
+ GET /offline.html 404 in 3.2s (compile: 2.3s, proxy.ts: 61ms, render: 816ms)
+⚠ Unsupported metadata viewport is configured in metadata export in /palette-test. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /palette-test 200 in 125ms (compile: 6ms, proxy.ts: 8ms, render: 111ms)
+⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[v0] LIVEKIT_API_KEY is not configured
+ GET /api/livekit/token?room=test-room&username=Viewer 500 in 44ms (compile: 12ms, proxy.ts: 25ms, render: 7ms)
+⚠ Unsupported metadata viewport is configured in metadata export in /_not-found. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /offline.html 404 in 298ms (compile: 145ms, proxy.ts: 15ms, render: 138ms)
+ GET / 200 in 303ms (compile: 11ms, proxy.ts: 15ms, render: 278ms)
+✓ Compiled in 831ms

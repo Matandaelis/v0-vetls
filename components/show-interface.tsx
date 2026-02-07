@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { Show, Product } from "@/lib/types"
 import { LiveKitPlayer } from "@/components/livekit-player"
 import { ShowChat } from "@/components/show-chat"
@@ -19,7 +19,19 @@ interface ShowInterfaceProps {
 
 export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceProps) {
   const [activeTab, setActiveTab] = useState<"shop" | "chat" | "more" | "about" | "share">("shop")
+  const [highContrast, setHighContrast] = useState(false)
   const { addItem } = useCart()
+
+  useEffect(() => {
+    if (highContrast) {
+      document.documentElement.style.filter = "contrast(1.5)"
+    } else {
+      document.documentElement.style.filter = ""
+    }
+    return () => {
+      document.documentElement.style.filter = ""
+    }
+  }, [highContrast])
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto pb-8">
@@ -65,7 +77,11 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
           </div>
 
           {/* Action Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar"
+            role="tablist"
+            aria-label="Show content sections"
+          >
             <TabButton
               active={activeTab === "shop"}
               onClick={() => setActiveTab("shop")}
@@ -143,16 +159,6 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
                   </div>
                 </div>
               ))}
-
-              {/* Accessibility Icon (Floating) */}
-              <div className="fixed bottom-4 left-4 z-50 md:absolute md:bottom-4 md:left-4">
-                <Button
-                  size="icon"
-                  className="rounded-full bg-[#0057B8] hover:bg-[#004494] text-white shadow-lg h-10 w-10"
-                >
-                  <Accessibility className="w-5 h-5" />
-                </Button>
-              </div>
             </div>
           )}
 
@@ -169,6 +175,24 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
               <p>Content for {activeTab} tab</p>
             </div>
           )}
+
+          {/* Accessibility Icon (Floating) */}
+          <div className="fixed bottom-4 left-4 z-50 md:absolute md:bottom-4 md:left-4">
+            <Button
+              size="icon"
+              className={cn(
+                "rounded-full shadow-lg h-10 w-10 transition-colors",
+                highContrast
+                  ? "bg-yellow-400 hover:bg-yellow-500 text-black ring-2 ring-black"
+                  : "bg-[#0057B8] hover:bg-[#004494] text-white",
+              )}
+              onClick={() => setHighContrast(!highContrast)}
+              aria-label={highContrast ? "Disable high contrast mode" : "Enable high contrast mode"}
+              aria-pressed={highContrast}
+            >
+              <Accessibility className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -184,6 +208,9 @@ function TabButton({
   return (
     <button
       onClick={onClick}
+      role="tab"
+      aria-selected={active}
+      type="button"
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors whitespace-nowrap",
         active ? "bg-black text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200",
