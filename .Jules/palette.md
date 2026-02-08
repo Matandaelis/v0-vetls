@@ -5,3 +5,7 @@
 ## 2025-02-28 - Native Button Accessibility Oversight
 **Learning:** Native HTML `<button>` elements used for micro-interactions (like "Like" or "Share") are often missed in accessibility audits compared to Shadcn `Button` components. They frequently lack `aria-label` when containing only icons.
 **Action:** Scan for native `<button>` tags specifically when auditing accessibility, not just UI library components.
+
+## 2025-02-28 - Custom Tab Implementations vs ARIA Tabs
+**Learning:** Custom tab implementations using generic buttons often lack `role="tab"`, `aria-selected`, and keyboard navigation, making them inaccessible. Replacing them with Radix UI `Tabs` significantly improves accessibility with minimal effort.
+**Action:** Replace custom tab-like button groups with `components/ui/tabs` whenever possible to ensure proper ARIA roles and keyboard support.

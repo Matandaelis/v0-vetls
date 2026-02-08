@@ -2,13 +2,12 @@
 
 import type React from "react"
 
-import { useState } from "react"
 import type { Show, Product } from "@/lib/types"
 import { LiveKitPlayer } from "@/components/livekit-player"
 import { ShowChat } from "@/components/show-chat"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Bell, Share2, Info, MoreHorizontal, MessageSquare, ShoppingBag, Accessibility } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { useCart } from "@/contexts/cart-context"
 
 interface ShowInterfaceProps {
@@ -18,11 +17,10 @@ interface ShowInterfaceProps {
 }
 
 export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceProps) {
-  const [activeTab, setActiveTab] = useState<"shop" | "chat" | "more" | "about" | "share">("shop")
   const { addItem } = useCart()
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto pb-8">
+    <Tabs defaultValue="shop" className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto pb-8">
       {/* Left Column: Video & Info */}
       <div className="flex-1 flex flex-col gap-4">
         {/* Video Player */}
@@ -65,38 +63,43 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
           </div>
 
           {/* Action Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-            <TabButton
-              active={activeTab === "shop"}
-              onClick={() => setActiveTab("shop")}
-              icon={<ShoppingBag className="w-4 h-4" />}
-              label="Shop"
-            />
-            <TabButton
-              active={activeTab === "chat"}
-              onClick={() => setActiveTab("chat")}
-              icon={<MessageSquare className="w-4 h-4" />}
-              label="Chat"
-            />
-            <TabButton
-              active={activeTab === "more"}
-              onClick={() => setActiveTab("more")}
-              icon={<MoreHorizontal className="w-4 h-4" />}
-              label="More"
-            />
-            <TabButton
-              active={activeTab === "about"}
-              onClick={() => setActiveTab("about")}
-              icon={<Info className="w-4 h-4" />}
-              label="About"
-            />
-            <TabButton
-              active={activeTab === "share"}
-              onClick={() => setActiveTab("share")}
-              icon={<Share2 className="w-4 h-4" />}
-              label="Share"
-            />
-          </div>
+          <TabsList className="bg-transparent h-auto p-0 justify-start gap-2 overflow-x-auto pb-2 no-scrollbar w-full">
+            <TabsTrigger
+              value="shop"
+              className="rounded-full px-4 py-2 h-auto text-sm font-semibold gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-md border-0"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Shop
+            </TabsTrigger>
+            <TabsTrigger
+              value="chat"
+              className="rounded-full px-4 py-2 h-auto text-sm font-semibold gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-md border-0"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Chat
+            </TabsTrigger>
+            <TabsTrigger
+              value="more"
+              className="rounded-full px-4 py-2 h-auto text-sm font-semibold gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-md border-0"
+            >
+              <MoreHorizontal className="w-4 h-4" />
+              More
+            </TabsTrigger>
+            <TabsTrigger
+              value="about"
+              className="rounded-full px-4 py-2 h-auto text-sm font-semibold gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-md border-0"
+            >
+              <Info className="w-4 h-4" />
+              About
+            </TabsTrigger>
+            <TabsTrigger
+              value="share"
+              className="rounded-full px-4 py-2 h-auto text-sm font-semibold gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:shadow-md border-0"
+            >
+              <Share2 className="w-4 h-4" />
+              Share
+            </TabsTrigger>
+          </TabsList>
         </div>
       </div>
 
@@ -104,7 +107,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
       <div className="w-full lg:w-[400px] px-4 md:px-0">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px] overflow-hidden relative">
           {/* Shop Tab Content */}
-          {activeTab === "shop" && (
+          <TabsContent value="shop" className="m-0 focus-visible:ring-0">
             <div className="p-4 space-y-4">
               {featuredProducts.map((product) => (
                 <div
@@ -149,48 +152,31 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
                 <Button
                   size="icon"
                   className="rounded-full bg-[#0057B8] hover:bg-[#004494] text-white shadow-lg h-10 w-10"
+                  aria-label="Accessibility settings"
                 >
                   <Accessibility className="w-5 h-5" />
                 </Button>
               </div>
             </div>
-          )}
+          </TabsContent>
 
           {/* Chat Tab Content */}
-          {activeTab === "chat" && (
+          <TabsContent value="chat" className="m-0 focus-visible:ring-0">
             <div className="h-[500px]">
               <ShowChat hostName={show.hostName} hostAvatar={show.hostAvatar} />
             </div>
-          )}
+          </TabsContent>
 
           {/* Other Tabs Placeholders */}
-          {["more", "about", "share"].includes(activeTab) && (
-            <div className="h-[400px] flex items-center justify-center text-gray-500">
-              <p>Content for {activeTab} tab</p>
-            </div>
-          )}
+          {["more", "about", "share"].map((tab) => (
+             <TabsContent key={tab} value={tab} className="m-0 focus-visible:ring-0">
+                <div className="h-[400px] flex items-center justify-center text-gray-500">
+                  <p>Content for {tab} tab</p>
+                </div>
+             </TabsContent>
+          ))}
         </div>
       </div>
-    </div>
-  )
-}
-
-function TabButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors whitespace-nowrap",
-        active ? "bg-black text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200",
-      )}
-    >
-      {icon}
-      {label}
-    </button>
+    </Tabs>
   )
 }
