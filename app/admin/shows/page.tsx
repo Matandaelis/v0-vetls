@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Search, StopCircle, Eye } from "lucide-react"
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { mapShow, type DbShow } from "@/lib/db/mappers"
 import type { Show } from "@/lib/types"
 
 export default function AdminShowsPage() {
@@ -20,9 +21,22 @@ export default function AdminShowsPage() {
     const loadShows = async () => {
       try {
         setIsLoading(true)
-        const { data, error } = await supabase.from("shows").select("*")
+        const { data, error } = await supabase
+          .from("shows")
+          .select(`
+            *,
+            host:profiles!host_id(username, display_name, avatar_url)
+          `)
         if (error) throw error
-        setShows(data || [])
+        
+        // Map database rows to UI Show models
+        const mappedShows = (data || []).map((row: any) => {
+          const hostName = row.host?.display_name || row.host?.username || "Unknown Host"
+          const hostAvatar = row.host?.avatar_url || ""
+          return mapShow(row as DbShow, hostName, hostAvatar)
+        })
+        
+        setShows(mappedShows)
       } catch (error) {
         console.error("[v0] Error loading shows:", error)
       } finally {
@@ -36,7 +50,7 @@ export default function AdminShowsPage() {
   const filteredShows = shows.filter(
     (show) =>
       show.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      show.host_name.toLowerCase().includes(searchTerm.toLowerCase()),
+      show.hostName.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   return (
@@ -87,7 +101,7 @@ export default function AdminShowsPage() {
                         <p className="text-xs text-muted-foreground">{show.category}</p>
                       </div>
                     </TableCell>
-                    <TableCell>{show.host_name}</TableCell>
+                    <TableCell>{show.hostName}</TableCell>
                     <TableCell>
                       <Badge
                         variant={
@@ -97,7 +111,7 @@ export default function AdminShowsPage() {
                         {show.status.toUpperCase()}
                       </Badge>
                     </TableCell>
-                    <TableCell>{show.viewer_count?.toLocaleString() || 0}</TableCell>
+                    <TableCell>{show.viewerCount?.toLocaleString() || 0}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" className="gap-2">
                         <Eye className="w-4 h-4" />
