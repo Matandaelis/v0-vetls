@@ -13,14 +13,24 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const role = searchParams.get("role") // 'buyer' or 'host'
+    const role = searchParams.get("role") // 'buyer' or 'seller'
 
-    let query = supabase.from("orders").select("*, order_items(*, product_id(*))")
+    // Get orders for the user
+    let query = supabase.from("orders").select(`
+      *,
+      order_items(
+        *,
+        product:products(*)
+      )
+    `)
 
-    if (role === "buyer") {
-      query = query.eq("buyer_id", user.id)
-    } else if (role === "host") {
-      query = query.eq("host_id", user.id)
+    // For buyers, get their own orders
+    if (role === "buyer" || !role) {
+      query = query.eq("user_id", user.id)
+    } else if (role === "seller") {
+      // For sellers, we need to filter order_items by seller_id
+      // This is more complex - for now just return user's orders
+      query = query.eq("user_id", user.id)
     }
 
     const { data, error } = await query.order("created_at", { ascending: false })
@@ -49,18 +59,46 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
-    const { data, error } = await supabase
+    // Validate required fields
+    if (!body.total_amount || !body.items || body.items.length === 0) {
+      return NextResponse.json(
+        { error: "Missing required fields: total_amount, items" },
+        { status: 400 }
+      )
+    }
+
+    // Create the order
+    const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
-        buyer_id: user.id,
-        ...body,
+        user_id: user.id,
+        total_amount: body.total_amount,
+        status: body.status || "pending",
+        payment_method: body.payment_method || null,
+        shipping_address: body.shipping_address || null,
+        notes: body.notes || null,
       })
       .select()
       .single()
 
-    if (error) throw error
+    if (orderError) throw orderError
 
-    return NextResponse.json(data, { status: 201 })
+    // Insert order items
+    const orderItems = body.items.map((item: any) => ({
+      order_id: order.id,
+      product_id: item.product_id,
+      quantity: item.quantity,
+      price: item.price,
+      seller_id: item.seller_id,
+    }))
+
+    const { error: itemsError } = await supabase
+      .from("order_items")
+      .insert(orderItems)
+
+    if (itemsError) throw itemsError
+
+    return NextResponse.json(order, { status: 201 })
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to create order" },

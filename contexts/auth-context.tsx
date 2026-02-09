@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { User } from "@/lib/types"
 import { createClient } from "@/lib/supabase/client"
+import { mapProfile, mapRoleToDb, type DbProfile } from "@/lib/db/mappers"
 
 interface AuthContextType {
   currentUser: User | null
@@ -33,10 +34,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const loadUser = async () => {
       try {
         const { data: session } = await supabase.auth.getSession()
-        if (session?.user) {
-          const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single()
+        if (session?.session?.user) {
+          const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.session.user.id).single()
           if (profile) {
-            setCurrentUser(profile as User)
+            setCurrentUser(mapProfile(profile as DbProfile, session.session.user.email || ""))
           }
         }
       } catch (error) {
@@ -56,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data?.user) {
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
         if (profile) {
-          setCurrentUser(profile as User)
+          setCurrentUser(mapProfile(profile as DbProfile, data.user.email || ""))
         }
         return { success: true }
       }
@@ -73,19 +74,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) throw error
       if (data?.user) {
+        // Map UI role to DB role and create profile with correct schema
+        const dbRole = mapRoleToDb(role)
         const { error: profileError } = await supabase.from("profiles").insert([
           {
             id: data.user.id,
-            name,
-            email,
-            role,
-            created_at: new Date().toISOString(),
+            username: name.toLowerCase().replace(/\s+/g, "_"),
+            display_name: name,
+            role: dbRole,
+            avatar_url: null,
+            bio: null,
           },
         ])
         if (profileError) throw profileError
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
         if (profile) {
-          setCurrentUser(profile as User)
+          setCurrentUser(mapProfile(profile as DbProfile, email))
         }
         return { success: true }
       }
