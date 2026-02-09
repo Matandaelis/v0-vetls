@@ -26,6 +26,7 @@ interface Report {
     username: string
   }
   reported_user: {
+    id: string
     username: string
   } | null
 }
