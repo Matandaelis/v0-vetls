@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Shield, Ban } from "lucide-react"
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { mapProfile, type DbProfile } from "@/lib/db/mappers"
 import type { User } from "@/lib/types"
 import {
   DropdownMenu,
@@ -31,7 +32,13 @@ export default function AdminUsersPage() {
         setIsLoading(true)
         const { data, error } = await supabase.from("profiles").select("*")
         if (error) throw error
-        setUsers(data || [])
+        
+        // Map database rows to UI User models
+        const mappedUsers = (data || []).map((row: any) => {
+          return mapProfile(row as DbProfile, row.email || "")
+        })
+        
+        setUsers(mappedUsers)
       } catch (error) {
         console.error("[v0] Error loading users:", error)
       } finally {
@@ -93,7 +100,7 @@ export default function AdminUsersPage() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarImage src={user.avatar_url || "/placeholder.svg"} alt={user.name} />
+                          <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                           <AvatarFallback>{user.name?.charAt(0) || "U"}</AvatarFallback>
                         </Avatar>
                         <div>
