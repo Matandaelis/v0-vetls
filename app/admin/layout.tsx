@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ShieldAlert, LayoutDashboard, Users, Video, Settings, Flag } from 'lucide-react'
+import { ShieldAlert, LayoutDashboard, Users, Video, Settings, Flag, UserCheck } from 'lucide-react'
 
 export default function AdminLayout({
   children,
@@ -75,16 +75,22 @@ export default function AdminLayout({
                   User Management
                 </Button>
               </Link>
+              <Link href="/admin/sellers">
+                <Button variant="ghost" className="w-full justify-start gap-2">
+                  <UserCheck className="w-4 h-4" />
+                  Seller Approval
+                </Button>
+              </Link>
               <Link href="/admin/shows">
                 <Button variant="ghost" className="w-full justify-start gap-2">
                   <Video className="w-4 h-4" />
                   Show Moderation
                 </Button>
               </Link>
-              <Link href="/admin/reports">
+              <Link href="/admin/moderation">
                 <Button variant="ghost" className="w-full justify-start gap-2">
                   <Flag className="w-4 h-4" />
-                  Reports
+                  Content Reports
                 </Button>
               </Link>
               <Link href="/admin/settings">
