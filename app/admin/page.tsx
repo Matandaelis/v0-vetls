@@ -31,9 +31,15 @@ export default function AdminDashboard() {
         // Get total revenue from orders
         const { data: ordersData, error: ordersError } = await supabase.from("orders").select("total_amount")
 
+        const { count: reportsCount, error: reportsError } = await supabase
+          .from("content_reports")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending")
+
         if (usersError) console.error("[v0] Users error:", usersError)
         if (showsError) console.error("[v0] Shows error:", showsError)
         if (ordersError) console.error("[v0] Orders error:", ordersError)
+        if (reportsError) console.error("[v0] Reports error:", reportsError)
 
         const totalRevenue = (ordersData || []).reduce((sum, order) => sum + (order.total_amount || 0), 0)
 
@@ -41,7 +47,7 @@ export default function AdminDashboard() {
           totalUsers: usersCount || 0,
           activeStreams: showsData?.length || 0,
           totalRevenue,
-          pendingReports: 12, // This would come from a reports table
+          pendingReports: reportsCount || 0,
         })
       } catch (error) {
         console.error("[v0] Error loading admin stats:", error)
