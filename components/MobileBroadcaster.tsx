@@ -268,6 +268,7 @@ function MobileBroadcasterControls({
           size="lg"
           onClick={toggleMic}
           className="rounded-full w-16 h-16"
+          aria-label={isMicEnabled ? "Mute Microphone" : "Unmute Microphone"}
         >
           {isMicEnabled ? <Mic className="w-8 h-8" /> : <MicOff className="w-8 h-8" />}
         </Button>
@@ -277,6 +278,7 @@ function MobileBroadcasterControls({
           size="lg"
           onClick={toggleCamera}
           className="rounded-full w-16 h-16"
+          aria-label={isCameraEnabled ? "Turn Camera Off" : "Turn Camera On"}
         >
           {isCameraEnabled ? <Video className="w-8 h-8" /> : <VideoOff className="w-8 h-8" />}
         </Button>
@@ -286,6 +288,7 @@ function MobileBroadcasterControls({
           size="lg"
           onClick={toggleRecording}
           className="rounded-full w-16 h-16"
+          aria-label={isRecording ? "Stop Recording" : "Start Recording"}
         >
           <Radio className={`w-8 h-8 ${isRecording ? 'animate-pulse' : ''}`} />
         </Button>
