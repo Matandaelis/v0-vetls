@@ -9,10 +9,12 @@ import {
   useRoomContext,
   useConnectionState,
 } from "@livekit/components-react"
-import { Track, ConnectionState, RoomEvent } from "livekit-client"
+import { Track, ConnectionState, RoomEvent, LocalTrackPublication, RemoteTrackPublication } from "livekit-client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Mic, MicOff, Video, VideoOff, Square } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Mic, MicOff, Video, VideoOff, Square, Monitor, Camera, Radio, Settings } from "lucide-react"
 import "@livekit/components-styles"
 
 interface LiveKitBroadcasterProps {
@@ -20,10 +22,18 @@ interface LiveKitBroadcasterProps {
   username: string
   onLeave?: () => void
   onMetricsUpdate?: (metrics: any) => void
+  onRecordingStateChange?: (isRecording: boolean) => void
 }
 
-export function LiveKitBroadcaster({ roomName, username, onLeave, onMetricsUpdate }: LiveKitBroadcasterProps) {
+export function LiveKitBroadcaster({ 
+  roomName, 
+  username, 
+  onLeave, 
+  onMetricsUpdate, 
+  onRecordingStateChange 
+}: LiveKitBroadcasterProps) {
   const [token, setToken] = useState("")
+  const [showAdvancedControls, setShowAdvancedControls] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -55,25 +65,126 @@ export function LiveKitBroadcaster({ roomName, username, onLeave, onMetricsUpdat
       style={{ height: "100%" }}
       onDisconnected={onLeave}
     >
-      <BroadcasterControls onLeave={onLeave} onMetricsUpdate={onMetricsUpdate} />
+      <div className="flex flex-col h-full">
+        <BroadcasterVideoView />
+        <BroadcasterControls 
+          onLeave={onLeave} 
+          onMetricsUpdate={onMetricsUpdate}
+          onRecordingStateChange={onRecordingStateChange}
+          showAdvanced={showAdvancedControls}
+          onToggleAdvanced={() => setShowAdvancedControls(!showAdvancedControls)}
+        />
+      </div>
     </LiveKitRoom>
+  )
+}
+
+function BroadcasterVideoView() {
+  const tracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare])
+  const [currentView, setCurrentView] = useState<'camera' | 'screen'>('camera')
+  const [isScreenSharing, setIsScreenSharing] = useState(false)
+  const { localParticipant } = useLocalParticipant()
+
+  // Get current active tracks
+  const cameraTrack = tracks.find((t) => t.source === Track.Source.Camera)
+  const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare)
+
+  const toggleScreenShare = async () => {
+    if (!localParticipant) return
+
+    try {
+      if (isScreenSharing) {
+        // Stop screen sharing
+        const screenTracks = Array.from(localParticipant.videoTracks.values())
+          .filter(pub => pub.track?.source === Track.Source.ScreenShare)
+        
+        for (const publication of screenTracks) {
+          await publication.unpublish()
+        }
+        setIsScreenSharing(false)
+        setCurrentView('camera')
+      } else {
+        // Start screen sharing
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: false
+        })
+        
+        await localParticipant.publishTrack(stream.getVideoTracks()[0], {
+          source: Track.Source.ScreenShare
+        })
+        setIsScreenSharing(true)
+        setCurrentView('screen')
+      }
+    } catch (error) {
+      console.error('Error toggling screen share:', error)
+    }
+  }
+
+  const displayTrack = currentView === 'screen' && screenTrack ? screenTrack : cameraTrack
+
+  if (!displayTrack) {
+    return (
+      <div className="flex items-center justify-center h-full bg-gray-900 text-white rounded-lg">
+        <p>No video source available</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative flex-1 bg-black rounded-lg overflow-hidden">
+      <VideoTrack trackRef={displayTrack} className="w-full h-full object-contain" />
+      
+      {/* Video source indicator */}
+      <div className="absolute top-4 left-4 z-10">
+        <Badge variant={isScreenSharing ? "default" : "secondary"} className="text-xs">
+          {isScreenSharing ? "Screen Share" : "Camera"}
+        </Badge>
+      </div>
+
+      {/* Screen share toggle button */}
+      <div className="absolute top-4 right-4 z-10">
+        <Button
+          variant={isScreenSharing ? "default" : "secondary"}
+          size="sm"
+          onClick={toggleScreenShare}
+          className="gap-2"
+        >
+          {isScreenSharing ? <Camera className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+          {isScreenSharing ? "Camera" : "Screen"}
+        </Button>
+      </div>
+    </div>
   )
 }
 
 function BroadcasterControls({
   onLeave,
   onMetricsUpdate,
-}: { onLeave?: () => void; onMetricsUpdate?: (metrics: any) => void }) {
+  onRecordingStateChange,
+  showAdvanced,
+  onToggleAdvanced,
+}: {
+  onLeave?: () => void
+  onMetricsUpdate?: (metrics: any) => void
+  onRecordingStateChange?: (isRecording: boolean) => void
+  showAdvanced: boolean
+  onToggleAdvanced: () => void
+}) {
   const { localParticipant } = useLocalParticipant()
   const room = useRoomContext()
   const connectionState = useConnectionState()
   const [isCameraEnabled, setIsCameraEnabled] = useState(true)
   const [isMicEnabled, setIsMicEnabled] = useState(true)
+  const [isRecording, setIsRecording] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamQuality, setStreamQuality] = useState<'low' | 'medium' | 'high'>('medium')
   const [metrics, setMetrics] = useState({
     ingressBitrate: 0,
     egressBitrate: 0,
     ingressPackets: 0,
     egressPackets: 0,
+    viewerCount: 0,
   })
 
   useEffect(() => {
@@ -81,38 +192,54 @@ function BroadcasterControls({
 
     const handleStatsUpdate = () => {
       try {
-        // Collect actual stats from room participants
-        if (room.participants.size > 0) {
-          for (const [, participant] of room.participants) {
-            if (participant.videoTracks.size > 0) {
-              const videoTrack = Array.from(participant.videoTracks)[0]
-              if (videoTrack.track) {
-                videoTrack.track.getStats().then((stats) => {
-                  if (stats && stats.bytesSent !== undefined) {
-                    const newMetrics = {
-                      ingressBitrate: (stats.bytesSent * 8) / 1000, // Convert to kbps
-                      egressBitrate: (stats.bytesReceived * 8) / 1000,
-                      ingressPackets: stats.packetsSent || 0,
-                      egressPackets: stats.packetsReceived || 0,
-                    }
-                    setMetrics(newMetrics)
-                    onMetricsUpdate?.(newMetrics)
-                  }
-                })
-              }
-            }
-          }
+        const newMetrics = {
+          ingressBitrate: 0,
+          egressBitrate: 0,
+          ingressPackets: 0,
+          egressPackets: 0,
+          viewerCount: room.participants.size,
         }
+
+        // Collect stats from local participant
+        if (localParticipant) {
+          localParticipant.tracks.forEach((publication: LocalTrackPublication) => {
+            if (publication.track) {
+              publication.track.getStats().then((stats: any) => {
+                if (stats?.bytesSent !== undefined) {
+                  newMetrics.egressBitrate += (stats.bytesSent * 8) / 1000
+                  newMetrics.ingressPackets += stats.packetsSent || 0
+                }
+              })
+            }
+          })
+        }
+
+        // Collect stats from remote participants
+        room.participants.forEach((participant) => {
+          participant.tracks.forEach((publication: RemoteTrackPublication) => {
+            if (publication.track) {
+              publication.track.getStats().then((stats: any) => {
+                if (stats?.bytesReceived !== undefined) {
+                  newMetrics.ingressBitrate += (stats.bytesReceived * 8) / 1000
+                  newMetrics.egressPackets += stats.packetsReceived || 0
+                }
+              })
+            }
+          })
+        })
+
+        setMetrics(newMetrics)
+        onMetricsUpdate?.(newMetrics)
       } catch (error) {
-        console.error("[v0] Error collecting LiveKit stats:", error)
+        console.error("[LiveKit] Error collecting stats:", error)
       }
     }
 
-    const interval = setInterval(handleStatsUpdate, 1000)
+    const interval = setInterval(handleStatsUpdate, 2000)
     room.on(RoomEvent.Disconnected, () => clearInterval(interval))
 
     return () => clearInterval(interval)
-  }, [room, onMetricsUpdate])
+  }, [room, localParticipant, onMetricsUpdate])
 
   const toggleCamera = async () => {
     if (localParticipant) {
@@ -130,8 +257,41 @@ function BroadcasterControls({
     }
   }
 
+  const toggleRecording = async () => {
+    try {
+      if (isRecording) {
+        // Stop recording
+        await fetch('/api/livekit/egress/stop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomName: room?.name })
+        })
+        setIsRecording(false)
+        onRecordingStateChange?.(false)
+      } else {
+        // Start recording
+        await fetch('/api/livekit/egress/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            roomName: room?.name,
+            mode: 'room_composite',
+            audioOnly: false
+          })
+        })
+        setIsRecording(true)
+        onRecordingStateChange?.(true)
+      }
+    } catch (error) {
+      console.error('Error toggling recording:', error)
+    }
+  }
+
   const handleLeave = async () => {
     if (room) {
+      if (isRecording) {
+        await toggleRecording()
+      }
       await room.disconnect()
     }
     onLeave?.()
@@ -140,19 +300,10 @@ function BroadcasterControls({
   const isConnected = connectionState === ConnectionState.Connected
 
   return (
-    <div className="relative h-full w-full bg-black rounded-lg overflow-hidden group">
-      <div className="absolute inset-0">
-        <VideoPreview />
-      </div>
-
-      <div className="absolute top-4 right-4 z-10">
-        <Badge variant="destructive" className="animate-pulse">
-          LIVE
-        </Badge>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-        <div className="flex items-center justify-center gap-4">
+    <div className="p-4 bg-black/80 backdrop-blur">
+      <div className="flex items-center justify-between">
+        {/* Primary Controls */}
+        <div className="flex items-center gap-3">
           <Button
             variant={isMicEnabled ? "secondary" : "destructive"}
             size="icon"
@@ -171,28 +322,99 @@ function BroadcasterControls({
             {isCameraEnabled ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </Button>
 
-          <Button variant="destructive" onClick={handleLeave} className="gap-2 rounded-full px-6">
+          <Button
+            variant={isRecording ? "destructive" : "secondary"}
+            size="sm"
+            onClick={toggleRecording}
+            className="gap-2"
+          >
+            <Radio className={`w-4 h-4 ${isRecording ? 'animate-pulse' : ''}`} />
+            {isRecording ? 'Stop Rec' : 'Record'}
+          </Button>
+
+          <Button variant="destructive" onClick={handleLeave} className="gap-2">
             <Square className="w-4 h-4" />
             End Stream
           </Button>
         </div>
+
+        {/* Status & Metrics */}
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-white/80">
+            <div className="flex items-center gap-2">
+              <Badge variant="destructive" className="animate-pulse">
+                LIVE
+              </Badge>
+              <span>{metrics.viewerCount} viewers</span>
+            </div>
+          </div>
+
+          {/* Advanced Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleAdvanced}
+            className="text-white/60 hover:text-white"
+          >
+            <Settings className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
+
+      {/* Advanced Controls Panel */}
+      {showAdvanced && (
+        <Card className="mt-4">
+          <CardContent className="p-4">
+            <Tabs defaultValue="quality">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="quality">Quality</TabsTrigger>
+                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="quality" className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Stream Quality</label>
+                  <div className="flex gap-2 mt-2">
+                    {(['low', 'medium', 'high'] as const).map((quality) => (
+                      <Button
+                        key={quality}
+                        variant={streamQuality === quality ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setStreamQuality(quality)}
+                      >
+                        {quality.charAt(0).toUpperCase() + quality.slice(1)}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="analytics" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="font-medium">Upload Speed</div>
+                    <div className="text-muted-foreground">{Math.round(metrics.egressBitrate)} kbps</div>
+                  </div>
+                  <div>
+                    <div className="font-medium">Download Speed</div>
+                    <div className="text-muted-foreground">{Math.round(metrics.ingressBitrate)} kbps</div>
+                  </div>
+                  <div>
+                    <div className="font-medium">Packets Sent</div>
+                    <div className="text-muted-foreground">{metrics.ingressPackets}</div>
+                  </div>
+                  <div>
+                    <div className="font-medium">Packets Received</div>
+                    <div className="text-muted-foreground">{metrics.egressPackets}</div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
 
-function VideoPreview() {
-  const tracks = useTracks([Track.Source.Camera, Track.Source.Microphone])
-
-  const cameraTrack = tracks.find((t) => t.source === Track.Source.Camera)
-
-  if (!cameraTrack) {
-    return (
-      <div className="flex items-center justify-center h-full text-white">
-        <p>Camera is off</p>
-      </div>
-    )
-  }
-
-  return <VideoTrack trackRef={cameraTrack} className="w-full h-full object-cover" />
-}
+// VideoPreview function removed - replaced with BroadcasterVideoView
