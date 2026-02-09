@@ -11,6 +11,7 @@ import { SearchProvider } from "@/contexts/search-context"
 import { SocialProvider } from "@/contexts/social-context"
 import { NotificationProvider } from "@/contexts/notification-context"
 import { AuthProvider } from "@/contexts/auth-context"
+import { LiveKitProvider } from "@/contexts/LiveKitContext"
 import { Suspense } from "react"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -86,8 +87,10 @@ export default function RootLayout({
                     <SearchProvider>
                       <SocialProvider>
                         <NotificationProvider>
-                          {children}
-                          <Analytics />
+                          <LiveKitProvider>
+                            {children}
+                            <Analytics />
+                          </LiveKitProvider>
                         </NotificationProvider>
                       </SocialProvider>
                     </SearchProvider>
