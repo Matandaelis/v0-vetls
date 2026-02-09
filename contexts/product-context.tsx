@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { Product } from "@/lib/types"
 import { createClient } from "@/lib/supabase/client"
+import { mapProduct, productToDb, type DbProduct, type DbProfile } from "@/lib/db/mappers"
 
 interface ProductContextType {
   products: Product[]
@@ -31,9 +32,22 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const loadProducts = async () => {
     try {
       setIsLoading(true)
-      const { data, error } = await supabase.from("products").select("*")
+      // Join with profiles to get seller information
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          seller:profiles!seller_id(username, display_name)
+        `)
       if (error) throw error
-      setProducts(data || [])
+      
+      // Map database rows to UI Product models
+      const mappedProducts = (data || []).map((row: any) => {
+        const sellerName = row.seller?.display_name || row.seller?.username || "Unknown Seller"
+        return mapProduct(row as DbProduct, sellerName)
+      })
+      
+      setProducts(mappedProducts)
     } catch (error) {
       console.error("[v0] Error loading products:", error)
     } finally {
@@ -55,7 +69,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   const addProduct = async (product: Omit<Product, "id">) => {
     try {
-      const { error } = await supabase.from("products").insert([product])
+      const dbProduct = productToDb(product)
+      const { error } = await supabase.from("products").insert([dbProduct])
       if (error) throw error
       await loadProducts()
     } catch (error) {
@@ -66,7 +81,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
-      const { error } = await supabase.from("products").update(updates).eq("id", id)
+      const dbUpdates = productToDb(updates as Omit<Product, "id" | "sellerName">)
+      const { error } = await supabase.from("products").update(dbUpdates).eq("id", id)
       if (error) throw error
       await loadProducts()
     } catch (error) {

@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { Show, StreamingMetrics } from "@/lib/types"
 import { createClient } from "@/lib/supabase/client"
+import { mapShow, showToDb, type DbShow, type DbProfile } from "@/lib/db/mappers"
 
 interface ShowContextType {
   shows: Show[]
@@ -34,9 +35,23 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
   const loadShows = async () => {
     try {
       setIsLoading(true)
-      const { data, error } = await supabase.from("shows").select("*")
+      // Join with profiles to get host information
+      const { data, error } = await supabase
+        .from("shows")
+        .select(`
+          *,
+          host:profiles!host_id(username, display_name, avatar_url)
+        `)
       if (error) throw error
-      setShows(data || [])
+      
+      // Map database rows to UI Show models
+      const mappedShows = (data || []).map((row: any) => {
+        const hostName = row.host?.display_name || row.host?.username || "Unknown Host"
+        const hostAvatar = row.host?.avatar_url || ""
+        return mapShow(row as DbShow, hostName, hostAvatar)
+      })
+      
+      setShows(mappedShows)
     } catch (error) {
       console.error("[v0] Error loading shows:", error)
     } finally {

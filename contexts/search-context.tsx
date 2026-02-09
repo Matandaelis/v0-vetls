@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState } from "react"
 import type { Product, Show, SearchFilters, SearchResult } from "@/lib/types"
 import { createClient } from "@/lib/supabase/client"
+import { mapProduct, mapShow, type DbProduct, type DbShow } from "@/lib/db/mappers"
 
 interface SearchContextType {
   searchAll: (filters: SearchFilters) => Promise<SearchResult[]>
@@ -27,7 +28,10 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const searchProducts = async (filters: SearchFilters): Promise<Product[]> => {
     try {
       setIsLoading(true)
-      let query = supabase.from("products").select("*")
+      let query = supabase.from("products").select(`
+        *,
+        seller:profiles!seller_id(username, display_name)
+      `)
 
       if (filters.category) {
         query = query.eq("category", filters.category)
@@ -50,7 +54,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
             query = query.order("price", { ascending: false })
             break
           case "popularity":
-            query = query.order("stock", { ascending: false })
+            query = query.order("sold", { ascending: false })
             break
           case "newest":
             query = query.order("created_at", { ascending: false })
@@ -65,8 +69,13 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         return []
       }
 
+      // Map to UI models
+      let results = (data || []).map((row: any) => {
+        const sellerName = row.seller?.display_name || row.seller?.username || "Unknown Seller"
+        return mapProduct(row as DbProduct, sellerName)
+      })
+
       // Client-side filtering for full-text search
-      let results = data || []
       if (filters.query) {
         results = results.filter(
           (p) =>
@@ -88,7 +97,10 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const searchShows = async (filters: SearchFilters): Promise<Show[]> => {
     try {
       setIsLoading(true)
-      let query = supabase.from("shows").select("*")
+      let query = supabase.from("shows").select(`
+        *,
+        host:profiles!host_id(username, display_name, avatar_url)
+      `)
 
       if (filters.category) {
         query = query.eq("category", filters.category)
@@ -112,8 +124,14 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         return []
       }
 
+      // Map to UI models
+      let results = (data || []).map((row: any) => {
+        const hostName = row.host?.display_name || row.host?.username || "Unknown Host"
+        const hostAvatar = row.host?.avatar_url || ""
+        return mapShow(row as DbShow, hostName, hostAvatar)
+      })
+
       // Client-side filtering for full-text search and tags
-      let results = data || []
       if (filters.query) {
         results = results.filter(
           (s) =>
@@ -157,7 +175,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
       title: s.title,
       description: s.description,
       image: s.image,
-      metadata: { category: s.category, status: s.status, viewer_count: s.viewer_count },
+      metadata: { category: s.category, status: s.status, viewerCount: s.viewerCount },
     }))
 
     return [...products, ...shows]

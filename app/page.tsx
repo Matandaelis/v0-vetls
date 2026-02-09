@@ -95,7 +95,8 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {shows
-              .filter((s) => s.status === "upcoming")
+              .filter((s) => s.status === "scheduled")
+              .slice(0, 3)
               .map((show) => (
                 <ShowCard key={show.id} show={show} />
               ))}
