@@ -3,6 +3,7 @@ export { LiveKitBroadcaster } from './livekit-broadcaster'
 export { LiveKitPlayer } from './livekit-player'
 export { MobileBroadcaster } from './MobileBroadcaster'
 export { MobilePlayer } from './MobilePlayer'
+export { LiveShoppingVideoConference } from '../live-shopping-video-conference'
 
 // Error Handling
 export { LiveKitErrorBoundary } from './LiveKitErrorBoundary'
@@ -15,6 +16,9 @@ export { LiveKitProvider, useLiveKitContext } from '@/contexts/LiveKitContext'
 
 // Hooks
 export { useLiveKit } from '@/hooks/useLiveKit'
+
+// Import types for interfaces
+type { Product, Show } from '@/lib/types'
 
 // Type Definitions
 export interface LiveKitConfig {
@@ -49,6 +53,15 @@ export interface MobilePlayerProps {
   roomName: string
   viewerName?: string
   onViewerCountUpdate?: (count: number) => void
+}
+
+export interface LiveShoppingVideoConferenceProps {
+  roomName: string
+  username: string
+  products: Product[]
+  show: Show
+  isHost?: boolean
+  initialPinnedProduct?: Product | null
 }
 
 export interface AnalyticsMetrics {
