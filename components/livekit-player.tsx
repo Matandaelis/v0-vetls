@@ -3,12 +3,9 @@
 import { useEffect, useState } from "react"
 import { LiveKitRoom, VideoTrack, useTracks, useConnectionState } from "@livekit/components-react"
 import { Track, ConnectionState } from "livekit-client"
-import { Users, Settings, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
+import { Users, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
 import "@livekit/components-styles"
 
 interface LiveKitPlayerProps {
@@ -239,6 +236,8 @@ function PlayerView({
               size="sm"
               onClick={toggleMute}
               className="text-white hover:text-white hover:bg-white/20"
+              aria-label={isMuted || volume === 0 ? "Unmute" : "Mute"}
+              title={isMuted || volume === 0 ? "Unmute" : "Mute"}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-5 h-5" />
@@ -248,29 +247,32 @@ function PlayerView({
             </Button>
             
             <div className="w-20">
-              <Slider
-                value={[isMuted ? 0 : volume]}
+              <input
+                type="range"
+                value={isMuted ? 0 : volume}
+                min={0}
                 max={100}
                 step={1}
-                onValueChange={handleVolumeChange}
-                className="cursor-pointer"
+                onChange={(e) => handleVolumeChange([parseInt(e.target.value)])}
+                className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:accent-gray-200"
+                aria-label="Volume"
               />
             </div>
           </div>
 
           {/* Center - Quality selector */}
           <div className="flex items-center gap-2">
-            <Select value={streamQuality} onValueChange={onQualityChange}>
-              <SelectTrigger className="w-24 h-8 bg-black/40 border-white/20 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="auto">Auto</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              value={streamQuality}
+              onChange={(e) => onQualityChange(e.target.value as any)}
+              className="w-24 h-8 bg-black/40 border border-white/20 text-white rounded-md px-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 appearance-none cursor-pointer"
+              aria-label="Stream quality"
+            >
+              <option value="auto" className="bg-black text-white">Auto</option>
+              <option value="low" className="bg-black text-white">Low</option>
+              <option value="medium" className="bg-black text-white">Medium</option>
+              <option value="high" className="bg-black text-white">High</option>
+            </select>
           </div>
 
           {/* Right side - Fullscreen */}
@@ -280,6 +282,8 @@ function PlayerView({
               size="sm"
               onClick={toggleFullscreen}
               className="text-white hover:text-white hover:bg-white/20"
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               {isFullscreen ? (
                 <Minimize className="w-5 h-5" />

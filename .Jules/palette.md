@@ -5,3 +5,7 @@
 ## 2025-02-28 - Native Button Accessibility Oversight
 **Learning:** Native HTML `<button>` elements used for micro-interactions (like "Like" or "Share") are often missed in accessibility audits compared to Shadcn `Button` components. They frequently lack `aria-label` when containing only icons.
 **Action:** Scan for native `<button>` tags specifically when auditing accessibility, not just UI library components.
+
+## 2025-05-30 - Missing UI Component Fallbacks
+**Learning:** The project lacks certain Shadcn UI components (`Slider`, `Select`) but imports them as if they exist, causing build failures. The documented fallback is to use styled native HTML elements.
+**Action:** Before using Shadcn components like `Slider` or `Select`, verify their existence in `components/ui/`. If missing, use accessible, styled native HTML elements (`<input type="range">`, `<select>`) as fallbacks.
