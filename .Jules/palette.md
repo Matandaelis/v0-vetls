@@ -5,3 +5,7 @@
 ## 2025-02-28 - Native Button Accessibility Oversight
 **Learning:** Native HTML `<button>` elements used for micro-interactions (like "Like" or "Share") are often missed in accessibility audits compared to Shadcn `Button` components. They frequently lack `aria-label` when containing only icons.
 **Action:** Scan for native `<button>` tags specifically when auditing accessibility, not just UI library components.
+
+## 2025-03-04 - Native Controls in Player Overlays
+**Learning:** Broken UI components (missing imports) in the LiveKit player necessitated a switch to native HTML controls (`<input type="range">`, `<select>`).
+**Action:** When working on player overlays or complex contexts (like fullscreen), favor native accessible controls as they are often more robust and less prone to z-index/portal issues than custom components.
