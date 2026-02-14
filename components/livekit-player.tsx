@@ -3,12 +3,9 @@
 import { useEffect, useState } from "react"
 import { LiveKitRoom, VideoTrack, useTracks, useConnectionState } from "@livekit/components-react"
 import { Track, ConnectionState } from "livekit-client"
-import { Users, Settings, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
+import { Users, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
 import "@livekit/components-styles"
 
 interface LiveKitPlayerProps {
@@ -130,7 +127,6 @@ function PlayerView({
   const [volume, setVolume] = useState(50)
   const [isMuted, setIsMuted] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [showQualityMenu, setShowQualityMenu] = useState(false)
 
   // Find the primary video track (prefer screen share over camera)
   const screenTrack = tracks.find((t) => t.source === Track.Source.ScreenShare)
@@ -151,8 +147,9 @@ function PlayerView({
     return () => clearTimeout(timer)
   }, [showControls, onControlsChange])
 
-  const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0])
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseInt(e.target.value)
+    setVolume(newVolume)
     // Note: LiveKit audio control would be implemented here
   }
 
@@ -239,6 +236,7 @@ function PlayerView({
               size="sm"
               onClick={toggleMute}
               className="text-white hover:text-white hover:bg-white/20"
+              aria-label={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-5 h-5" />
@@ -247,30 +245,32 @@ function PlayerView({
               )}
             </Button>
             
-            <div className="w-20">
-              <Slider
-                value={[isMuted ? 0 : volume]}
-                max={100}
-                step={1}
-                onValueChange={handleVolumeChange}
-                className="cursor-pointer"
+            <div className="w-20 flex items-center">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={isMuted ? 0 : volume}
+                onChange={handleVolumeChange}
+                className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-white"
+                aria-label="Volume"
               />
             </div>
           </div>
 
           {/* Center - Quality selector */}
           <div className="flex items-center gap-2">
-            <Select value={streamQuality} onValueChange={onQualityChange}>
-              <SelectTrigger className="w-24 h-8 bg-black/40 border-white/20 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="auto">Auto</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              value={streamQuality}
+              onChange={(e) => onQualityChange(e.target.value as any)}
+              className="bg-black/40 border border-white/20 text-white text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-white/50"
+              aria-label="Stream quality"
+            >
+              <option value="auto">Auto</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
           </div>
 
           {/* Right side - Fullscreen */}
@@ -280,6 +280,7 @@ function PlayerView({
               size="sm"
               onClick={toggleFullscreen}
               className="text-white hover:text-white hover:bg-white/20"
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               {isFullscreen ? (
                 <Minimize className="w-5 h-5" />

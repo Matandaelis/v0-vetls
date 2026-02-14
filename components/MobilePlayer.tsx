@@ -6,7 +6,6 @@ import { Track, ConnectionState } from "livekit-client"
 import { Users, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Slider } from "@/components/ui/slider"
 
 interface MobilePlayerProps {
   roomName: string
@@ -131,8 +130,8 @@ function MobilePlayerView({
     return () => clearTimeout(timer)
   }, [onControlsChange])
 
-  const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0])
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(parseInt(e.target.value))
   }
 
   const toggleMute = () => {
@@ -210,6 +209,7 @@ function MobilePlayerView({
               size="lg"
               onClick={toggleMute}
               className="text-white hover:text-white hover:bg-white/20 rounded-full w-12 h-12"
+              aria-label={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-6 h-6" />
@@ -219,12 +219,14 @@ function MobilePlayerView({
             </Button>
             
             <div className="flex-1 mx-2">
-              <Slider
-                value={[isMuted ? 0 : volume]}
-                max={100}
-                step={1}
-                onValueChange={handleVolumeChange}
-                className="cursor-pointer"
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={isMuted ? 0 : volume}
+                onChange={handleVolumeChange}
+                className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-white"
+                aria-label="Volume"
               />
             </div>
             
@@ -240,6 +242,7 @@ function MobilePlayerView({
               size="lg"
               onClick={toggleFullscreen}
               className="text-white hover:text-white hover:bg-white/20 rounded-full w-12 h-12"
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               {isFullscreen ? (
                 <Minimize className="w-6 h-6" />
