@@ -5,3 +5,7 @@
 ## 2025-02-28 - Native Button Accessibility Oversight
 **Learning:** Native HTML `<button>` elements used for micro-interactions (like "Like" or "Share") are often missed in accessibility audits compared to Shadcn `Button` components. They frequently lack `aria-label` when containing only icons.
 **Action:** Scan for native `<button>` tags specifically when auditing accessibility, not just UI library components.
+
+## 2025-03-01 - Micro-UX Scope and Broken Infrastructure
+**Learning:** When attempting to fix accessibility in broken or incomplete components (missing file imports), creating the missing files (infrastructure fix) can bloat the PR and violate the "Micro-UX" scope (under 50 lines).
+**Action:** Prioritize the accessibility fix (adding attributes) over fixing the broken infrastructure, unless explicitly asked to fix the build. Mention the missing files in the PR description but do not include them if they are large boilerplate.
