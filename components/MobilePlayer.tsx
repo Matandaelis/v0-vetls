@@ -210,6 +210,7 @@ function MobilePlayerView({
               size="lg"
               onClick={toggleMute}
               className="text-white hover:text-white hover:bg-white/20 rounded-full w-12 h-12"
+              aria-label={isMuted || volume === 0 ? "Unmute" : "Mute"}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-6 h-6" />
@@ -225,6 +226,7 @@ function MobilePlayerView({
                 step={1}
                 onValueChange={handleVolumeChange}
                 className="cursor-pointer"
+                aria-label="Volume"
               />
             </div>
             
@@ -240,6 +242,7 @@ function MobilePlayerView({
               size="lg"
               onClick={toggleFullscreen}
               className="text-white hover:text-white hover:bg-white/20 rounded-full w-12 h-12"
+              aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             >
               {isFullscreen ? (
                 <Minimize className="w-6 h-6" />

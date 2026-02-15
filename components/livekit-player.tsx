@@ -239,6 +239,7 @@ function PlayerView({
               size="sm"
               onClick={toggleMute}
               className="text-white hover:text-white hover:bg-white/20"
+              aria-label={isMuted || volume === 0 ? "Unmute" : "Mute"}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-5 h-5" />
@@ -254,6 +255,7 @@ function PlayerView({
                 step={1}
                 onValueChange={handleVolumeChange}
                 className="cursor-pointer"
+                aria-label="Volume"
               />
             </div>
           </div>
@@ -280,6 +282,7 @@ function PlayerView({
               size="sm"
               onClick={toggleFullscreen}
               className="text-white hover:text-white hover:bg-white/20"
+              aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             >
               {isFullscreen ? (
                 <Minimize className="w-5 h-5" />
