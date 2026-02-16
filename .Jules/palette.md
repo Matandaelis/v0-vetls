@@ -9,3 +9,7 @@
 ## 2025-03-01 - Micro-UX Scope and Broken Infrastructure
 **Learning:** When attempting to fix accessibility in broken or incomplete components (missing file imports), creating the missing files (infrastructure fix) can bloat the PR and violate the "Micro-UX" scope (under 50 lines).
 **Action:** Prioritize the accessibility fix (adding attributes) over fixing the broken infrastructure, unless explicitly asked to fix the build. Mention the missing files in the PR description but do not include them if they are large boilerplate.
+
+## 2025-05-18 - Native Input Accessibility Pattern
+**Learning:** Native `<input>` and `<select>` elements used for filtering (e.g., in `ProductFilters`) often rely on visual context (like headers) or placeholders, which fail to provide accessible names for screen readers.
+**Action:** When auditing filter components, always verify that native form controls have explicit `aria-label` attributes if visible `<label>` elements are absent.
