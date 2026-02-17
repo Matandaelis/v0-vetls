@@ -9,3 +9,7 @@
 ## 2025-03-01 - Micro-UX Scope and Broken Infrastructure
 **Learning:** When attempting to fix accessibility in broken or incomplete components (missing file imports), creating the missing files (infrastructure fix) can bloat the PR and violate the "Micro-UX" scope (under 50 lines).
 **Action:** Prioritize the accessibility fix (adding attributes) over fixing the broken infrastructure, unless explicitly asked to fix the build. Mention the missing files in the PR description but do not include them if they are large boilerplate.
+
+## 2025-05-24 - Accessibility of "Tabs" using Buttons
+**Learning:** Using `role="tab"` on a native `<button>` element is a valid, simple alternative to complex "roving tabindex" implementations for tab navigation, provided you don't manipulate `tabIndex` manually (letting it default to `0`). This ensures all tabs are naturally focusable via the Tab key, which is functional and accessible, even if less "pure" than arrow-key navigation.
+**Action:** For simple tab interfaces where full keyboard logic is overkill, use `role="tab"` on native buttons without `tabIndex` manipulation to maintain natural focus order.
