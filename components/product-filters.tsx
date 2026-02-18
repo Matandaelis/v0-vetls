@@ -62,6 +62,7 @@ export function ProductFilters({
           value={sortBy || "relevance"}
           onChange={handleSortChange}
           className="w-full px-3 py-2 text-sm rounded border bg-background"
+          aria-label="Sort products"
         >
           <option value="relevance">Relevance</option>
           <option value="price_asc">Price: Low to High</option>
@@ -109,6 +110,7 @@ export function ProductFilters({
               onChange={handlePriceMinChange}
               placeholder="Min"
               className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
+              aria-label="Minimum price"
             />
             <input
               type="number"
@@ -118,6 +120,7 @@ export function ProductFilters({
               onChange={handlePriceMaxChange}
               placeholder="Max"
               className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
+              aria-label="Maximum price"
             />
           </div>
           <p className="text-xs text-muted-foreground">

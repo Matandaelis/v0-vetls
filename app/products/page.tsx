@@ -45,7 +45,7 @@ export default function ProductsPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link href="/">
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" aria-label="Back to home">
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
