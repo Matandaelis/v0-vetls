@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
+import { useDebounceCallback } from "@/hooks/use-debounce-callback"
 
 interface ShowProductCarouselProps {
   products: Product[]
@@ -26,6 +27,8 @@ export function ShowProductCarousel({ products, isLive = true }: ShowProductCaro
       containerRef.current.scrollLeft < containerRef.current.scrollWidth - containerRef.current.clientWidth - 10,
     )
   }
+
+  const debouncedCheckScroll = useDebounceCallback(checkScroll, 200)
 
   const scroll = (direction: "left" | "right") => {
     if (!containerRef.current) return
@@ -58,7 +61,7 @@ export function ShowProductCarousel({ products, isLive = true }: ShowProductCaro
         <div
           ref={containerRef}
           className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide pb-2"
-          onScroll={checkScroll}
+          onScroll={debouncedCheckScroll}
         >
           {products.map((product) => (
             <Card key={product.id} className="flex-shrink-0 w-64 overflow-hidden hover:shadow-lg transition-shadow">
