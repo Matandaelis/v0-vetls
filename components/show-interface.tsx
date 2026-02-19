@@ -65,32 +65,42 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
           </div>
 
           {/* Action Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar" role="tablist">
             <TabButton
+              id="tab-shop"
+              ariaControls="panel-shop"
               active={activeTab === "shop"}
               onClick={() => setActiveTab("shop")}
               icon={<ShoppingBag className="w-4 h-4" />}
               label="Shop"
             />
             <TabButton
+              id="tab-chat"
+              ariaControls="panel-chat"
               active={activeTab === "chat"}
               onClick={() => setActiveTab("chat")}
               icon={<MessageSquare className="w-4 h-4" />}
               label="Chat"
             />
             <TabButton
+              id="tab-more"
+              ariaControls="panel-more"
               active={activeTab === "more"}
               onClick={() => setActiveTab("more")}
               icon={<MoreHorizontal className="w-4 h-4" />}
               label="More"
             />
             <TabButton
+              id="tab-about"
+              ariaControls="panel-about"
               active={activeTab === "about"}
               onClick={() => setActiveTab("about")}
               icon={<Info className="w-4 h-4" />}
               label="About"
             />
             <TabButton
+              id="tab-share"
+              ariaControls="panel-share"
               active={activeTab === "share"}
               onClick={() => setActiveTab("share")}
               icon={<Share2 className="w-4 h-4" />}
@@ -105,7 +115,12 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px] overflow-hidden relative">
           {/* Shop Tab Content */}
           {activeTab === "shop" && (
-            <div className="p-4 space-y-4">
+            <div
+              className="p-4 space-y-4"
+              role="tabpanel"
+              id="panel-shop"
+              aria-labelledby="tab-shop"
+            >
               {featuredProducts.map((product) => (
                 <div
                   key={product.id}
@@ -137,6 +152,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
                     <Button
                       className="w-fit bg-[#E60023] hover:bg-[#ad001b] text-white rounded-full px-6 h-8 text-sm font-bold shadow-sm"
                       onClick={() => addItem(product, 1)}
+                      aria-label={`Add ${product.name} to cart`}
                     >
                       Shop
                     </Button>
@@ -149,6 +165,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
                 <Button
                   size="icon"
                   className="rounded-full bg-[#0057B8] hover:bg-[#004494] text-white shadow-lg h-10 w-10"
+                  aria-label="Accessibility settings"
                 >
                   <Accessibility className="w-5 h-5" />
                 </Button>
@@ -158,14 +175,24 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
 
           {/* Chat Tab Content */}
           {activeTab === "chat" && (
-            <div className="h-[500px]">
+            <div
+              className="h-[500px]"
+              role="tabpanel"
+              id="panel-chat"
+              aria-labelledby="tab-chat"
+            >
               <ShowChat hostName={show.hostName} hostAvatar={show.hostAvatar} />
             </div>
           )}
 
           {/* Other Tabs Placeholders */}
           {["more", "about", "share"].includes(activeTab) && (
-            <div className="h-[400px] flex items-center justify-center text-gray-500">
+            <div
+              className="h-[400px] flex items-center justify-center text-gray-500"
+              role="tabpanel"
+              id={`panel-${activeTab}`}
+              aria-labelledby={`tab-${activeTab}`}
+            >
               <p>Content for {activeTab} tab</p>
             </div>
           )}
@@ -175,14 +202,22 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
   )
 }
 
-function TabButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+interface TabButtonProps {
+  active: boolean
+  onClick: () => void
+  icon: React.ReactNode
+  label: string
+  id: string
+  ariaControls: string
+}
+
+function TabButton({ active, onClick, icon, label, id, ariaControls }: TabButtonProps) {
   return (
     <button
+      role="tab"
+      id={id}
+      aria-selected={active}
+      aria-controls={ariaControls}
       onClick={onClick}
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors whitespace-nowrap",
