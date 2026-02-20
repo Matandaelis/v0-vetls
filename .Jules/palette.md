@@ -9,3 +9,11 @@
 ## 2025-03-01 - Micro-UX Scope and Broken Infrastructure
 **Learning:** When attempting to fix accessibility in broken or incomplete components (missing file imports), creating the missing files (infrastructure fix) can bloat the PR and violate the "Micro-UX" scope (under 50 lines).
 **Action:** Prioritize the accessibility fix (adding attributes) over fixing the broken infrastructure, unless explicitly asked to fix the build. Mention the missing files in the PR description but do not include them if they are large boilerplate.
+
+## 2024-05-22 - Interactive Feedback Gap
+**Learning:** "Shop" buttons in product lists lacked immediate visual feedback, causing user uncertainty. Simple state-based text changes ("Added!") are high-impact.
+**Action:** When adding action buttons, always pair with a temporary success state or toast notification.
+
+## 2024-05-22 - Tab Semantics
+**Learning:** Tabs were implemented as simple button groups. While functional for mouse users, this pattern fails screen reader expectations for tab navigation.
+**Action:** Use `role="tablist"`, `role="tab"`, and `aria-selected` for all segmented controls in the future.
