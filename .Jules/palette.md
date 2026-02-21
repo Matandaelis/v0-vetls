@@ -17,3 +17,7 @@
 ## 2024-05-22 - Tab Semantics
 **Learning:** Tabs were implemented as simple button groups. While functional for mouse users, this pattern fails screen reader expectations for tab navigation.
 **Action:** Use `role="tablist"`, `role="tab"`, and `aria-selected` for all segmented controls in the future.
+
+## 2024-05-24 - Filter Button State
+**Learning:** Filter lists implemented as a series of buttons (like categories) often lack programmatic state indication. Using `aria-pressed` effectively communicates the "active" state of a filter to screen readers without changing the visual design or component structure.
+**Action:** Add `aria-pressed={isActive}` to button-based filters to improve accessibility.
