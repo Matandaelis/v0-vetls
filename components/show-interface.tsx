@@ -19,7 +19,6 @@ interface ShowInterfaceProps {
 
 export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceProps) {
   const [activeTab, setActiveTab] = useState<"shop" | "chat" | "more" | "about" | "share">("shop")
-  const { addItem } = useCart()
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto pb-8">
@@ -58,6 +57,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
               variant="outline"
               size="sm"
               className="rounded-full gap-1.5 h-8 text-xs font-semibold shadow-sm bg-transparent"
+              aria-label="Toggle notification"
             >
               <Bell className="w-3.5 h-3.5" />
               Notify
@@ -107,41 +107,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
           {activeTab === "shop" && (
             <div className="p-4 space-y-4">
               {featuredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="flex gap-4 p-3 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow"
-                >
-                  {/* Product Image */}
-                  <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                    <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Product Details */}
-                  <div className="flex-1 flex flex-col justify-between min-w-0">
-                    <div>
-                      <h3 className="font-semibold text-sm line-clamp-2 mb-1">{product.name}</h3>
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
-                        {product.price < 50 && (
-                          <span className="text-xs text-gray-400 line-through">
-                            ${(product.price * 1.4).toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <Button
-                      className="w-fit bg-[#E60023] hover:bg-[#ad001b] text-white rounded-full px-6 h-8 text-sm font-bold shadow-sm"
-                      onClick={() => addItem(product, 1)}
-                    >
-                      Shop
-                    </Button>
-                  </div>
-                </div>
+                <FeaturedProductCard key={product.id} product={product} />
               ))}
 
               {/* Accessibility Icon (Floating) */}
@@ -149,6 +115,7 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
                 <Button
                   size="icon"
                   className="rounded-full bg-[#0057B8] hover:bg-[#004494] text-white shadow-lg h-10 w-10"
+                  aria-label="Accessibility options"
                 >
                   <Accessibility className="w-5 h-5" />
                 </Button>
@@ -170,6 +137,58 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
             </div>
           )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+function FeaturedProductCard({ product }: { product: Product }) {
+  const { addItem } = useCart()
+  const [isAdded, setIsAdded] = useState(false)
+
+  const handleShop = () => {
+    addItem(product, 1)
+    setIsAdded(true)
+    setTimeout(() => setIsAdded(false), 2000)
+  }
+
+  return (
+    <div className="flex gap-4 p-3 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+      {/* Product Image */}
+      <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+        <img
+          src={product.image || "/placeholder.svg"}
+          alt={product.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Product Details */}
+      <div className="flex-1 flex flex-col justify-between min-w-0">
+        <div>
+          <h3 className="font-semibold text-sm line-clamp-2 mb-1">{product.name}</h3>
+          <div className="flex items-baseline gap-2">
+            <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
+            {product.price < 50 && (
+              <span className="text-xs text-gray-400 line-through">
+                ${(product.price * 1.4).toFixed(2)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <Button
+          className={cn(
+            "w-fit rounded-full px-6 h-8 text-sm font-bold shadow-sm transition-all",
+            isAdded
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-[#E60023] hover:bg-[#ad001b] text-white",
+          )}
+          onClick={handleShop}
+          aria-label={`Add ${product.name} to cart`}
+        >
+          {isAdded ? "Added!" : "Shop"}
+        </Button>
       </div>
     </div>
   )
