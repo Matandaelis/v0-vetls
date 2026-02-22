@@ -17,3 +17,7 @@
 ## 2024-05-22 - Tab Semantics
 **Learning:** Tabs were implemented as simple button groups. While functional for mouse users, this pattern fails screen reader expectations for tab navigation.
 **Action:** Use `role="tablist"`, `role="tab"`, and `aria-selected` for all segmented controls in the future.
+
+## 2025-05-23 - Raw Input Accessibility Gaps
+**Learning:** Found raw HTML `input` and `select` elements used for filtering (price, sort) instead of Shadcn UI components. These lacked associated labels and `aria-label` attributes, creating accessibility barriers.
+**Action:** When auditing forms, specifically check for raw `input` tags mixed with UI components and replace them with accessible `Input` components where possible, or ensure they have `aria-label`.
