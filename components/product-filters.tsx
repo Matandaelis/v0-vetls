@@ -4,6 +4,8 @@ import type React from "react"
 
 import { useCallback } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import type { SearchFilters } from "@/lib/types"
 
 interface ProductFiltersProps {
@@ -56,9 +58,12 @@ export function ProductFilters({
   return (
     <div className="space-y-6">
       {/* Sort */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Sort</h3>
+      <div className="space-y-2">
+        <Label htmlFor="sort-select" className="text-base font-semibold">
+          Sort
+        </Label>
         <select
+          id="sort-select"
           value={sortBy || "relevance"}
           onChange={handleSortChange}
           className="w-full px-3 py-2 text-sm rounded border bg-background"
@@ -71,8 +76,8 @@ export function ProductFilters({
       </div>
 
       {/* Category Filter */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Category</h3>
+      <div className="space-y-2">
+        <Label className="text-base font-semibold">Category</Label>
         <div className="space-y-2">
           <Button
             variant={selectedCategory ? "outline" : "default"}
@@ -97,27 +102,29 @@ export function ProductFilters({
       </div>
 
       {/* Price Range Filter */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Price Range</h3>
+      <div className="space-y-2">
+        <Label className="text-base font-semibold">Price Range</Label>
         <div className="space-y-3">
           <div className="flex gap-2">
-            <input
+            <Input
               type="number"
               min="0"
               max="1000"
               value={priceRange[0]}
               onChange={handlePriceMinChange}
               placeholder="Min"
-              className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
+              className="w-1/2"
+              aria-label="Minimum price"
             />
-            <input
+            <Input
               type="number"
               min="0"
               max="1000"
               value={priceRange[1]}
               onChange={handlePriceMaxChange}
               placeholder="Max"
-              className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
+              className="w-1/2"
+              aria-label="Maximum price"
             />
           </div>
           <p className="text-xs text-muted-foreground">
