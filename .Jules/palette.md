@@ -17,3 +17,7 @@
 ## 2024-05-22 - Tab Semantics
 **Learning:** Tabs were implemented as simple button groups. While functional for mouse users, this pattern fails screen reader expectations for tab navigation.
 **Action:** Use `role="tablist"`, `role="tab"`, and `aria-selected` for all segmented controls in the future.
+
+## 2025-05-27 - Native Input Accessibility Gap
+**Learning:** Product filters used native `<input>` elements without labels, relying on placeholders which are inaccessible. Replacing them with the design system's `Input` component improved both consistency and accessibility.
+**Action:** Always check filter/search components for native inputs and replace them with Shadcn `Input` components with proper `aria-label` or `<Label>` associations.
