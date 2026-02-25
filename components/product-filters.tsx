@@ -4,6 +4,8 @@ import type React from "react"
 
 import { useCallback } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import type { SearchFilters } from "@/lib/types"
 
 interface ProductFiltersProps {
@@ -57,8 +59,11 @@ export function ProductFilters({
     <div className="space-y-6">
       {/* Sort */}
       <div>
-        <h3 className="font-semibold text-foreground mb-3">Sort</h3>
+        <Label htmlFor="sort-select" className="font-semibold text-foreground mb-3 block text-base">
+          Sort
+        </Label>
         <select
+          id="sort-select"
           value={sortBy || "relevance"}
           onChange={handleSortChange}
           className="w-full px-3 py-2 text-sm rounded border bg-background"
@@ -97,34 +102,36 @@ export function ProductFilters({
       </div>
 
       {/* Price Range Filter */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Price Range</h3>
+      <fieldset>
+        <legend className="font-semibold text-foreground mb-3 block text-base w-full">Price Range</legend>
         <div className="space-y-3">
           <div className="flex gap-2">
-            <input
+            <Input
               type="number"
               min="0"
               max="1000"
               value={priceRange[0]}
               onChange={handlePriceMinChange}
               placeholder="Min"
-              className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
+              className="w-1/2"
+              aria-label="Minimum Price"
             />
-            <input
+            <Input
               type="number"
               min="0"
               max="1000"
               value={priceRange[1]}
               onChange={handlePriceMaxChange}
               placeholder="Max"
-              className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
+              className="w-1/2"
+              aria-label="Maximum Price"
             />
           </div>
           <p className="text-xs text-muted-foreground">
             ${priceRange[0]} - ${priceRange[1]}
           </p>
         </div>
-      </div>
+      </fieldset>
     </div>
   )
 }
