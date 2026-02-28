@@ -65,36 +65,50 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
           </div>
 
           {/* Action Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar"
+            role="tablist"
+            aria-label="Show content sections"
+          >
             <TabButton
               active={activeTab === "shop"}
               onClick={() => setActiveTab("shop")}
               icon={<ShoppingBag className="w-4 h-4" />}
               label="Shop"
+              id="tab-shop"
+              ariaControls="panel-shop"
             />
             <TabButton
               active={activeTab === "chat"}
               onClick={() => setActiveTab("chat")}
               icon={<MessageSquare className="w-4 h-4" />}
               label="Chat"
+              id="tab-chat"
+              ariaControls="panel-chat"
             />
             <TabButton
               active={activeTab === "more"}
               onClick={() => setActiveTab("more")}
               icon={<MoreHorizontal className="w-4 h-4" />}
               label="More"
+              id="tab-more"
+              ariaControls="panel-more"
             />
             <TabButton
               active={activeTab === "about"}
               onClick={() => setActiveTab("about")}
               icon={<Info className="w-4 h-4" />}
               label="About"
+              id="tab-about"
+              ariaControls="panel-about"
             />
             <TabButton
               active={activeTab === "share"}
               onClick={() => setActiveTab("share")}
               icon={<Share2 className="w-4 h-4" />}
               label="Share"
+              id="tab-share"
+              ariaControls="panel-share"
             />
           </div>
         </div>
@@ -105,7 +119,13 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 min-h-[400px] overflow-hidden relative">
           {/* Shop Tab Content */}
           {activeTab === "shop" && (
-            <div className="p-4 space-y-4">
+            <div
+              className="p-4 space-y-4"
+              role="tabpanel"
+              id="panel-shop"
+              aria-labelledby="tab-shop"
+              tabIndex={0}
+            >
               {featuredProducts.map((product) => (
                 <FeaturedProductCard key={product.id} product={product} />
               ))}
@@ -125,14 +145,26 @@ export function ShowInterface({ show, featuredProducts, isLive }: ShowInterfaceP
 
           {/* Chat Tab Content */}
           {activeTab === "chat" && (
-            <div className="h-[500px]">
+            <div
+              className="h-[500px]"
+              role="tabpanel"
+              id="panel-chat"
+              aria-labelledby="tab-chat"
+              tabIndex={0}
+            >
               <ShowChat hostName={show.hostName} hostAvatar={show.hostAvatar} />
             </div>
           )}
 
           {/* Other Tabs Placeholders */}
           {["more", "about", "share"].includes(activeTab) && (
-            <div className="h-[400px] flex items-center justify-center text-gray-500">
+            <div
+              className="h-[400px] flex items-center justify-center text-gray-500"
+              role="tabpanel"
+              id={`panel-${activeTab}`}
+              aria-labelledby={`tab-${activeTab}`}
+              tabIndex={0}
+            >
               <p>Content for {activeTab} tab</p>
             </div>
           )}
@@ -199,7 +231,16 @@ function TabButton({
   onClick,
   icon,
   label,
-}: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+  id,
+  ariaControls,
+}: {
+  active: boolean
+  onClick: () => void
+  icon: React.ReactNode
+  label: string
+  id?: string
+  ariaControls?: string
+}) {
   return (
     <button
       onClick={onClick}
@@ -207,6 +248,10 @@ function TabButton({
         "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors whitespace-nowrap",
         active ? "bg-black text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200",
       )}
+      role="tab"
+      aria-selected={active}
+      id={id}
+      aria-controls={ariaControls}
     >
       {icon}
       {label}
