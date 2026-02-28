@@ -6,7 +6,8 @@ import { useState } from "react"
 import { useSocial } from "@/contexts/social-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { RatingDisplay } from "@/components/rating-display"
+import { Star } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface ReviewFormProps {
   productId?: string
@@ -48,16 +49,33 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
       <h3 className="text-lg font-semibold mb-4">Leave a Review</h3>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Rating</label>
-        <div className="flex gap-2">
+        <label id="rating-label" className="block text-sm font-medium mb-2">
+          Rating
+        </label>
+        <div
+          className="flex gap-2"
+          role="radiogroup"
+          aria-labelledby="rating-label"
+          aria-required="true"
+        >
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
+              role="radio"
+              aria-checked={score === star}
+              aria-label={`${star} star${star > 1 ? "s" : ""}`}
               onClick={() => setScore(star as 1 | 2 | 3 | 4 | 5)}
-              className="focus:outline-none"
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full transition-transform hover:scale-110"
             >
-              <RatingDisplay score={star as 1 | 2 | 3 | 4 | 5} size="lg" />
+              <Star
+                className={cn(
+                  "w-6 h-6",
+                  star <= score
+                    ? "fill-yellow-400 text-yellow-400"
+                    : "text-muted-foreground"
+                )}
+              />
             </button>
           ))}
         </div>
