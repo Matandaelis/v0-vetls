@@ -49,18 +49,18 @@ export function ClipCard({ clip }: ClipCardProps) {
         {/* Right Side Actions */}
         <div className="absolute right-4 bottom-20 flex flex-col gap-4 items-center">
           <div className="flex flex-col items-center gap-1">
-            <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 text-white">
+            <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 text-white" aria-label="Like clip">
               <Heart className="w-6 h-6" />
             </Button>
             <span className="text-xs text-white font-medium">{clip.likes}</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 text-white">
+            <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 text-white" aria-label="Open chat">
               <MessageCircle className="w-6 h-6" />
             </Button>
             <span className="text-xs text-white font-medium">Chat</span>
           </div>
-          <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 text-white">
+          <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 text-white" aria-label="Share clip">
             <Share2 className="w-6 h-6" />
           </Button>
         </div>
