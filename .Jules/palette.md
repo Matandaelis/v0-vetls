@@ -17,3 +17,7 @@
 ## 2024-05-22 - Tab Semantics
 **Learning:** Tabs were implemented as simple button groups. While functional for mouse users, this pattern fails screen reader expectations for tab navigation.
 **Action:** Use `role="tablist"`, `role="tab"`, and `aria-selected` for all segmented controls in the future.
+
+## 2025-03-05 - Interactive Rating Screen Reader Output
+**Learning:** Using an array of static display components (like `<RatingDisplay>`) inside a loop for interactive rating inputs causes screen readers to read out the full static element array (e.g., all 5 stars) inside every single button, leading to massive duplicate output.
+**Action:** When building interactive rating inputs, use individual scalable SVG icons with native `role='radiogroup'` and `role='radio'` attributes instead of static display component arrays to ensure correct and concise screen reader functionality.
