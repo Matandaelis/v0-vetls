@@ -56,11 +56,12 @@ export function ProductFilters({
   return (
     <div className="space-y-6">
       {/* Sort */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Sort</h3>
+      <fieldset>
+        <legend className="font-semibold text-foreground mb-3">Sort</legend>
         <select
           value={sortBy || "relevance"}
           onChange={handleSortChange}
+          aria-label="Sort by"
           className="w-full px-3 py-2 text-sm rounded border bg-background"
         >
           <option value="relevance">Relevance</option>
@@ -68,17 +69,18 @@ export function ProductFilters({
           <option value="price_desc">Price: High to Low</option>
           <option value="popularity">Popularity</option>
         </select>
-      </div>
+      </fieldset>
 
       {/* Category Filter */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Category</h3>
-        <div className="space-y-2">
+      <fieldset>
+        <legend className="font-semibold text-foreground mb-3">Category</legend>
+        <div className="space-y-2" role="group" aria-label="Category filters">
           <Button
             variant={selectedCategory ? "outline" : "default"}
             size="sm"
             onClick={() => handleCategorySelect(undefined)}
             className="w-full justify-start bg-transparent"
+            aria-pressed={!selectedCategory}
           >
             All Categories
           </Button>
@@ -89,16 +91,17 @@ export function ProductFilters({
               size="sm"
               onClick={() => handleCategorySelect(category)}
               className="w-full justify-start bg-transparent"
+              aria-pressed={selectedCategory === category}
             >
               {category}
             </Button>
           ))}
         </div>
-      </div>
+      </fieldset>
 
       {/* Price Range Filter */}
-      <div>
-        <h3 className="font-semibold text-foreground mb-3">Price Range</h3>
+      <fieldset>
+        <legend className="font-semibold text-foreground mb-3">Price Range</legend>
         <div className="space-y-3">
           <div className="flex gap-2">
             <input
@@ -108,6 +111,7 @@ export function ProductFilters({
               value={priceRange[0]}
               onChange={handlePriceMinChange}
               placeholder="Min"
+              aria-label="Minimum price"
               className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
             />
             <input
@@ -117,6 +121,7 @@ export function ProductFilters({
               value={priceRange[1]}
               onChange={handlePriceMaxChange}
               placeholder="Max"
+              aria-label="Maximum price"
               className="w-1/2 px-2 py-1 text-sm rounded border bg-background"
             />
           </div>
@@ -124,7 +129,7 @@ export function ProductFilters({
             ${priceRange[0]} - ${priceRange[1]}
           </p>
         </div>
-      </div>
+      </fieldset>
     </div>
   )
 }
