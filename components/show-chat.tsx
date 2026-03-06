@@ -116,6 +116,7 @@ export function ShowChat({ hostName, hostAvatar, initialComments = [], viewerCou
         <div className="flex gap-2">
           <Input
             placeholder="Say something nice..."
+            aria-label="Chat message"
             className="text-sm h-10 rounded-full border-gray-300 focus:ring-pink-500"
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}

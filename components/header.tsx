@@ -49,9 +49,10 @@ export function Header() {
 
           {/* Search Bar - Simplified for desktop only */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-2">
-            <Search className="w-4 h-4 text-muted-foreground" />
+            <Search className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               placeholder="Search products or shows..."
+              aria-label="Search products or shows"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="border-0 bg-secondary text-foreground placeholder:text-muted-foreground focus-visible:ring-0"
@@ -89,9 +90,10 @@ export function Header() {
         {/* Mobile Search */}
         <form onSubmit={handleSearch} className="md:hidden pb-3">
           <div className="flex items-center gap-2 bg-secondary rounded-lg px-3 py-2">
-            <Search className="w-4 h-4 text-muted-foreground" />
+            <Search className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               placeholder="Search..."
+              aria-label="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="border-0 bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:ring-0"
