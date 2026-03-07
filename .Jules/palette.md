@@ -21,3 +21,7 @@
 ## 2025-03-05 - Semantic Form Grouping and Missing ARIA Labels on Native Inputs
 **Learning:** Native form inputs (like `select` and `input type="number"`) used for filtering without visible `<label>` elements were missing programmatic associations, making them inaccessible to screen readers. Furthermore, related filters were grouped visually using `<div>` and `<h3>` tags instead of semantically grouping them with `<fieldset>` and `<legend>`.
 **Action:** When auditing forms and filter panels, replace visual `<div>`/`<h3>` grouping with semantic `<fieldset>`/`<legend>` structures. Ensure all inputs (including Shadcn `<Input>` components and native elements) without visible text labels include an `aria-label` attribute.
+
+## 2025-03-05 - Rating Component Input Accessibility Pattern
+**Learning:** Rating component inputs constructed via loops mapping over display elements (like `RatingDisplay`) result in deeply nested and duplicated accessible elements (e.g. 25 stars instead of 5). Furthermore, custom input mechanisms using repeated `<button>` tags without implicit grouping fail to convey their purpose.
+**Action:** When auditing or building custom interactive inputs (like a star rating), extract individual, scalable elements (like `lucide-react`'s `<Star>`) from display components. Apply `role="radiogroup"` to the container and `role="radio"` and `aria-checked` to the individual interactive elements to correctly mimic native radio button behavior. Ensure focus rings (`focus-visible:ring-2`) are present for keyboard accessibility.
