@@ -6,15 +6,30 @@ import { Button } from "@/components/ui/button"
 import { FollowButton } from "@/components/follow-button"
 import { useParams } from "next/navigation"
 import { Mail, Share2 } from "lucide-react"
-import { useProducts } from "@/contexts/product-context"
+import { useSearch } from "@/contexts/search-context"
 import { ProductCard } from "@/components/product-card"
+import { useEffect, useState } from "react"
+import type { Product } from "@/lib/types"
 
 export default function UserProfilePage() {
   const params = useParams()
   const userId = params.userId as string
   const { getUserById } = useSocial()
   const user = getUserById(userId)
-  const { products } = useProducts()
+  const { searchProducts } = useSearch()
+
+  const [userProducts, setUserProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true)
+      const results = await searchProducts({ sellerId: userId })
+      setUserProducts(results)
+      setLoading(false)
+    }
+    fetchProducts()
+  }, [userId, searchProducts])
 
   if (!user) {
     return (
@@ -26,9 +41,6 @@ export default function UserProfilePage() {
       </div>
     )
   }
-
-  // Filter products by seller
-  const userProducts = products.filter((p) => p.sellerId === userId)
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,7 +89,11 @@ export default function UserProfilePage() {
       </section>
 
       {/* Products Section */}
-      {userProducts.length > 0 && (
+      {loading ? (
+        <section className="py-12 md:py-16 text-center">
+          <p className="text-muted-foreground">Loading products...</p>
+        </section>
+      ) : userProducts.length > 0 ? (
         <section className="py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
@@ -93,10 +109,7 @@ export default function UserProfilePage() {
             </div>
           </div>
         </section>
-      )}
-
-      {/* Empty State */}
-      {userProducts.length === 0 && (
+      ) : (
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-muted-foreground mb-4">No products yet</p>

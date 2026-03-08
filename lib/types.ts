@@ -78,6 +78,7 @@ export interface SearchFilters {
   maxPrice?: number
   tags?: string[]
   sortBy?: "relevance" | "price_asc" | "price_desc" | "newest" | "popularity"
+  sellerId?: string
 }
 
 export interface SearchResult {
