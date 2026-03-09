@@ -279,6 +279,7 @@ function Controls({
             size="icon"
             onClick={onToggleCamera}
             className="rounded-full"
+            aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}
           >
             {isCameraEnabled ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </Button>
@@ -290,6 +291,7 @@ function Controls({
             size="icon"
             onClick={onToggleMic}
             className="rounded-full"
+            aria-label={isMicEnabled ? "Mute microphone" : "Unmute microphone"}
           >
             {isMicEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </Button>
@@ -412,6 +414,7 @@ function ProductCard({
                   size="sm"
                   className="h-8 w-8 p-0"
                   onClick={() => onTogglePin(product)}
+                  aria-label={isPinned ? `Unpin ${product.name}` : `Pin ${product.name}`}
                 >
                   {isPinned ? (
                     <PinOff className="w-4 h-4 text-[#E60023]" />
@@ -437,6 +440,7 @@ function ProductCard({
                 variant="outline"
                 className="h-8 w-8 p-0"
                 onClick={() => setLiked(!liked)}
+                aria-label={liked ? `Unlike ${product.name}` : `Like ${product.name}`}
               >
                 <Heart className={`w-4 h-4 ${liked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
               </Button>
@@ -518,6 +522,7 @@ function PinnedProductDisplay({
             variant="outline"
             className="h-10 w-10 p-0"
             onClick={() => setLiked(!liked)}
+            aria-label={liked ? `Unlike ${product.name}` : `Like ${product.name}`}
           >
             <Heart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
           </Button>
