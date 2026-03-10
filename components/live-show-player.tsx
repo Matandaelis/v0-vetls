@@ -44,7 +44,7 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
         />
 
         {/* Overlay Controls */}
-        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
           {/* Top Info */}
           <div className="flex items-start justify-between">
             {isLive && <Badge className="bg-destructive">LIVE</Badge>}
@@ -61,10 +61,11 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
                 variant="ghost"
                 className="text-white hover:bg-white/20"
                 onClick={() => setIsLiked(!isLiked)}
+                aria-label={isLiked ? "Unlike show" : "Like show"}
               >
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
               </Button>
-              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
+              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20" aria-label="Share show">
                 <Share2 className="w-5 h-5" />
               </Button>
             </div>
@@ -73,6 +74,7 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
               variant="ghost"
               className="text-white hover:bg-white/20"
               onClick={() => setIsMuted(!isMuted)}
+              aria-label={isMuted ? "Unmute show" : "Mute show"}
             >
               {isMuted ? <Volume1 className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </Button>
