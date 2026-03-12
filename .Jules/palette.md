@@ -21,3 +21,7 @@
 ## 2025-03-05 - Semantic Form Grouping and Missing ARIA Labels on Native Inputs
 **Learning:** Native form inputs (like `select` and `input type="number"`) used for filtering without visible `<label>` elements were missing programmatic associations, making them inaccessible to screen readers. Furthermore, related filters were grouped visually using `<div>` and `<h3>` tags instead of semantically grouping them with `<fieldset>` and `<legend>`.
 **Action:** When auditing forms and filter panels, replace visual `<div>`/`<h3>` grouping with semantic `<fieldset>`/`<legend>` structures. Ensure all inputs (including Shadcn `<Input>` components and native elements) without visible text labels include an `aria-label` attribute.
+
+## 2025-03-05 - Invalid HTML Structure (Nested Interactive Elements)
+**Learning:** Wrapping a full product card (which contains action buttons like "Add to Cart") in a `<Link>` creates invalid HTML (`<button>` nested inside `<a>`) and severe accessibility issues.
+**Action:** Use the "pseudo-element block link" pattern instead. Apply `relative group` to the card, place the `<Link>` inside the heading with `before:absolute before:inset-0 before:z-0`, and add `relative z-10` to independent interactive elements to position them above the pseudo-link.
