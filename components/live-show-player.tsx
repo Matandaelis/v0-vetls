@@ -57,6 +57,7 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button
+                aria-label={isLiked ? "Unlike show" : "Like show"}
                 size="icon"
                 variant="ghost"
                 className="text-white hover:bg-white/20"
@@ -64,11 +65,12 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
               >
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
               </Button>
-              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
+              <Button aria-label="Share show" size="icon" variant="ghost" className="text-white hover:bg-white/20">
                 <Share2 className="w-5 h-5" />
               </Button>
             </div>
             <Button
+              aria-label={isMuted ? "Unmute" : "Mute"}
               size="icon"
               variant="ghost"
               className="text-white hover:bg-white/20"
