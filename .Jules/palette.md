@@ -21,3 +21,7 @@
 ## 2025-03-05 - Semantic Form Grouping and Missing ARIA Labels on Native Inputs
 **Learning:** Native form inputs (like `select` and `input type="number"`) used for filtering without visible `<label>` elements were missing programmatic associations, making them inaccessible to screen readers. Furthermore, related filters were grouped visually using `<div>` and `<h3>` tags instead of semantically grouping them with `<fieldset>` and `<legend>`.
 **Action:** When auditing forms and filter panels, replace visual `<div>`/`<h3>` grouping with semantic `<fieldset>`/`<legend>` structures. Ensure all inputs (including Shadcn `<Input>` components and native elements) without visible text labels include an `aria-label` attribute.
+
+## 2024-03-15 - [Added aria-labels to Icon Buttons]
+**Learning:** Found several interactive icon-only buttons (`<Button size="icon">`) lacking accessible names. Without these, screen readers would simply announce "button" or the SVG contents, which is unhelpful.
+**Action:** Always ensure that any button containing only an icon (or visually hidden text) has an explicit, descriptive `aria-label`. Use dynamic labels to reflect state changes (e.g., `aria-label={isLiked ? "Unlike show" : "Like show"}`).
