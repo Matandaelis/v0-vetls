@@ -62,7 +62,7 @@ export default function CartPage() {
                       <p className="font-bold mt-2">${item.product.price.toFixed(2)}</p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => removeItem(item.product.id)}>
+                      <Button variant="ghost" size="icon" aria-label={`Remove ${item.product.name} from cart`} onClick={() => removeItem(item.product.id)}>
                         <Trash2 className="w-4 h-4" />
                       </Button>
                       <div className="flex items-center border border-border rounded">
@@ -70,15 +70,17 @@ export default function CartPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
+                          aria-label={`Decrease quantity of ${item.product.name}`}
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                         >
                           <Minus className="w-3 h-3" />
                         </Button>
-                        <span className="w-8 text-center text-sm">{item.quantity}</span>
+                        <span className="w-8 text-center text-sm" aria-live="polite">{item.quantity}</span>
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
+                          aria-label={`Increase quantity of ${item.product.name}`}
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                         >
                           <Plus className="w-3 h-3" />
