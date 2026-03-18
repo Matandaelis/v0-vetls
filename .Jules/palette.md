@@ -21,3 +21,6 @@
 ## 2025-03-05 - Semantic Form Grouping and Missing ARIA Labels on Native Inputs
 **Learning:** Native form inputs (like `select` and `input type="number"`) used for filtering without visible `<label>` elements were missing programmatic associations, making them inaccessible to screen readers. Furthermore, related filters were grouped visually using `<div>` and `<h3>` tags instead of semantically grouping them with `<fieldset>` and `<legend>`.
 **Action:** When auditing forms and filter panels, replace visual `<div>`/`<h3>` grouping with semantic `<fieldset>`/`<legend>` structures. Ensure all inputs (including Shadcn `<Input>` components and native elements) without visible text labels include an `aria-label` attribute.
+## 2026-03-18 - Dynamic Quantity ARIA Live Announcements
+**Learning:** In e-commerce carts and product pages, dynamic quantity updates (e.g., clicking +/- buttons) that do not trigger page reloads are completely silent to screen readers without ARIA live regions.
+**Action:** Always add `aria-live="polite"` to the display element (like a `<span>`) holding dynamic quantities or totals. This ensures screen readers announce the new value automatically when a user adjusts it via icon buttons.
