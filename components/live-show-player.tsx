@@ -44,7 +44,7 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
         />
 
         {/* Overlay Controls */}
-        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
           {/* Top Info */}
           <div className="flex items-start justify-between">
             {isLive && <Badge className="bg-destructive">LIVE</Badge>}
@@ -61,11 +61,20 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
                 variant="ghost"
                 className="text-white hover:bg-white/20"
                 onClick={() => setIsLiked(!isLiked)}
+                aria-label={isLiked ? "Unlike show" : "Like show"}
+                aria-pressed={isLiked}
+                title={isLiked ? "Unlike show" : "Like show"}
               >
-                <Heart className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
+                <Heart className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`} aria-hidden="true" />
               </Button>
-              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
-                <Share2 className="w-5 h-5" />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-white hover:bg-white/20"
+                aria-label="Share show"
+                title="Share show"
+              >
+                <Share2 className="w-5 h-5" aria-hidden="true" />
               </Button>
             </div>
             <Button
@@ -73,8 +82,10 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
               variant="ghost"
               className="text-white hover:bg-white/20"
               onClick={() => setIsMuted(!isMuted)}
+              aria-label={isMuted ? "Unmute" : "Mute"}
+              title={isMuted ? "Unmute" : "Mute"}
             >
-              {isMuted ? <Volume1 className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              {isMuted ? <Volume1 className="w-5 h-5" aria-hidden="true" /> : <Volume2 className="w-5 h-5" aria-hidden="true" />}
             </Button>
           </div>
         </div>
@@ -85,15 +96,17 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
             size="sm"
             className="absolute bottom-4 left-4 bg-black/50 border-white/20 text-white hover:bg-black/70"
             onClick={() => setShowProductOverlay(!showProductOverlay)}
+            aria-expanded={showProductOverlay}
+            aria-controls="product-overlay"
           >
             {showProductOverlay ? (
               <>
-                <X className="w-4 h-4 mr-1" />
+                <X className="w-4 h-4 mr-1" aria-hidden="true" />
                 Hide Products
               </>
             ) : (
               <>
-                <ShoppingCart className="w-4 h-4 mr-1" />
+                <ShoppingCart className="w-4 h-4 mr-1" aria-hidden="true" />
                 View Products ({featuredProducts.length})
               </>
             )}
@@ -102,7 +115,7 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
       </div>
 
       {showProductOverlay && featuredProducts.length > 0 && (
-        <div className="bg-gray-950 border-t border-border p-4">
+        <div id="product-overlay" className="bg-gray-950 border-t border-border p-4">
           <h4 className="font-semibold text-sm mb-4 text-white">Featured Products</h4>
           <ShowProductCarousel products={featuredProducts} isLive={isLive} />
         </div>
