@@ -56,6 +56,7 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
               type="button"
               onClick={() => setScore(star as 1 | 2 | 3 | 4 | 5)}
               className="focus:outline-none"
+              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
             >
               <RatingDisplay score={star as 1 | 2 | 3 | 4 | 5} size="lg" />
             </button>

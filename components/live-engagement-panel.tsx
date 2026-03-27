@@ -132,6 +132,7 @@ export function LiveEngagementPanel({ poll, tipTarget, reactionCounts = {} }: Li
                 size="sm"
                 onClick={() => handleReaction(emoji)}
                 className="text-xl h-10 hover:scale-110 transition-transform"
+                aria-label={`React with ${emoji}`}
               >
                 {emoji}
               </Button>
