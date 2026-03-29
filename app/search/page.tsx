@@ -70,7 +70,7 @@ export default function SearchPage() {
         <form onSubmit={handleSearch} className="mb-8">
           <div className="flex gap-2 mb-4">
             <Link href="/">
-              <Button variant="outline" size="icon" className="flex-shrink-0 bg-transparent">
+              <Button variant="outline" size="icon" className="flex-shrink-0 bg-transparent" aria-label="Back to home">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>

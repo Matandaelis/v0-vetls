@@ -48,6 +48,46 @@ if not check_file("components/show-chat.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking app/products/[id]/page.tsx...")
+if not check_file("app/products/[id]/page.tsx", [
+    'aria-label="Decrease quantity"',
+    'aria-label="Increase quantity"'
+]):
+    all_passed = False
+
+print("\nChecking app/products/page.tsx...")
+if not check_file("app/products/page.tsx", [
+    'aria-label="Back to home"'
+]):
+    all_passed = False
+
+print("\nChecking app/search/page.tsx...")
+if not check_file("app/search/page.tsx", [
+    'aria-label="Back to home"'
+]):
+    all_passed = False
+
+print("\nChecking components/host/product-management.tsx...")
+if not check_file("components/host/product-management.tsx", [
+    'aria-label="View statistics"',
+    'aria-label="Edit product"',
+    'aria-label="Delete product"'
+]):
+    all_passed = False
+
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label="Volume settings"',
+    'aria-label="Share stream"'
+]):
+    all_passed = False
+
+print("\nChecking components/show-sidebar.tsx...")
+if not check_file("components/show-sidebar.tsx", [
+    'aria-label="Send message"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
