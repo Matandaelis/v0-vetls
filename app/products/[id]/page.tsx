@@ -99,11 +99,11 @@ export default function ProductPage() {
             <div className="flex items-center gap-4 mb-6">
               <span className="font-semibold">Quantity:</span>
               <div className="flex items-center border border-border rounded">
-                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">
                   −
                 </Button>
                 <span className="w-12 text-center">{quantity}</span>
-                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}>
+                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} aria-label="Increase quantity">
                   +
                 </Button>
               </div>
