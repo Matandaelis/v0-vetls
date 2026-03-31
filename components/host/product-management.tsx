@@ -40,14 +40,14 @@ export function ProductManagement() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button size="icon" variant="ghost">
-                  <BarChart className="w-4 h-4" />
+                <Button size="icon" variant="ghost" aria-label={`View stats for ${product.name}`}>
+                  <BarChart className="w-4 h-4" aria-hidden="true" />
                 </Button>
-                <Button size="icon" variant="ghost">
-                  <Edit className="w-4 h-4" />
+                <Button size="icon" variant="ghost" aria-label={`Edit ${product.name}`}>
+                  <Edit className="w-4 h-4" aria-hidden="true" />
                 </Button>
-                <Button size="icon" variant="ghost" className="text-destructive">
-                  <Trash2 className="w-4 h-4" />
+                <Button size="icon" variant="ghost" className="text-destructive" aria-label={`Delete ${product.name}`}>
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
                 </Button>
               </div>
             </div>
