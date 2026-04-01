@@ -43,6 +43,7 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
           onClick={() => setSelectedProduct(hotspot.productId)}
           className="absolute w-12 h-12 -translate-x-1/2 -translate-y-1/2 group"
           style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
+          aria-label={`View details for ${products.find((p) => p.id === hotspot.productId)?.name || "product"}`}
         >
           <div className="relative w-full h-full">
             <div className="absolute inset-0 bg-pink-500 rounded-full opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -69,6 +70,7 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                 size="icon"
                 className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full"
                 onClick={() => setSelectedProduct(null)}
+                aria-label="Close product preview"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -105,6 +107,7 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                   size="icon"
                   className="h-9 w-9 bg-transparent"
                   onClick={() => toggleLike(selectedProductData.id)}
+                  aria-label={likedProducts.has(selectedProductData.id) ? "Unlike product" : "Like product"}
                 >
                   <Heart
                     className={`w-4 h-4 ${
