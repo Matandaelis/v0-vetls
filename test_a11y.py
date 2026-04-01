@@ -48,6 +48,20 @@ if not check_file("components/show-chat.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/show-sidebar.tsx...")
+if not check_file("components/show-sidebar.tsx", [
+    'aria-label="Send message"'
+]):
+    all_passed = False
+
+print("\nChecking components/product-hotspot.tsx...")
+if not check_file("components/product-hotspot.tsx", [
+    'aria-label={`View details for ${products.find((p) => p.id === hotspot.productId)?.name || "product"}`}',
+    'aria-label="Close product preview"',
+    'aria-label={likedProducts.has(selectedProductData.id) ? "Unlike product" : "Like product"}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
