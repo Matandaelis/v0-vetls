@@ -27,43 +27,55 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Link href={`/products/${product.id}`}>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
-        <div className="relative overflow-hidden bg-secondary h-48">
-          <img
-            src={product.image || "/placeholder.svg"}
-            alt={product.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform"
-          />
-          {product.stock <= 5 && (
-            <div className="absolute top-2 right-2 bg-destructive text-white px-2 py-1 rounded text-xs font-semibold">
-              Low Stock
-            </div>
-          )}
-        </div>
-        <div className="p-4 flex flex-col flex-1">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <div className="flex-1">
-              <h3 className="font-semibold line-clamp-2">{product.name}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{product.sellerName}</p>
-            </div>
+    <Card className="relative group overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+      <div className="relative overflow-hidden bg-secondary h-48">
+        <img
+          src={product.image || "/placeholder.svg"}
+          alt={product.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+        />
+        {product.stock <= 5 && (
+          <div className="absolute top-2 right-2 bg-destructive text-white px-2 py-1 rounded text-xs font-semibold z-10">
+            Low Stock
           </div>
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{product.description}</p>
-          <div className="mt-auto">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-xs text-muted-foreground">(128)</span>
-              </div>
-            </div>
-            <Button onClick={handleAddToCart} size="sm" className="w-full" variant={isAdded ? "default" : "outline"}>
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              {isAdded ? "Added!" : "Add to Cart"}
-            </Button>
+        )}
+      </div>
+      <div className="p-4 flex flex-col flex-1">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex-1">
+            <h3 className="font-semibold line-clamp-2">
+              <Link
+                href={`/products/${product.id}`}
+                className="before:absolute before:inset-0 before:z-0 outline-none focus-visible:underline"
+              >
+                {product.name}
+              </Link>
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">{product.sellerName}</p>
           </div>
         </div>
-      </Card>
-    </Link>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3 relative z-10 pointer-events-none">{product.description}</p>
+        <div className="mt-auto relative z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
+              <span className="text-xs text-muted-foreground">(128)</span>
+            </div>
+          </div>
+          <Button
+            onClick={handleAddToCart}
+            size="sm"
+            className="w-full"
+            variant={isAdded ? "default" : "outline"}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" aria-hidden="true" />
+            {isAdded ? "Added!" : "Add to Cart"}
+          </Button>
+        </div>
+      </div>
+    </Card>
   )
 }

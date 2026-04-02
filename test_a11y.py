@@ -48,6 +48,14 @@ if not check_file("components/show-chat.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/product-card.tsx...")
+if not check_file("components/product-card.tsx", [
+    'aria-live="polite"',
+    'aria-atomic="true"',
+    'before:absolute before:inset-0 before:z-0'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
