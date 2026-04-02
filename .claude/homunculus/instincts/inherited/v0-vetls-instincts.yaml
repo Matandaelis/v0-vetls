@@ -1,0 +1,445 @@
+# Instincts generated from https://github.com/Matandaelis/v0-vetls
+# Generated: 2026-04-02T18:39:20.761Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: v0-vetls-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Commit Length
+
+## Action
+
+Write moderate-length commit messages (~60 characters)
+
+## Evidence
+
+- Average commit message length: 60 chars
+- Based on 95 commits
+
+---
+id: v0-vetls-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: v0-vetls-import-alias
+trigger: "when importing modules"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Import Alias
+
+## Action
+
+Use path aliases (@/, ~/) instead of relative imports
+
+## Evidence
+
+- Import analysis shows alias pattern
+- Example: import { x } from '@/lib/x'
+
+---
+id: v0-vetls-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Export Style
+
+## Action
+
+Prefer default exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: default
+
+---
+id: v0-vetls-workflow-database-migration
+trigger: "when modifying the database schema or adding tables"
+confidence: 0.8
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Workflow Database Migration
+
+## Action
+
+Follow the database-migration workflow:
+1. Create migration file
+2. Update schema definitions
+3. Generate/update types
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~6x per month
+- Files: migrations/*, **/schema.*
+
+---
+id: v0-vetls-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~14x per month
+- Files: app/api/admin/init-db/*, app/api/affiliates/earnings/*, app/api/affiliates/track-click/*
+
+---
+id: v0-vetls-workflow-accessibility-enhancement-workflow
+trigger: "when doing accessibility enhancement workflow"
+confidence: 0.65
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Workflow Accessibility Enhancement Workflow
+
+## Action
+
+Follow the accessibility-enhancement-workflow workflow:
+1. Edit one or more React component files (e.g., in components/) to add ARIA attributes, semantic HTML, or improve screen reader support.
+2. Update or add related accessibility tests (e.g., test_a11y.py or verify-a11y.py).
+3. Document the change or learning in .Jules/palette.md.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~3x per month
+- Files: components/*.tsx, .Jules/palette.md, test_a11y.py
+
+---
+id: v0-vetls-workflow-feature-development-with-docs-and-migrations
+trigger: "when doing feature development with docs and migrations"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Workflow Feature Development With Docs And Migrations
+
+## Action
+
+Follow the feature-development-with-docs-and-migrations workflow:
+1. Create or update API route files (e.g., app/api/*/route.ts).
+2. Create or update frontend components (e.g., components/*.tsx).
+3. Create or update database migration or schema files (e.g., lib/db/migrations.ts, scripts/*.sql, supabase-schema.sql).
+4. Update or add documentation/implementation summary files (e.g., *.md).
+5. Update package.json if dependencies are needed.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: app/api/**/*.ts, components/**/*.tsx, lib/db/migrations.ts
+
+---
+id: v0-vetls-workflow-merge-pr-with-feature-or-fix
+trigger: "when doing merge pr with feature or fix"
+confidence: 0.7
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/Matandaelis/v0-vetls
+---
+
+# V0 Vetls Workflow Merge Pr With Feature Or Fix
+
+## Action
+
+Follow the merge-pr-with-feature-or-fix workflow:
+1. Feature/fix branch is developed and committed (touching relevant files).
+2. A merge commit is created, often with the same set of files as the feature/fix commit.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~4x per month
+- Files: varies (matches files changed in feature/fix commits)
+
+---
+id: v0-vetls-instinct-naming-conventions
+trigger: "When creating or renaming files, functions, classes, or constants"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Naming Conventions
+
+## Action
+
+Use camelCase for files and functions, PascalCase for classes, and SCREAMING_SNAKE_CASE for constants
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions
+- Consistent naming in components/*.tsx
+
+---
+id: v0-vetls-instinct-import-style
+trigger: "When importing modules in TypeScript files"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Import Style
+
+## Action
+
+Use alias-based import paths instead of relative imports
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+- refactor: update Supabase imports to consistent client
+
+---
+id: v0-vetls-instinct-export-style
+trigger: "When exporting modules or components"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Export Style
+
+## Action
+
+Use default export style for modules and components
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: v0-vetls-instinct-testing-location
+trigger: "When adding tests for new features or components"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Testing Location
+
+## Action
+
+Place test files adjacent to the implementation or in a mixed location as per existing structure
+
+## Evidence
+
+- architecture.folderStructure.testLocation is 'mixed'
+- Presence of test_a11y.py, verify-a11y.py
+
+---
+id: v0-vetls-instinct-accessibility-testing
+trigger: "When enhancing accessibility in components"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Accessibility Testing
+
+## Action
+
+Update or add accessibility tests in test_a11y.py or verify-a11y.py
+
+## Evidence
+
+- accessibility-enhancement-workflow step 2
+- Pattern in files: test_a11y.py, verify-a11y.py
+
+---
+id: v0-vetls-instinct-git-commit-prefix
+trigger: "When writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Git Commit Prefix
+
+## Action
+
+Prefix the commit message with feat, fix, or refactor as appropriate
+
+## Evidence
+
+- commits.prefixes: feat, fix, refactor
+- Examples: feat(ux): add aria labels..., fix: update Supabase client import...
+
+---
+id: v0-vetls-instinct-git-commit-length
+trigger: "When composing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Git Commit Length
+
+## Action
+
+Keep commit messages concise, around 60 characters on average
+
+## Evidence
+
+- commits.averageLength: 60
+
+---
+id: v0-vetls-instinct-git-merge-pr
+trigger: "When merging a pull request for a feature or fix"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Git Merge Pr
+
+## Action
+
+Ensure the merge commit touches the same files as the original feature/fix commit
+
+## Evidence
+
+- merge-pr-with-feature-or-fix workflow
+- Merge pull request #79 from Matandaelis/palette-clip-card-a11y-6018444098607226387
+
+---
+id: v0-vetls-instinct-accessibility-enhancement
+trigger: "When someone wants to enhance accessibility of a component or UI feature"
+confidence: 0.98
+domain: workflow
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Accessibility Enhancement
+
+## Action
+
+Edit React component files to add ARIA attributes/semantic HTML, update a11y tests, and document in .Jules/palette.md
+
+## Evidence
+
+- accessibility-enhancement-workflow
+- Commits: feat(ux): add aria labels..., 🎨 Palette: [a11y improvement for clip card buttons]
+
+---
+id: v0-vetls-instinct-feature-development-with-docs-and-migrations
+trigger: "When implementing a new feature or major enhancement involving both backend and frontend"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Feature Development With Docs And Migrations
+
+## Action
+
+Update API routes, frontend components, migrations/schema, documentation, and package.json as needed
+
+## Evidence
+
+- feature-development-with-docs-and-migrations workflow
+- Commits: feat: implement comprehensive platform features
+
+---
+id: v0-vetls-instinct-database-migration-workflow
+trigger: "When making database schema changes"
+confidence: 0.8
+domain: workflow
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Database Migration Workflow
+
+## Action
+
+Create migration files, update schema definitions, and generate/update types
+
+## Evidence
+
+- database-migration workflow
+- Pattern in files: migrations/*, **/schema.*
+
+---
+id: v0-vetls-instinct-feature-development-standard
+trigger: "When adding a standard feature"
+confidence: 0.8
+domain: workflow
+source: repo-analysis
+source_repo: Matandaelis/v0-vetls
+---
+
+# V0 Vetls Instinct Feature Development Standard
+
+## Action
+
+Implement the feature, add tests, and update documentation
+
+## Evidence
+
+- feature-development workflow
+- Pattern in files: app/api/**, components/**, **/*.test.*
+
