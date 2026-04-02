@@ -48,6 +48,17 @@ if not check_file("components/show-chat.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    'id="rating-label"',
+    'role="radiogroup"',
+    'aria-labelledby="rating-label"',
+    'role="radio"',
+    'aria-checked={score === star}',
+    'aria-label={`${star} star${star > 1 ? \'s\' : \'\'}`}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
