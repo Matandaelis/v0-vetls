@@ -17,7 +17,7 @@
   "buildOutputDirectory": ".next",
   "functions": {
     "app/api/**": {
-      "maxDuration": 60
+      "maxDuration": 600000
     }
   }
 }
