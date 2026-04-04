@@ -48,6 +48,15 @@ if not check_file("components/show-chat.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/live-show-player.tsx...")
+if not check_file("components/live-show-player.tsx", [
+    'aria-label={isLiked ? "Unlike show" : "Like show"}',
+    'aria-label="Share show"',
+    'aria-label={isMuted ? "Unmute" : "Mute"}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
