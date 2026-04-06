@@ -94,7 +94,7 @@ export function ShowSidebar({ hostName, hostAvatar, initialComments = [] }: Show
             onChange={(e) => setMessageText(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <Button size="icon" className="h-9 w-9" onClick={handleSendMessage} disabled={!messageText.trim()}>
+          <Button size="icon" className="h-9 w-9" onClick={handleSendMessage} disabled={!messageText.trim()} aria-label="Send message">
             <Send className="w-4 h-4" />
           </Button>
         </div>
