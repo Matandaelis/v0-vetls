@@ -76,3 +76,12 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/host/product-management.tsx...")
+content = open("components/host/product-management.tsx").read()
+assert 'aria-label={`View analytics for ${product.name}`}' in content
+assert 'aria-label={`Edit ${product.name}`}' in content
+assert 'aria-label={`Delete ${product.name}`}' in content
+print("PASSED: components/host/product-management.tsx")
+
+print("\nAll accessibility checks passed!")
