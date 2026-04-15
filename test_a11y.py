@@ -76,3 +76,22 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+def test_review_form_a11y():
+    with open("components/review-form.tsx", "r") as f:
+        content = f.read()
+
+    assert "role=\"radiogroup\"" in content, "Missing radiogroup role"
+    assert "role=\"radio\"" in content, "Missing radio role"
+    assert "aria-checked" in content, "Missing aria-checked"
+    assert "<fieldset" in content, "Missing fieldset"
+    assert "<legend" in content, "Missing legend"
+    assert "htmlFor=\"review-title\"" in content, "Missing htmlFor title"
+    assert "id=\"review-title\"" in content, "Missing id title"
+    assert "htmlFor=\"review-comment\"" in content, "Missing htmlFor comment"
+    assert "id=\"review-comment\"" in content, "Missing id comment"
+    assert "aria-busy={isSubmitting}" in content, "Missing aria-busy"
+
+    print("Review form a11y tests passed!")
+
+test_review_form_a11y()
