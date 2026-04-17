@@ -76,3 +76,34 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+def test_review_form():
+    with open('components/review-form.tsx', 'r') as f:
+        content = f.read()
+
+    errors = []
+
+    if 'role="radiogroup"' not in content:
+        errors.append("Missing role='radiogroup' on rating container")
+
+    if 'role="radio"' not in content:
+        errors.append("Missing role='radio' on rating stars")
+
+    if '<fieldset' not in content:
+        errors.append("Missing <fieldset> around rating input")
+
+    if 'aria-busy' not in content:
+        errors.append("Missing aria-busy on submit button")
+
+    if 'htmlFor="title"' not in content:
+        errors.append("Missing htmlFor link for title label")
+
+    if errors:
+        print("\nFAILED: components/review-form.tsx")
+        for error in errors:
+            print(f"  - {error}")
+        sys.exit(1)
+
+    print("\nPASSED: components/review-form.tsx")
+
+test_review_form()
