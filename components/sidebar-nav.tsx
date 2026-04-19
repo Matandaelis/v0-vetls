@@ -153,14 +153,21 @@ export function SidebarNav() {
     return (
       <Link href={item.href}>
         <Button
-          variant={isActive ? "secondary" : "ghost"}
-          className={cn("w-full justify-start gap-2 text-sm", level > 0 && "ml-4")}
+          variant="ghost"
+          className={cn(
+            "w-full justify-start gap-2.5 px-3 py-2 h-auto rounded-md text-sm font-medium transition-colors duration-200",
+            isActive && "bg-accent text-accent-foreground font-semibold",
+            !isActive && "text-foreground hover:bg-secondary",
+            level > 0 && "ml-4 text-muted-foreground hover:text-foreground"
+          )}
           onClick={() => setIsOpen(false)}
         >
           {item.icon}
           <span className="flex-1 text-left">{item.title}</span>
           {item.badge && (
-            <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">{item.badge}</span>
+            <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full font-semibold">
+              {item.badge}
+            </span>
           )}
         </Button>
       </Link>
@@ -175,23 +182,33 @@ export function SidebarNav() {
       <div key={category.title} className="space-y-1">
         <Button
           variant="ghost"
-          className="w-full justify-between"
+          className={cn(
+            "w-full justify-between px-3 py-2.5 h-auto rounded-md font-semibold text-sm transition-colors duration-200",
+            "text-foreground hover:bg-secondary"
+          )}
           onClick={() => hasChildren && toggleCategory(category.title)}
         >
-          <div className="flex items-center gap-2">
-            {category.icon}
-            <span className="text-sm font-medium">{category.title}</span>
+          <div className="flex items-center gap-2.5 flex-1">
+            <span className="text-accent">{category.icon}</span>
+            <span>{category.title}</span>
             {category.badge && (
-              <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-accent text-accent-foreground px-2 py-0.5 rounded-full font-bold ml-auto">
                 {category.badge}
               </span>
             )}
           </div>
-          {hasChildren && <ChevronDown className={cn("w-4 h-4 transition-transform", isExpanded && "rotate-180")} />}
+          {hasChildren && (
+            <ChevronDown
+              className={cn(
+                "w-4 h-4 transition-transform duration-300 flex-shrink-0 ml-1",
+                isExpanded && "rotate-180"
+              )}
+            />
+          )}
         </Button>
 
         {hasChildren && isExpanded && (
-          <div className="ml-2 border-l border-border pl-2 space-y-1">
+          <div className="ml-3 border-l-2 border-border pl-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
             {category.children.map((item) => (
               <NavItem key={item.href} item={item} level={1} />
             ))}
@@ -206,8 +223,9 @@ export function SidebarNav() {
       <Button
         variant="ghost"
         size="icon"
-        className="fixed left-4 top-20 z-40 md:hidden"
-        aria-label={isOpen ? "Close menu" : "Open menu"}
+        className="fixed left-4 top-20 z-40 md:hidden hover:bg-secondary transition-colors duration-200"
+        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+        aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -215,29 +233,34 @@ export function SidebarNav() {
 
       <aside
         className={cn(
-          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r border-border bg-background overflow-y-auto transition-transform duration-300 z-30",
+          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 sm:w-72 border-r border-border bg-background overflow-y-auto transition-all duration-300 ease-out z-30 shadow-lg md:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
-        <div className="p-4 space-y-6">
+        <div className="p-4 sm:p-6 space-y-8">
           {/* Navigation Categories */}
-          <div className="space-y-2">
+          <nav className="space-y-1">
             {filteredCategories.map((category) => (
               <CategoryButton key={category.title} category={category} />
             ))}
-          </div>
+          </nav>
 
           {/* User Section */}
           {isAuthenticated && (
-            <div className="border-t pt-4 space-y-2">
-              <div className="px-3 py-2 rounded-lg bg-secondary text-sm">
-                <p className="font-medium">{currentUser?.name}</p>
-                <p className="text-xs text-muted-foreground">{currentUser?.email}</p>
-                <p className="text-xs text-muted-foreground capitalize mt-1">Role: {currentUser?.role}</p>
+            <div className="border-t border-border pt-6 space-y-3">
+              <div className="flex items-center gap-3 px-3 py-3 rounded-lg bg-secondary/60 border border-border/50">
+                <div className="w-10 h-10 bg-accent text-accent-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+                  {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-foreground truncate">{currentUser?.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{currentUser?.email}</p>
+                  <p className="text-xs text-accent font-medium capitalize mt-0.5">{currentUser?.role}</p>
+                </div>
               </div>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-2 text-destructive hover:text-destructive"
+                className="w-full justify-start gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors duration-200 font-medium"
                 onClick={handleLogout}
               >
                 <LogOut className="w-4 h-4" />
