@@ -50,9 +50,15 @@ interface NavItem {
 export function SidebarNav() {
   const [isOpen, setIsOpen] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["shopping", "discovery"])
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { isAuthenticated, isSeller, isAdmin, currentUser, logout } = useAuth()
+
+  // Hydration safety
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const toggleCategory = (title: string) => {
     setExpandedCategories((prev) => (prev.includes(title) ? prev.filter((c) => c !== title) : [...prev, title]))
@@ -218,28 +224,48 @@ export function SidebarNav() {
     )
   }
 
+  // Only render on client to avoid hydration issues
+  if (!mounted) {
+    return null
+  }
+
   return (
     <>
+      {/* Mobile Menu Button - Hidden on desktop */}
       <Button
         variant="ghost"
         size="icon"
-        className="fixed left-4 top-20 z-40 md:hidden hover:bg-secondary transition-colors duration-200"
+        className="fixed left-4 top-20 z-50 md:hidden hover:bg-secondary transition-colors duration-200"
         aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={isOpen}
+        aria-controls="sidebar-nav"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </Button>
 
+      {/* Mobile Overlay - Only on mobile when open */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden" 
+          onClick={() => setIsOpen(false)}
+          role="presentation"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar Navigation */}
       <aside
+        id="sidebar-nav"
         className={cn(
-          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 sm:w-72 border-r border-border bg-background overflow-y-auto transition-all duration-300 ease-out z-30 shadow-lg md:shadow-none",
-          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 sm:w-72 border-r border-border bg-background overflow-y-auto transition-all duration-300 ease-out z-40 shadow-lg md:shadow-none md:translate-x-0",
+          // On mobile: open/close based on isOpen state, on desktop: always visible via md:translate-x-0
+          isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="p-4 sm:p-6 space-y-8">
           {/* Navigation Categories */}
-          <nav className="space-y-1">
+          <nav className="space-y-1" role="navigation" aria-label="Main navigation">
             {filteredCategories.map((category) => (
               <CategoryButton key={category.title} category={category} />
             ))}
@@ -284,9 +310,6 @@ export function SidebarNav() {
           )}
         </div>
       </aside>
-
-      {/* Mobile Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setIsOpen(false)} />}
     </>
   )
 }
