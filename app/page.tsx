@@ -23,77 +23,98 @@ export default function HomePage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 md:py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Live Shopping, Real Connections</h1>
-              <p className="text-lg mb-6 opacity-90">
-                Watch live shows, discover amazing products, and shop in real-time with your favorite creators.
+      <section className="relative overflow-hidden bg-gradient-to-br from-foreground to-foreground/90 text-background py-16 md:py-28 lg:py-32">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-transparent"></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 text-accent rounded-full text-sm font-semibold">
+                  <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
+                  Live shopping is here
+                </div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-balance leading-tight">
+                  Watch, Shop, Save
+                </h1>
+              </div>
+              <p className="text-lg text-background/80 max-w-lg leading-relaxed">
+                Join live shopping shows from your favorite creators. Discover exclusive products, get real-time deals, and connect with a community of savvy shoppers.
               </p>
-              <div className="flex gap-3">
-                <Button size="lg" variant="secondary" className="gap-2">
-                  <Play className="w-4 h-4" /> Watch Now
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold gap-2 px-8">
+                  <Play className="w-5 h-5" /> Watch Live Shows
                 </Button>
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="text-primary border-primary-foreground hover:bg-primary-foreground/10 bg-transparent"
+                  className="border border-background/30 bg-background/10 text-background hover:bg-background/20 font-semibold"
                 >
-                  Learn More
+                  Explore Products
                 </Button>
               </div>
             </div>
-            <div className="hidden md:block">
-              <img src="/live-shopping-platform.jpg" alt="Live Shopping" className="w-full rounded-lg" />
+
+            {/* Hero Image */}
+            <div className="hidden lg:block relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-transparent blur-3xl rounded-full"></div>
+              <div className="relative bg-gradient-to-br from-accent/30 to-transparent p-1 rounded-2xl">
+                <img 
+                  src="/placeholder.svg" 
+                  alt="Live Shopping" 
+                  className="w-full rounded-xl object-cover shadow-2xl" 
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Live Now Section */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+      <section className="py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Live Now</h2>
-              <p className="text-muted-foreground">Tune in to live shows happening right now</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-3 text-foreground">Now Live</h2>
+              <p className="text-lg text-muted-foreground">Join these amazing live shows happening right now</p>
             </div>
             <Link href="/live">
-              <Button variant="outline" className="gap-2 bg-transparent">
+              <Button className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold whitespace-nowrap">
                 View All <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
           {liveShows.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {liveShows.map((show) => (
                 <ShowCard key={show.id} show={show} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 border rounded-lg bg-secondary/20">
-              <p className="text-muted-foreground">No live shows right now. Check back soon!</p>
+            <div className="text-center py-16 border border-border rounded-lg bg-secondary/30">
+              <p className="text-muted-foreground text-lg">No live shows right now. Check back soon!</p>
             </div>
           )}
         </div>
       </section>
 
       {/* Upcoming Shows Section */}
-      <section className="py-12 md:py-16 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+      <section className="py-16 md:py-20 bg-secondary/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Upcoming Shows</h2>
-              <p className="text-muted-foreground">Don't miss out on upcoming events</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-3 text-foreground">Upcoming Shows</h2>
+              <p className="text-lg text-muted-foreground">Set reminders for shows you don&apos;t want to miss</p>
             </div>
             <Link href="/shows">
-              <Button variant="outline" className="gap-2 bg-transparent">
+              <Button className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold whitespace-nowrap">
                 View All <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {shows
               .filter((s) => s.status === "scheduled")
               .slice(0, 3)
@@ -105,20 +126,20 @@ export default function HomePage() {
       </section>
 
       {/* Featured Products Section */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+      <section className="py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
-              <p className="text-muted-foreground">Trending products from our top sellers</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-3 text-foreground">Featured Products</h2>
+              <p className="text-lg text-muted-foreground">Trending items from our top sellers</p>
             </div>
             <Link href="/products">
-              <Button variant="outline" className="gap-2 bg-transparent">
-                View All <ArrowRight className="w-4 h-4" />
+              <Button className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold whitespace-nowrap">
+                Shop All <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -127,15 +148,14 @@ export default function HomePage() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-12 md:py-16 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8">Shop by Category</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <section className="py-16 md:py-20 bg-secondary/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl md:text-5xl font-bold mb-12 text-foreground">Shop by Category</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
             {categories.map((category) => (
               <Link key={category} href={`/category/${category.toLowerCase()}`}>
                 <Button
-                  variant="outline"
-                  className="w-full h-24 text-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-colors bg-transparent"
+                  className="w-full h-28 text-base font-semibold bg-card border border-border hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-200 flex items-center justify-center"
                 >
                   {category}
                 </Button>

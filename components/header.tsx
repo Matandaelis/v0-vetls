@@ -34,35 +34,42 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background shadow-sm">
       <SidebarNav />
 
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
+          <Link href="/" className="flex items-center gap-3 font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity">
+            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center text-accent-foreground font-bold text-sm">
               TS
             </div>
-            <span className="hidden sm:inline">JB Live Shopping</span>
+            <span className="hidden sm:inline text-foreground">TalkShop Live</span>
           </Link>
 
-          {/* Search Bar - Simplified for desktop only */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-2">
-            <Search className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-            <Input
-              placeholder="Search products or shows..."
-              aria-label="Search products or shows"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-0 bg-secondary text-foreground placeholder:text-muted-foreground focus-visible:ring-0"
-            />
+          {/* Search Bar - Center and prominent */}
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-4 items-center">
+            <div className="w-full relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
+              <Input
+                placeholder="Search products..."
+                aria-label="Search products or shows"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-accent rounded-lg"
+              />
+            </div>
           </form>
 
-          {/* Right Navigation - Simplified */}
-          <div className="flex items-center gap-2">
-            <div className="hidden lg:flex items-center gap-3">
-              <Button variant="ghost" size="sm" aria-label="Wishlist">
+          {/* Right Navigation */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <div className="hidden lg:flex items-center gap-1">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                aria-label="Wishlist"
+                className="hover:bg-secondary"
+              >
                 <Heart className="w-5 h-5" />
               </Button>
               <NotificationPanel />
@@ -73,12 +80,12 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative"
+                className="relative hover:bg-secondary"
                 aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-semibold rounded-full flex items-center justify-center">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
                 )}
@@ -88,8 +95,8 @@ export function Header() {
         </div>
 
         {/* Mobile Search */}
-        <form onSubmit={handleSearch} className="md:hidden pb-3">
-          <div className="flex items-center gap-2 bg-secondary rounded-lg px-3 py-2">
+        <form onSubmit={handleSearch} className="md:hidden pb-3 -mx-4 px-4">
+          <div className="flex items-center gap-2 bg-secondary border border-border rounded-lg px-3 py-2.5">
             <Search className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               placeholder="Search..."
