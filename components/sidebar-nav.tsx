@@ -151,19 +151,20 @@ export function SidebarNav() {
   const NavItem = ({ item, level = 0 }: { item: NavItem; level?: number }) => {
     const isActive = pathname === item.href
     return (
-      <Link href={item.href}>
-        <Button
-          variant={isActive ? "secondary" : "ghost"}
-          className={cn("w-full justify-start gap-2 text-sm", level > 0 && "ml-4")}
-          onClick={() => setIsOpen(false)}
-        >
+      <Button
+        variant={isActive ? "secondary" : "ghost"}
+        className={cn("w-full justify-start gap-2 text-sm", level > 0 && "ml-4")}
+        onClick={() => setIsOpen(false)}
+        asChild
+      >
+        <Link href={item.href}>
           {item.icon}
           <span className="flex-1 text-left">{item.title}</span>
           {item.badge && (
             <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">{item.badge}</span>
           )}
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     )
   }
 
@@ -249,14 +250,16 @@ export function SidebarNav() {
           {/* Auth Buttons */}
           {!isAuthenticated && (
             <div className="border-t pt-4 space-y-2">
-              <Link href="/login">
-                <Button variant="outline" className="w-full bg-transparent">
+              <Button variant="outline" className="w-full bg-transparent" asChild>
+                <Link href="/login">
                   Login
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button className="w-full">Sign up</Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button className="w-full" asChild>
+                <Link href="/register">
+                  Sign up
+                </Link>
+              </Button>
             </div>
           )}
         </div>

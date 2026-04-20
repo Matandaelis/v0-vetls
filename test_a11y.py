@@ -76,3 +76,17 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/product-card.tsx for semantic pseudo-element link pattern...")
+if not check_file("components/product-card.tsx", [
+    'relative group',
+    'before:absolute before:inset-0 before:z-0',
+    'relative z-10'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)

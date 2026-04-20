@@ -36,9 +36,11 @@ export default function AdminLayout({
                 You need administrator privileges to access this area.
               </p>
               <div className="flex gap-2 justify-center pt-4">
-                <Link href="/">
-                  <Button variant="outline">Go Home</Button>
-                </Link>
+                <Button variant="outline" asChild>
+  <Link href="/">
+    Go Home
+  </Link>
+</Button>
               </div>
             </CardContent>
           </Card>
@@ -63,42 +65,54 @@ export default function AdminLayout({
               Super Admin
             </h2>
             <nav className="space-y-2">
-              <Link href="/admin">
-                <Button variant="ghost" className="w-full justify-start gap-2">
+              <Button variant="ghost" className="w-full justify-start gap-2" asChild>
+  <Link href="/admin">
+
                   <LayoutDashboard className="w-4 h-4" />
                   Overview
-                </Button>
-              </Link>
-              <Link href="/admin/users">
-                <Button variant="ghost" className="w-full justify-start gap-2">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start gap-2" asChild>
+  <Link href="/admin/users">
+
                   <Users className="w-4 h-4" />
                   User Management
-                </Button>
-              </Link>
-              <Link href="/admin/sellers">
-                <Button variant="ghost" className="w-full justify-start gap-2">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start gap-2" asChild>
+  <Link href="/admin/sellers">
+
                   <UserCheck className="w-4 h-4" />
                   Seller Approval
-                </Button>
-              </Link>
-              <Link href="/admin/shows">
-                <Button variant="ghost" className="w-full justify-start gap-2">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start gap-2" asChild>
+  <Link href="/admin/shows">
+
                   <Video className="w-4 h-4" />
                   Show Moderation
-                </Button>
-              </Link>
-              <Link href="/admin/moderation">
-                <Button variant="ghost" className="w-full justify-start gap-2">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start gap-2" asChild>
+  <Link href="/admin/moderation">
+
                   <Flag className="w-4 h-4" />
                   Content Reports
-                </Button>
-              </Link>
-              <Link href="/admin/settings">
-                <Button variant="ghost" className="w-full justify-start gap-2">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start gap-2" asChild>
+  <Link href="/admin/settings">
+
                   <Settings className="w-4 h-4" />
                   Platform Settings
-                </Button>
-              </Link>
+
+  </Link>
+</Button>
             </nav>
           </div>
         </aside>

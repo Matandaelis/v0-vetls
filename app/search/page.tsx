@@ -69,11 +69,13 @@ export default function SearchPage() {
         {/* Search Form */}
         <form onSubmit={handleSearch} className="mb-8">
           <div className="flex gap-2 mb-4">
-            <Link href="/">
-              <Button variant="outline" size="icon" className="flex-shrink-0 bg-transparent">
+            <Button variant="outline" size="icon" className="flex-shrink-0 bg-transparent" asChild>
+  <Link href="/">
+
                 <ArrowLeft className="w-4 h-4" />
-              </Button>
-            </Link>
+
+  </Link>
+</Button>
             <Input
               placeholder="Search products, shows, brands, categories..."
               value={query}
@@ -191,9 +193,11 @@ export default function SearchPage() {
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">No results found for "{query}"</p>
-                <Link href="/">
-                  <Button variant="outline">Return to Home</Button>
-                </Link>
+                <Button variant="outline" asChild>
+  <Link href="/">
+    Return to Home
+  </Link>
+</Button>
               </div>
             )}
           </>

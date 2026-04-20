@@ -125,9 +125,11 @@ export default function FeedPage() {
                 <div className="text-center py-12">
                   <p className="text-muted-foreground mb-4">No live shows right now</p>
                   <p className="text-sm text-muted-foreground mb-6">Follow creators to see their shows in your feed</p>
-                  <Link href="/shows">
-                    <Button>Browse All Shows</Button>
-                  </Link>
+                  <Button asChild>
+  <Link href="/shows">
+    Browse All Shows
+  </Link>
+</Button>
                 </div>
               )}
             </div>
@@ -179,11 +181,13 @@ export default function FeedPage() {
           <h2 className="text-2xl font-bold mb-6">Discover by Interest</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {["Electronics", "Fashion", "Beauty", "Home & Garden"].map((category) => (
-              <Link key={category} href={`/category/${category.toLowerCase()}`}>
-                <Button variant="outline" className="w-full bg-transparent" size="lg">
+              <Button variant="outline" className="w-full bg-transparent" size="lg" asChild>
+  <Link key={category} href={`/category/${category.toLowerCase()}`}>
+
                   {category}
-                </Button>
-              </Link>
+
+  </Link>
+</Button>
             ))}
           </div>
         </div>

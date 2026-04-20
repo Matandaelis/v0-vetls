@@ -39,12 +39,16 @@ export default function HostLayout({
                 Current account type: <span className="font-medium capitalize">{currentUser?.role}</span>
               </p>
               <div className="flex gap-2 justify-center pt-4">
-                <Link href="/">
-                  <Button variant="outline">Go Home</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Create Seller Account</Button>
-                </Link>
+                <Button variant="outline" asChild>
+  <Link href="/">
+    Go Home
+  </Link>
+</Button>
+                <Button asChild>
+  <Link href="/register">
+    Create Seller Account
+  </Link>
+</Button>
               </div>
             </CardContent>
           </Card>
