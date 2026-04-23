@@ -115,17 +115,20 @@ export function LiveAuctionEnhanced({ auction }: { auction: AuctionEnhanced }) {
         <div className="border-t border-orange-200 pt-4">
           <button
             onClick={() => setShowBidHistory(!showBidHistory)}
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+            aria-expanded={showBidHistory}
+            aria-controls="bid-history-panel"
+            aria-label={showBidHistory ? "Hide bid history" : "Show bid history"}
+            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
           >
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4" aria-hidden="true" />
               <span className="font-semibold text-sm">Bid History</span>
             </div>
-            {showBidHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {showBidHistory ? <ChevronUp className="w-4 h-4" aria-hidden="true" /> : <ChevronDown className="w-4 h-4" aria-hidden="true" />}
           </button>
 
           {showBidHistory && (
-            <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
+            <div id="bid-history-panel" className="mt-3 space-y-2 max-h-48 overflow-y-auto">
               {auction.bidHistory.slice(0, 10).map((bid, idx) => (
                 <div
                   key={idx}
@@ -158,8 +161,9 @@ export function LiveAuctionEnhanced({ auction }: { auction: AuctionEnhanced }) {
 
           {useProxy && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 block">Maximum Proxy Bid</label>
+              <label htmlFor="proxy-bid-amount" className="text-sm font-medium text-gray-700 block">Maximum Proxy Bid</label>
               <Input
+                id="proxy-bid-amount"
                 type="number"
                 value={proxyBidAmount || ""}
                 onChange={(e) => setProxyBidAmount(e.target.value ? Number.parseFloat(e.target.value) : null)}
