@@ -76,3 +76,20 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+def check_mobile_nav():
+    with open('components/mobile-bottom-nav.tsx', 'r') as f:
+        content = f.read()
+
+    print("\nChecking components/mobile-bottom-nav.tsx...")
+    if 'getCartItemCount' not in content:
+        print("FAILED: components/mobile-bottom-nav.tsx is missing getCartItemCount")
+        sys.exit(1)
+
+    if 'aria-label' not in content:
+        print("FAILED: components/mobile-bottom-nav.tsx is missing dynamic aria-label")
+        sys.exit(1)
+
+    print("PASSED: components/mobile-bottom-nav.tsx")
+
+check_mobile_nav()
