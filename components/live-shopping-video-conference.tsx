@@ -279,6 +279,7 @@ function Controls({
             size="icon"
             onClick={onToggleCamera}
             className="rounded-full"
+            aria-label={isCameraEnabled ? "Disable camera" : "Enable camera"}
           >
             {isCameraEnabled ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </Button>
@@ -290,6 +291,7 @@ function Controls({
             size="icon"
             onClick={onToggleMic}
             className="rounded-full"
+            aria-label={isMicEnabled ? "Mute mic" : "Unmute mic"}
           >
             {isMicEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </Button>
