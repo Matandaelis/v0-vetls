@@ -6,19 +6,35 @@ import { ShowCard } from "@/components/show-card"
 import { Button } from "@/components/ui/button"
 import { useProducts } from "@/contexts/product-context"
 import { useShows } from "@/contexts/show-context"
+import { useSearch } from "@/contexts/search-context"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import { useEffect, useState } from "react"
+import type { Product } from "@/lib/types"
 
 export default function CategoryPage() {
   const params = useParams()
   const category = Array.isArray(params.category) ? params.category[0] : params.category
   const displayCategory = decodeURIComponent(category).replace(/[-_]/g, " ")
 
-  const { getProductsByCategory, getCategories } = useProducts()
+  const { getCategories } = useProducts()
+  const { searchProducts } = useSearch()
   const { getShowsByCategory } = useShows()
 
-  const products = getProductsByCategory(displayCategory)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true)
+      const results = await searchProducts({ category: displayCategory })
+      setProducts(results)
+      setLoading(false)
+    }
+    fetchProducts()
+  }, [displayCategory, searchProducts])
+
   const shows = getShowsByCategory(displayCategory)
   const allCategories = getCategories()
 
@@ -93,7 +109,9 @@ export default function CategoryPage() {
             </Link>
           </div>
 
-          {products.length > 0 ? (
+          {loading ? (
+            <div className="py-12 text-center text-muted-foreground">Loading products...</div>
+          ) : products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
