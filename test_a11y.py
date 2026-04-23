@@ -57,6 +57,17 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    "<fieldset className=",
+    "<legend className=",
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={score === star}',
+    'aria-busy={isSubmitting}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
