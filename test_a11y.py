@@ -57,6 +57,15 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/product-card.tsx...")
+if not check_file("components/product-card.tsx", [
+    'aria-label={`Add ${product.name} to cart`}',
+    'aria-hidden="true"',
+    'aria-live="polite"',
+    'aria-atomic="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
