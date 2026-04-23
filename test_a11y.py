@@ -76,3 +76,25 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/review-form.tsx...")
+with open("components/review-form.tsx", "r") as f:
+    content = f.read()
+    if 'role="radiogroup"' not in content:
+        print("FAILED: components/review-form.tsx - Missing role=\"radiogroup\"")
+        exit(1)
+    if 'role="radio"' not in content:
+        print("FAILED: components/review-form.tsx - Missing role=\"radio\"")
+        exit(1)
+    if 'aria-checked={score === star}' not in content:
+        print("FAILED: components/review-form.tsx - Missing aria-checked={score === star}")
+        exit(1)
+    if '<fieldset' not in content:
+        print("FAILED: components/review-form.tsx - Missing <fieldset>")
+        exit(1)
+    if '<legend' not in content:
+        print("FAILED: components/review-form.tsx - Missing <legend>")
+        exit(1)
+    print("PASSED: components/review-form.tsx")
+
+print("\nAll accessibility checks passed!")
