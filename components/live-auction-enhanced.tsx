@@ -115,6 +115,8 @@ export function LiveAuctionEnhanced({ auction }: { auction: AuctionEnhanced }) {
         <div className="border-t border-orange-200 pt-4">
           <button
             onClick={() => setShowBidHistory(!showBidHistory)}
+            aria-expanded={showBidHistory}
+            aria-controls="bid-history-panel"
             className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <div className="flex items-center gap-2">
@@ -125,7 +127,7 @@ export function LiveAuctionEnhanced({ auction }: { auction: AuctionEnhanced }) {
           </button>
 
           {showBidHistory && (
-            <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
+            <div id="bid-history-panel" className="mt-3 space-y-2 max-h-48 overflow-y-auto">
               {auction.bidHistory.slice(0, 10).map((bid, idx) => (
                 <div
                   key={idx}
