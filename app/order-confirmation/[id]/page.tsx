@@ -20,9 +20,11 @@ export default function OrderConfirmationPage() {
         <Header />
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl font-bold">Order not found</h1>
-          <Link href="/">
-            <Button className="mt-4">Back to Home</Button>
-          </Link>
+          <Button className="mt-4" asChild>
+  <Link href="/">
+    Back to Home
+  </Link>
+</Button>
         </div>
       </div>
     )
@@ -183,9 +185,11 @@ export default function OrderConfirmationPage() {
         {/* Back to Shopping */}
         <div className="text-center mt-8">
           <p className="text-muted-foreground mb-4">Continue exploring and find more amazing products!</p>
-          <Link href="/">
-            <Button size="lg">Continue Shopping</Button>
-          </Link>
+          <Button size="lg" asChild>
+  <Link href="/">
+    Continue Shopping
+  </Link>
+</Button>
         </div>
       </div>
     </div>

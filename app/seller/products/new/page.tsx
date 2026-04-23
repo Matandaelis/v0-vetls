@@ -150,11 +150,13 @@ export default function NewProductPage() {
                 <Button type="submit" disabled={isLoading} size="lg" className="flex-1">
                   {isLoading ? "Creating..." : "Create Product"}
                 </Button>
-                <Link href="/seller" className="flex-1">
-                  <Button type="button" variant="outline" size="lg" className="w-full bg-transparent">
+                <Button type="button" variant="outline" size="lg" className="w-full bg-transparent" asChild>
+  <Link href="/seller" className="flex-1">
+
                     Cancel
-                  </Button>
-                </Link>
+
+  </Link>
+</Button>
               </div>
             </form>
           </Card>

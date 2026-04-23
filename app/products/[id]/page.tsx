@@ -24,9 +24,11 @@ export default function ProductPage() {
         <Header />
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl font-bold">Product not found</h1>
-          <Link href="/">
-            <Button className="mt-4">Back to Home</Button>
-          </Link>
+          <Button className="mt-4" asChild>
+  <Link href="/">
+    Back to Home
+  </Link>
+</Button>
         </div>
       </div>
     )

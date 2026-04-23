@@ -69,12 +69,14 @@ export default function SellerDashboard() {
               <h1 className="text-3xl font-bold">Seller Dashboard</h1>
               <p className="text-muted-foreground">Manage your products and sales</p>
             </div>
-            <Link href="/seller/products/new">
-              <Button size="lg">
+            <Button size="lg" asChild>
+  <Link href="/seller/products/new">
+
                 <Plus className="w-4 h-4 mr-2" />
                 New Product
-              </Button>
-            </Link>
+
+  </Link>
+</Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -135,9 +137,11 @@ export default function SellerDashboard() {
               ) : products.length === 0 ? (
                 <Card className="p-12 text-center">
                   <p className="text-muted-foreground mb-4">No products yet</p>
-                  <Link href="/seller/products/new">
-                    <Button>Create First Product</Button>
-                  </Link>
+                  <Button asChild>
+  <Link href="/seller/products/new">
+    Create First Product
+  </Link>
+</Button>
                 </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -152,11 +156,13 @@ export default function SellerDashboard() {
                         <h3 className="font-semibold">{product.name}</h3>
                         <p className="text-2xl font-bold text-primary mt-2">${product.price.toFixed(2)}</p>
                         <div className="flex gap-2 mt-4">
-                          <Link href={`/seller/products/${product.id}/edit`} className="flex-1">
-                            <Button variant="outline" size="sm" className="w-full bg-transparent">
+                          <Button variant="outline" size="sm" className="w-full bg-transparent" asChild>
+  <Link href={`/seller/products/${product.id}/edit`} className="flex-1">
+
                               Edit
-                            </Button>
-                          </Link>
+
+  </Link>
+</Button>
                           <Button variant="destructive" size="sm" className="flex-1">
                             Delete
                           </Button>

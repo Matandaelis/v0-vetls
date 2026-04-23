@@ -14,12 +14,16 @@ export default function NotFound() {
           The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
         </p>
         <div className="flex gap-4">
-          <Link href="/">
-            <Button>Go Home</Button>
-          </Link>
-          <Link href="/shows">
-            <Button variant="outline">Browse Shows</Button>
-          </Link>
+          <Button asChild>
+  <Link href="/">
+    Go Home
+  </Link>
+</Button>
+          <Button variant="outline" asChild>
+  <Link href="/shows">
+    Browse Shows
+  </Link>
+</Button>
         </div>
       </main>
       <Footer />

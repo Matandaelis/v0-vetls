@@ -44,11 +44,13 @@ export default function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Link href="/">
-            <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" asChild>
+  <Link href="/">
+
               <ArrowLeft className="w-4 h-4" />
-            </Button>
-          </Link>
+
+  </Link>
+</Button>
           <div>
             <h1 className="text-4xl font-bold">Products</h1>
             <p className="text-muted-foreground">

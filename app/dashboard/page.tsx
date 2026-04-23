@@ -29,11 +29,13 @@ export default function DashboardPage() {
               <h1 className="text-4xl font-bold">Shows Dashboard</h1>
               <p className="text-muted-foreground mt-1">Manage and track all live shopping shows</p>
             </div>
-            <Link href="/shows">
-              <Button className="gap-2">
+            <Button className="gap-2" asChild>
+  <Link href="/shows">
+
                 View All Shows <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+
+  </Link>
+</Button>
           </div>
         </div>
 
@@ -88,21 +90,27 @@ export default function DashboardPage() {
           <Card className="p-6">
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <div className="space-y-2">
-              <Link href="/shows">
-                <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start" asChild>
+  <Link href="/shows">
+
                   Browse All Shows
-                </Button>
-              </Link>
-              <Link href="/products">
-                <Button variant="ghost" className="w-full justify-start">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start" asChild>
+  <Link href="/products">
+
                   View Products
-                </Button>
-              </Link>
-              <Link href="/cart">
-                <Button variant="ghost" className="w-full justify-start">
+
+  </Link>
+</Button>
+              <Button variant="ghost" className="w-full justify-start" asChild>
+  <Link href="/cart">
+
                   Shopping Cart
-                </Button>
-              </Link>
+
+  </Link>
+</Button>
             </div>
           </Card>
 
@@ -115,14 +123,16 @@ export default function DashboardPage() {
             {upcomingShows.length > 0 ? (
               <div className="space-y-2">
                 {upcomingShows.slice(0, 3).map((show) => (
-                  <Link key={show.id} href={`/shows/${show.id}`}>
-                    <Button variant="ghost" className="w-full justify-start text-left h-auto p-2">
+                  <Button variant="ghost" className="w-full justify-start text-left h-auto p-2" asChild>
+  <Link key={show.id} href={`/shows/${show.id}`}>
+
                       <div className="text-sm">
                         <p className="font-medium">{show.title}</p>
                         <p className="text-xs text-muted-foreground">{show.hostName}</p>
                       </div>
-                    </Button>
-                  </Link>
+
+  </Link>
+</Button>
                 ))}
               </div>
             ) : (
