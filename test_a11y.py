@@ -57,6 +57,16 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/live-engagement-panel.tsx...")
+if not check_file("components/live-engagement-panel.tsx", [
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={isSelected}',
+    'aria-label="Select tip amount"',
+    'aria-label="Custom tip amount"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
