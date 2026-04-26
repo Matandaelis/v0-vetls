@@ -25,3 +25,7 @@
 ## 2025-03-05 - Shopping Cart Accessibility Requirements
 **Learning:** Icon-only buttons for quantity manipulation and removal in list contexts (like a shopping cart) are completely inaccessible without specific context. A generic "Increase" label is insufficient when there are multiple items; it needs to be "Increase quantity of [Product Name]". Furthermore, dynamic text that updates on the client without a page reload (like the quantity counter itself) requires `aria-live="polite"` and `aria-atomic="true"` so screen readers proactively announce the changed value. Finally, decorative icons inside these buttons should be explicitly hidden with `aria-hidden="true"` to prevent redundant reading.
 **Action:** When auditing list items or repeating groups with icon-only controls, ensure the `aria-label` incorporates the item's context (e.g. name or ID). Always wrap dynamically updated text nodes with `aria-live="polite"`. Add `aria-hidden="true"` to decorative `<svg>` components inside labeled buttons.
+
+## 2024-05-18 - Dynamically updating text requires ARIA live regions
+**Learning:** React state variables reflecting values that change client-side but don't cause page reloads (e.g., product quantities) are easily missed by screen readers.
+**Action:** Establish a pattern of consistently using `aria-live="polite"` and `aria-atomic="true"` on dynamically changing values across components (such as item count and quantity displays), mirroring its use in the cart view.

@@ -99,11 +99,11 @@ export default function ProductPage() {
             <div className="flex items-center gap-4 mb-6">
               <span className="font-semibold">Quantity:</span>
               <div className="flex items-center border border-border rounded">
-                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">
                   −
                 </Button>
-                <span className="w-12 text-center">{quantity}</span>
-                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}>
+                <span className="w-12 text-center" aria-live="polite" aria-atomic="true">{quantity}</span>
+                <Button variant="ghost" size="icon" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} aria-label="Increase quantity">
                   +
                 </Button>
               </div>
@@ -112,15 +112,15 @@ export default function ProductPage() {
             {/* Action Buttons */}
             <div className="flex gap-3">
               <Button size="lg" className="flex-1" onClick={handleAddToCart} disabled={product.stock === 0}>
-                <ShoppingCart className="w-5 h-5 mr-2" />
+                <ShoppingCart className="w-5 h-5 mr-2" aria-hidden="true" />
                 {isAdded ? "Added to Cart!" : "Add to Cart"}
               </Button>
               <Button size="lg" variant="outline" className="flex-1 bg-transparent">
-                <Heart className="w-5 h-5 mr-2" />
+                <Heart className="w-5 h-5 mr-2" aria-hidden="true" />
                 Save
               </Button>
-              <Button size="lg" variant="outline">
-                <Share2 className="w-5 h-5" />
+              <Button size="lg" variant="outline" aria-label="Share product">
+                <Share2 className="w-5 h-5" aria-hidden="true" />
               </Button>
             </div>
 
