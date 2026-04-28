@@ -69,6 +69,7 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                 size="icon"
                 className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full"
                 onClick={() => setSelectedProduct(null)}
+                aria-label="Close product preview"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -105,6 +106,7 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                   size="icon"
                   className="h-9 w-9 bg-transparent"
                   onClick={() => toggleLike(selectedProductData.id)}
+                  aria-label={likedProducts.has(selectedProductData.id) ? "Unlike product" : "Like product"}
                 >
                   <Heart
                     className={`w-4 h-4 ${
