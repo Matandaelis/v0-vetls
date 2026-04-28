@@ -57,6 +57,34 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/live-shopping-video-conference.tsx...")
+if not check_file("components/live-shopping-video-conference.tsx", [
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'aria-label={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}'
+]):
+    all_passed = False
+
+print("\nChecking components/livekit-broadcaster.tsx...")
+if not check_file("components/livekit-broadcaster.tsx", [
+    'aria-label={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}',
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}'
+]):
+    all_passed = False
+
+print("\nChecking components/product-hotspot.tsx...")
+if not check_file("components/product-hotspot.tsx", [
+    'aria-label="Close product preview"',
+    'aria-label={likedProducts.has(selectedProductData.id) ? "Unlike product" : "Like product"}'
+]):
+    all_passed = False
+
+print("\nChecking components/show-product-carousel.tsx...")
+if not check_file("components/show-product-carousel.tsx", [
+    'aria-label="Scroll left"',
+    'aria-label="Scroll right"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
