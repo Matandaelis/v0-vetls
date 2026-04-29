@@ -47,8 +47,9 @@ export function ShowProductCarousel({ products, isLive = true }: ShowProductCaro
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
             onClick={() => scroll("left")}
+            aria-label="Scroll left"
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
@@ -98,8 +99,9 @@ export function ShowProductCarousel({ products, isLive = true }: ShowProductCaro
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
             onClick={() => scroll("right")}
+            aria-label="Scroll right"
           >
             <ChevronRight className="w-5 h-5" />
           </Button>
