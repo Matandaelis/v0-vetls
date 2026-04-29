@@ -76,3 +76,17 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/show-product-carousel.tsx...")
+if not check_file("components/show-product-carousel.tsx", [
+    'aria-label="Scroll left"',
+    'aria-label="Scroll right"',
+    'focus-visible:opacity-100'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)
