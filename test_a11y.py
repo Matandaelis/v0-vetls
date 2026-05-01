@@ -57,17 +57,21 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
-if all_passed:
-    print("\nAll accessibility checks passed!")
-else:
-    print("\nSome accessibility checks failed.")
-    exit(1)
-
 print("\nChecking components/clip-card.tsx...")
 if not check_file("components/clip-card.tsx", [
     'aria-label="Like"',
     'aria-label="Chat"',
     'aria-label="Share"'
+]):
+    all_passed = False
+
+print("\nChecking components/live-engagement-panel.tsx...")
+if not check_file("components/live-engagement-panel.tsx", [
+    'role="radiogroup"',
+    'aria-label={poll.question}',
+    'role="radio"',
+    'aria-checked={isSelected}',
+    'aria-label={`React with ${emoji}`}'
 ]):
     all_passed = False
 
