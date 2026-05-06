@@ -76,3 +76,24 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/host/product-management.tsx...")
+if not check_file("components/host/product-management.tsx", [
+    'aria-label={`View statistics for ${product.name}`}',
+    'aria-label={`Edit ${product.name}`}',
+    'aria-label={`Delete ${product.name}`}'
+]):
+    all_passed = False
+
+print("\nChecking components/live-shopping-video-conference.tsx...")
+if not check_file("components/live-shopping-video-conference.tsx", [
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'aria-label={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)
