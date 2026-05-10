@@ -76,3 +76,25 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    '<fieldset className="mb-4">',
+    '<legend className="block text-sm font-medium mb-2">Rating</legend>',
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={score === star}',
+    'aria-label={`Rate ${star} stars`}',
+    'htmlFor="review-title"',
+    'id="review-title"',
+    'htmlFor="review-comment"',
+    'id="review-comment"',
+    'aria-busy={isSubmitting}'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)
