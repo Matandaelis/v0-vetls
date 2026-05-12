@@ -76,3 +76,30 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/host/product-management.tsx...")
+if not check_file("components/host/product-management.tsx", [
+    'aria-label={`View analytics for ${product.name}`}',
+    'aria-label={`Edit ${product.name}`}',
+    'aria-label={`Delete ${product.name}`}'
+]):
+    all_passed = False
+
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label="Volume settings"',
+    'aria-label="Share stream"'
+]):
+    all_passed = False
+
+print("\nChecking components/show-sidebar.tsx...")
+if not check_file("components/show-sidebar.tsx", [
+    'aria-label="Send message"'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)
