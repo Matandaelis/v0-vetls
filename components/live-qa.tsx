@@ -265,6 +265,7 @@ export function LiveQA({ showId, isHost = false, onQuestionSubmit, onAnswer }: L
               onClick={handleSubmitQuestion}
               disabled={submitting || !questionText.trim()}
               size="icon"
+              aria-label="Submit question"
             >
               <Send className="w-4 h-4" />
             </Button>
