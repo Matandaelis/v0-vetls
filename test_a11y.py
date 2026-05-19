@@ -76,3 +76,9 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+# Test for dynamic ARIA labels on Mic/Camera buttons in livekit-broadcaster.tsx
+with open('components/livekit-broadcaster.tsx', 'r') as f:
+    content = f.read()
+    assert 'aria-label={isMicEnabled ? "Mute microphone" : "Unmute microphone"}' in content
+    assert 'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}' in content
