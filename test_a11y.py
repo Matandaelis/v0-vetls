@@ -76,3 +76,21 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/host/product-management.tsx...")
+if not check_file("components/host/product-management.tsx", [
+    'aria-label={`View stats for ${product.name}`}',
+    'title={`View stats for ${product.name}`}',
+    'aria-label={`Edit ${product.name}`}',
+    'title={`Edit ${product.name}`}',
+    'aria-label={`Delete ${product.name}`}',
+    'title={`Delete ${product.name}`}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)
