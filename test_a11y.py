@@ -76,3 +76,17 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/live-engagement-panel.tsx...")
+if not check_file("components/live-engagement-panel.tsx", [
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={isSelected}'
+]):
+    all_passed = False
+
+if all_passed:
+    print("\nAll accessibility checks passed!")
+else:
+    print("\nSome accessibility checks failed.")
+    exit(1)
