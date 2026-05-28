@@ -18,7 +18,7 @@ export { LiveKitProvider, useLiveKitContext } from '@/contexts/LiveKitContext'
 export { useLiveKit } from '@/hooks/useLiveKit'
 
 // Import types for interfaces
-type { Product, Show } from '@/lib/types'
+import type { Product, Show } from '@/lib/types'
 
 // Type Definitions
 export interface LiveKitConfig {
