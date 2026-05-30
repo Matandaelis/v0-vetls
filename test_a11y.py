@@ -57,17 +57,22 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
-if all_passed:
-    print("\nAll accessibility checks passed!")
-else:
-    print("\nSome accessibility checks failed.")
-    exit(1)
 
 print("\nChecking components/clip-card.tsx...")
 if not check_file("components/clip-card.tsx", [
     'aria-label="Like"',
     'aria-label="Chat"',
     'aria-label="Share"'
+]):
+    all_passed = False
+
+
+
+print("\nChecking components/host/product-management.tsx...")
+if not check_file("components/host/product-management.tsx", [
+    "aria-label={`View stats for ${product.name}`}",
+    "aria-label={`Edit ${product.name}`}",
+    "aria-label={`Delete ${product.name}`}"
 ]):
     all_passed = False
 
