@@ -57,6 +57,28 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/host/product-management.tsx...")
+if not check_file("components/host/product-management.tsx", [
+    'aria-label={`View metrics for ${product.name}`}',
+    'aria-label={`Edit ${product.name}`}',
+    'aria-label={`Delete ${product.name}`}',
+    'title={`View metrics for ${product.name}`}',
+    'title={`Edit ${product.name}`}',
+    'title={`Delete ${product.name}`}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label="Adjust volume"',
+    'title="Adjust volume"',
+    'aria-label="Share stream"',
+    'title="Share stream"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
