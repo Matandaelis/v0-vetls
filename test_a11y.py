@@ -57,7 +57,18 @@ if not check_file("components/live-show-player.tsx", [
 ]):
     all_passed = False
 
+
+print("\nChecking components/live-auction-enhanced.tsx...")
+if not check_file("components/live-auction-enhanced.tsx", [
+    'aria-expanded={showBidHistory}',
+    'aria-controls="bid-history-panel"',
+    'aria-label={showBidHistory ? "Hide Bid History" : "Show Bid History"}',
+    'id="bid-history-panel"'
+]):
+    all_passed = False
+
 if all_passed:
+
     print("\nAll accessibility checks passed!")
 else:
     print("\nSome accessibility checks failed.")
