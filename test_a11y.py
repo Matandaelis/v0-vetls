@@ -69,6 +69,23 @@ if not check_file("components/host/product-management.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    "<fieldset",
+    "<legend",
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={score === star}',
+    'aria-label={`${star} star${star !== 1 ? "s" : ""}`}',
+    'aria-hidden="true"',
+    'htmlFor="title"',
+    'id="title"',
+    'htmlFor="comment"',
+    'id="comment"',
+    'aria-busy={isSubmitting}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
