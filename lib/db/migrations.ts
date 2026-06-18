@@ -668,11 +668,18 @@ export async function runMigrations() {
     `,
   })
 
+  // Fetch all executed migrations at once
+  const { data: executedMigrations, error: fetchError } = await supabase.from("migrations").select("id")
+  if (fetchError) {
+    console.error("Failed to fetch executed migrations:", fetchError)
+    throw fetchError
+  }
+
+  const executedMigrationIds = new Set(executedMigrations?.map((m) => m.id) || [])
+
   // Run pending migrations
   for (const migration of migrations) {
-    const { data: executed } = await supabase.from("migrations").select("id").eq("id", migration.id).single()
-
-    if (!executed) {
+    if (!executedMigrationIds.has(migration.id)) {
       console.log(`Running migration: ${migration.name}`)
       const { error } = await supabase.rpc("execute_sql", {
         sql: migration.sql,
