@@ -109,28 +109,148 @@ class QueryOptimizer {
 
     for (const [batchKey, queries] of batches) {
       try {
-        // Execute queries concurrently within batch
-        const results = await Promise.all(
-          queries.map(async ({ query, table }) => {
-            const q = supabase.from(table)
-            const { data, error } = await query(q)
+        if (queries.length === 0) continue
+
+        // Analyze and group queries by structure to identify bulk optimization opportunities
+        const analysis = queries.map(q => ({
+          query: q,
+          calls: this.analyzeQuery(q.query)
+        }))
+
+        const processed = new Set<number>()
+        const finalResults = new Array(queries.length)
+        let optimizedBatches = 0
+
+        for (let i = 0; i < queries.length; i++) {
+          if (processed.has(i)) continue
+
+          const optimizableMatch = this.findOptimizableBatch(i, analysis, processed)
+
+          if (optimizableMatch) {
+            // Execute as a single bulk operation (e.g., using .in() for multiple .eq() calls)
+            const { results, indices } = await this.executeBulkQuery(supabase, optimizableMatch)
+            indices.forEach((originalIdx, resultIdx) => {
+              finalResults[originalIdx] = results[resultIdx]
+              processed.add(originalIdx)
+            })
+            optimizedBatches++
+          } else {
+            // Fallback: Execute single query if no optimization match found
+            const current = analysis[i]
+            const { query, table } = current.query
+            const { data, error } = await query(supabase.from(table))
             if (error) throw error
-            return data
-          })
-        )
+            finalResults[i] = data
+            processed.add(i)
+          }
+        }
 
-        // Resolve all promises
+        // Resolve all original promises with their corresponding results
         queries.forEach((q, index) => {
-          q.resolve(results[index])
+          q.resolve(finalResults[index])
         })
 
-        metricsCollector.recordMetric('db.batch.size', queries.length, { 
-          batchKey 
-        })
+        metricsCollector.recordMetric('db.batch.size', queries.length, { batchKey })
+        metricsCollector.recordMetric('db.batch.optimized_count', optimizedBatches, { batchKey })
       } catch (error) {
         queries.forEach(q => q.reject(error))
       }
     }
+  }
+
+  /**
+   * Dry-run a query builder using a Proxy to record its structure
+   */
+  private analyzeQuery(queryBuilder: (query: any) => any) {
+    const calls: { method: string, args: any[] }[] = []
+    const recorder = new Proxy({} as any, {
+      get: (target, prop) => {
+        if (prop === 'then' || typeof prop === 'symbol') return undefined
+        return (...args: any[]) => {
+          calls.push({ method: prop as string, args })
+          return recorder
+        }
+      }
+    })
+
+    try {
+      queryBuilder(recorder)
+      return calls
+    } catch (e) {
+      // If query builder logic is too complex for Proxy, return null to skip optimization
+      return null
+    }
+  }
+
+  /**
+   * Find a group of queries that can be merged into a single operation
+   */
+  private findOptimizableBatch(startIndex: number, analysis: any[], processed: Set<number>) {
+    const current = analysis[startIndex]
+    if (!current.calls) return null
+
+    // Pattern: .select().eq(column, value)
+    const isSimpleSelectEq = current.calls.length === 2 &&
+      current.calls[0].method === 'select' &&
+      current.calls[1].method === 'eq'
+
+    if (!isSimpleSelectEq) return null
+
+    const table = current.query.table
+    const selectArgs = current.calls[0].args
+    const column = current.calls[1].args[0]
+
+    // Only optimize if the filter column is present in select results (for mapping back)
+    const isColumnInSelect = selectArgs[0] === '*' ||
+      (typeof selectArgs[0] === 'string' && selectArgs[0].includes(column))
+
+    if (!isColumnInSelect) return null
+
+    const batchIndices = [startIndex]
+    const values = [current.calls[1].args[1]]
+
+    // Look for other queries with the same structure but different values
+    for (let j = startIndex + 1; j < analysis.length; j++) {
+      if (processed.has(j)) continue
+      const other = analysis[j]
+
+      const isMatch = other.calls?.length === 2 &&
+        other.query.table === table &&
+        other.calls[0].method === 'select' &&
+        JSON.stringify(other.calls[0].args) === JSON.stringify(selectArgs) &&
+        other.calls[1].method === 'eq' &&
+        other.calls[1].args[0] === column
+
+      if (isMatch) {
+        batchIndices.push(j)
+        values.push(other.calls[1].args[1])
+      }
+    }
+
+    // Only "bulk" if we have at least 2 queries to merge
+    return batchIndices.length >= 2 ? { table, selectArgs, column, values, indices: batchIndices } : null
+  }
+
+  /**
+   * Execute a merged bulk query and return results mapped to original query indices
+   */
+  private async executeBulkQuery(supabase: SupabaseClient, batch: any) {
+    const { table, selectArgs, column, values, indices } = batch
+
+    // Use .in() to fetch all requested values in a single round-trip
+    const { data, error } = await supabase
+      .from(table)
+      .select(selectArgs[0], selectArgs[1])
+      .in(column, values)
+
+    if (error) throw error
+
+    // Map the combined results back to each original query's requested value
+    const results = values.map((val: any) => {
+      return (data as any[]).filter(item => item[column] === val)
+    })
+
+    return { results, indices }
   }
 
   /**
