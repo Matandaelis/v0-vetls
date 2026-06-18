@@ -69,21 +69,22 @@ export function Header() {
             </div>
 
             {/* Cart Icon */}
-            <Link href="/cart">
-              <Button
+            <Button
+                asChild
                 variant="ghost"
                 size="icon"
                 className="relative"
                 aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
               >
-                <ShoppingCart className="w-5 h-5" />
+                <Link href="/cart">
+                  <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
                   <span className="absolute top-0 right-0 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
                 )}
+                </Link>
               </Button>
-            </Link>
           </div>
         </div>
 

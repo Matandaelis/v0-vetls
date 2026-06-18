@@ -23,9 +23,9 @@ export default function CartPage() {
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-2">Your Cart is Empty</h1>
             <p className="text-muted-foreground mb-6">Start shopping to add items to your cart</p>
-            <Link href="/">
-              <Button size="lg">Continue Shopping</Button>
-            </Link>
+            <Button asChild size="lg">
+              <Link href="/">Continue Shopping</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -127,11 +127,11 @@ export default function CartPage() {
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
-              <Link href="/checkout">
-                <Button size="lg" className="w-full mb-3">
+              <Button asChild size="lg" className="w-full mb-3">
+                <Link href="/checkout">
                   Proceed to Checkout
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <Button variant="outline" size="lg" className="w-full bg-transparent" onClick={clearCart}>
                 Clear Cart
               </Button>
