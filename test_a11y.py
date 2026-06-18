@@ -88,3 +88,18 @@ if all_passed:
 else:
     print("\nSome accessibility checks failed.")
     exit(1)
+
+print("\nChecking components/review-form.tsx...")
+with open("components/review-form.tsx", "r") as f:
+    content = f.read()
+    assert "htmlFor=\"review-title\"" in content, "Missing htmlFor on Title label"
+    assert "id=\"review-title\"" in content, "Missing id on Title input"
+    assert "htmlFor=\"review-comment\"" in content, "Missing htmlFor on Review label"
+    assert "id=\"review-comment\"" in content, "Missing id on Review textarea"
+    assert "fieldset" in content, "Missing fieldset for rating group"
+    assert "legend" in content, "Missing legend for rating group"
+    assert "role=\"radiogroup\"" in content, "Missing role=radiogroup"
+    assert "role=\"radio\"" in content, "Missing role=radio on star buttons"
+    assert "aria-checked={score === star}" in content, "Missing aria-checked on star buttons"
+    assert "aria-busy={isSubmitting}" in content, "Missing aria-busy on submit button"
+    print("PASSED: components/review-form.tsx")
