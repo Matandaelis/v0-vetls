@@ -7,16 +7,43 @@ import { useProducts } from "@/contexts/product-context"
 import { useCart } from "@/contexts/cart-context"
 import { useParams } from "next/navigation"
 import { ShoppingCart, Star, Heart, Share2, Truck, RefreshCw } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
+import type { Product } from "@/lib/types"
 
 export default function ProductPage() {
   const params = useParams()
-  const { getProductById } = useProducts()
+  const { getProductById, fetchProductById } = useProducts()
   const { addItem } = useCart()
-  const product = getProductById(params.id as string)
+
+  const [product, setProduct] = useState<Product | undefined>(getProductById(params.id as string))
+  const [loading, setLoading] = useState(!product)
+
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
+
+  useEffect(() => {
+    if (product) return
+
+    const loadProduct = async () => {
+      setLoading(true)
+      const fetched = await fetchProductById(params.id as string)
+      setProduct(fetched)
+      setLoading(false)
+    }
+    loadProduct()
+  }, [params.id, product, fetchProductById])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+          <p className="text-muted-foreground">Loading product...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!product) {
     return (

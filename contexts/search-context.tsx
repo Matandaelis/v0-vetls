@@ -37,6 +37,10 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         query = query.eq("category", filters.category)
       }
 
+      if (filters.sellerId) {
+        query = query.eq("seller_id", filters.sellerId)
+      }
+
       if (filters.minPrice !== undefined) {
         query = query.gte("price", filters.minPrice)
       }
