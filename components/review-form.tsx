@@ -6,7 +6,7 @@ import { useState } from "react"
 import { useSocial } from "@/contexts/social-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { RatingDisplay } from "@/components/rating-display"
+import { Star } from "lucide-react"
 
 interface ReviewFormProps {
   productId?: string
@@ -47,30 +47,39 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
     <form onSubmit={handleSubmit} className="bg-secondary/50 rounded-lg p-6">
       <h3 className="text-lg font-semibold mb-4">Leave a Review</h3>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Rating</label>
-        <div className="flex gap-2">
+      <fieldset className="mb-4">
+        <legend className="block text-sm font-medium mb-2">Rating</legend>
+        <div className="flex gap-2" role="radiogroup" aria-label="Select rating">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
+              role="radio"
+              aria-checked={score === star}
+              aria-label={`${star} star${star > 1 ? "s" : ""}`}
               onClick={() => setScore(star as 1 | 2 | 3 | 4 | 5)}
-              className="focus:outline-none"
+              className="p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm transition-transform hover:scale-110 active:scale-95"
             >
-              <RatingDisplay score={star as 1 | 2 | 3 | 4 | 5} size="lg" />
+              <Star
+                className={`w-6 h-6 ${
+                  star <= score ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground hover:text-yellow-400/50"
+                }`}
+                aria-hidden="true"
+              />
             </button>
           ))}
         </div>
+      </fieldset>
+
+      <div className="mb-4">
+        <label htmlFor="review-title" className="block text-sm font-medium mb-2">Title</label>
+        <Input id="review-title" placeholder="What did you think?" value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Title</label>
-        <Input placeholder="What did you think?" value={title} onChange={(e) => setTitle(e.target.value)} required />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Review</label>
+        <label htmlFor="review-comment" className="block text-sm font-medium mb-2">Review</label>
         <textarea
+          id="review-comment"
           placeholder="Share your experience..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
