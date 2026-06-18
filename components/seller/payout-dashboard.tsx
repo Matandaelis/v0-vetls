@@ -177,7 +177,7 @@ export default function PayoutDashboard() {
               You need to connect your Stripe account to withdraw earnings. This is a one-time setup.
             </p>
           </div>
-          <Button onClick={connectStripe} disabled={isProcessing}>
+          <Button onClick={connectStripe} disabled={isProcessing} aria-busy={isProcessing}>
             <CreditCard className="h-4 w-4 mr-2" />
             {isProcessing ? "Connecting..." : "Connect Stripe Account"}
           </Button>
@@ -256,7 +256,7 @@ export default function PayoutDashboard() {
               Maximum: ${balance?.available_balance.toFixed(2) || "0.00"}
             </p>
           </div>
-          <Button onClick={requestPayout} disabled={isProcessing || !withdrawAmount}>
+          <Button onClick={requestPayout} disabled={isProcessing || !withdrawAmount} aria-busy={isProcessing}>
             <DollarSign className="h-4 w-4 mr-2" />
             {isProcessing ? "Processing..." : "Request Payout"}
           </Button>

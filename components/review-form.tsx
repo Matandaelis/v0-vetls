@@ -80,7 +80,7 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
         {isSubmitting ? "Submitting..." : "Submit Review"}
       </Button>
     </form>

@@ -69,6 +69,24 @@ if not check_file("components/host/product-management.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/live-auction.tsx...")
+if not check_file("components/live-auction.tsx", [
+    'aria-busy={isLoading}'
+]):
+    all_passed = False
+
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    'aria-busy={isSubmitting}'
+]):
+    all_passed = False
+
+print("\nChecking components/seller/payout-dashboard.tsx...")
+if not check_file("components/seller/payout-dashboard.tsx", [
+    'aria-busy={isProcessing}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:

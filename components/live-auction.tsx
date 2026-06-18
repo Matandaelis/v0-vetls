@@ -140,6 +140,7 @@ export function LiveAuction({ auction }: { auction: Auction }) {
               <Button
                 onClick={handlePlaceBid}
                 disabled={isLoading || timeLeft <= 0}
+                aria-busy={isLoading}
                 className="bg-orange-600 hover:bg-orange-700 text-white"
               >
                 {isLoading ? "Placing..." : "Place Bid"}
