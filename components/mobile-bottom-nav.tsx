@@ -4,9 +4,12 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Tv, ShoppingCart, User, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useCart } from "@/contexts/cart-context"
 
 export function MobileBottomNav() {
   const pathname = usePathname()
+  const { getCartItemCount } = useCart()
+  const cartCount = getCartItemCount()
 
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
@@ -27,12 +30,20 @@ export function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              aria-label={item.label === "Cart" && cartCount > 0 ? `Cart, ${cartCount} items` : item.label}
               className={cn(
                 "flex flex-col items-center justify-center w-full py-3 transition-colors",
                 isActive ? "text-primary" : "text-muted-foreground",
               )}
             >
-              <Icon className="w-5 h-5" />
+              <div className="relative">
+                <Icon className="w-5 h-5" />
+                {item.label === "Cart" && cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {cartCount > 9 ? "9+" : cartCount}
+                  </span>
+                )}
+              </div>
               <span className="text-xs mt-1">{item.label}</span>
             </Link>
           )
