@@ -40,12 +40,12 @@ export default function CategoryPage() {
       {/* Hero Section */}
       <section className={`bg-gradient-to-r ${getCategoryColor()} text-white py-12 md:py-16`}>
         <div className="max-w-7xl mx-auto px-4">
-          <Link href="/">
-            <Button variant="ghost" className="text-white hover:bg-white/20 mb-4 gap-2">
+          <Button variant="ghost" className="text-white hover:bg-white/20 mb-4 gap-2" asChild>
+            <Link href="/">
               <ArrowLeft className="w-4 h-4" />
               Back
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <h1 className="text-4xl md:text-5xl font-bold mb-2">{displayCategory}</h1>
           <p className="text-lg opacity-90">
             Explore our collection of {displayCategory.toLowerCase()} products and exclusive shows
@@ -59,11 +59,17 @@ export default function CategoryPage() {
           <p className="text-sm font-semibold text-muted-foreground mb-3">OTHER CATEGORIES</p>
           <div className="flex flex-wrap gap-2">
             {allCategories.map((cat) => (
-              <Link key={cat} href={`/category/${cat.toLowerCase()}`}>
-                <Button variant={cat === displayCategory ? "default" : "outline"} size="sm" className="bg-transparent">
+              <Button
+                key={cat}
+                variant={cat === displayCategory ? "default" : "outline"}
+                size="sm"
+                className="bg-transparent"
+                asChild
+              >
+                <Link href={`/category/${cat.toLowerCase()}`}>
                   {cat}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ))}
           </div>
         </div>
@@ -86,11 +92,11 @@ export default function CategoryPage() {
             <h2 className="text-2xl font-bold">
               Products <span className="text-muted-foreground text-lg">({products.length})</span>
             </h2>
-            <Link href={`/products?category=${encodeURIComponent(displayCategory)}`}>
-              <Button variant="outline" className="bg-transparent">
+            <Button variant="outline" className="bg-transparent" asChild>
+              <Link href={`/products?category=${encodeURIComponent(displayCategory)}`}>
                 View All
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
 
           {products.length > 0 ? (
@@ -102,9 +108,9 @@ export default function CategoryPage() {
           ) : (
             <div className="text-center py-12 border rounded-lg bg-secondary/30">
               <p className="text-muted-foreground mb-4">No products found in {displayCategory} yet</p>
-              <Link href="/products">
-                <Button variant="outline">Browse All Products</Button>
-              </Link>
+              <Button variant="outline" asChild>
+                <Link href="/products">Browse All Products</Link>
+              </Button>
             </div>
           )}
         </section>
