@@ -49,7 +49,7 @@ export function LiveEngagementPanel({ poll, tipTarget, reactionCounts = {} }: Li
               </Badge>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2" role="radiogroup" aria-label={poll.question}>
               {poll.options.map((option) => {
                 const percentage = poll.totalVotes > 0 ? (option.votes / poll.totalVotes) * 100 : 0
                 const isSelected = selectedOption === option.text
@@ -57,8 +57,10 @@ export function LiveEngagementPanel({ poll, tipTarget, reactionCounts = {} }: Li
                 return (
                   <button
                     key={option.text}
+                    role="radio"
+                    aria-checked={isSelected}
                     onClick={() => setSelectedOption(option.text)}
-                    className={`w-full text-left p-2 rounded-lg transition-all ${
+                    className={`w-full text-left p-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                       isSelected ? "ring-2 ring-blue-500 bg-white" : "bg-white hover:bg-blue-100"
                     }`}
                   >
@@ -130,8 +132,9 @@ export function LiveEngagementPanel({ poll, tipTarget, reactionCounts = {} }: Li
                 key={emoji}
                 variant="outline"
                 size="sm"
+                aria-label={"React with " + emoji}
                 onClick={() => handleReaction(emoji)}
-                className="text-xl h-10 hover:scale-110 transition-transform"
+                className="text-xl h-10 hover:scale-110 transition-transform focus-visible:ring-2 focus-visible:ring-offset-2"
               >
                 {emoji}
               </Button>
