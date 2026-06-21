@@ -43,13 +43,13 @@ export function LiveEngagementPanel({ poll, tipTarget, reactionCounts = {} }: Li
         <Card className="p-4 border-blue-200 bg-blue-50">
           <div className="space-y-3">
             <div className="flex items-start justify-between">
-              <h4 className="font-bold text-sm">{poll.question}</h4>
+              <h4 id="poll-question" className="font-bold text-sm">{poll.question}</h4>
               <Badge variant="outline" className="text-xs">
                 {poll.totalVotes} votes
               </Badge>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2" role="radiogroup" aria-labelledby="poll-question">
               {poll.options.map((option) => {
                 const percentage = poll.totalVotes > 0 ? (option.votes / poll.totalVotes) * 100 : 0
                 const isSelected = selectedOption === option.text
@@ -57,6 +57,8 @@ export function LiveEngagementPanel({ poll, tipTarget, reactionCounts = {} }: Li
                 return (
                   <button
                     key={option.text}
+                    role="radio"
+                    aria-checked={isSelected}
                     onClick={() => setSelectedOption(option.text)}
                     className={`w-full text-left p-2 rounded-lg transition-all ${
                       isSelected ? "ring-2 ring-blue-500 bg-white" : "bg-white hover:bg-blue-100"
