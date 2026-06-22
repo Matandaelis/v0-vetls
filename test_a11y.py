@@ -69,6 +69,40 @@ if not check_file("components/host/product-management.tsx", [
 ]):
     all_passed = False
 
+
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label="Toggle mute"',
+    'title="Toggle mute"',
+    'aria-label="Share stream"',
+    'title="Share stream"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
+
+print("\nChecking components/show-sidebar.tsx...")
+if not check_file("components/show-sidebar.tsx", [
+    'aria-label="Send message"',
+    'title="Send message"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
+
+print("\nChecking components/show-product-carousel.tsx...")
+if not check_file("components/show-product-carousel.tsx", [
+    'aria-label="Scroll left"',
+    'title="Scroll left"',
+    'aria-label="Scroll right"',
+    'title="Scroll right"',
+    'focus:opacity-100',
+    'focus-visible:opacity-100',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
