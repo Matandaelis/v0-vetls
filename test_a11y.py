@@ -69,11 +69,14 @@ if not check_file("components/host/product-management.tsx", [
 ]):
     all_passed = False
 
-if all_passed:
-    print("\nAll accessibility checks passed!")
-else:
-    print("\nSome accessibility checks failed.")
-    exit(1)
+print("\nChecking components/livekit-broadcaster.tsx...")
+if not check_file("components/livekit-broadcaster.tsx", [
+    'aria-label={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}',
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'aria-label={showAdvanced ? "Hide advanced settings" : "Show advanced settings"}',
+    'aria-expanded={showAdvanced}'
+]):
+    all_passed = False
 
 print("\nChecking components/clip-card.tsx...")
 if not check_file("components/clip-card.tsx", [
