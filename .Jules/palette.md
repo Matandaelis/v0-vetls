@@ -28,3 +28,7 @@
 ## 2024-05-18 - Added ARIA labels to host product management icons
 **Learning:** Found that when creating list-based UI with action buttons like in `ProductManagement`, developers frequently use generic icon-only buttons without `aria-label`s. Furthermore, even when fixing these, we must ensure dynamic strings (like `product.name`) are used to give screen readers full context of *which* item is being acted upon (e.g. "Edit Wireless Headphones" instead of just "Edit"). Additionally, sighted users benefit from these dynamic descriptions via `title` attributes that act as native tooltips.
 **Action:** Always verify loop structures and available item properties (like `product.name`) before adding dynamic ARIA labels. Pair `aria-label` with `title` for tooltip support and add `aria-hidden="true"` to inner SVG/Lucide icons.
+
+## 2024-05-18 - Accessible Interactive Star Rating Forms
+**Learning:** A static "RatingDisplay" view component cannot simply be mapped over inside buttons to create an accessible rating selector. Interactive star ratings must use native semantic roles to be understood by screen readers as a mutually exclusive choice.
+**Action:** When building interactive rating selectors, wrap the group in a `<fieldset>` with a `<legend>`, apply `role="radiogroup"` to the container, and use `role="radio"` with `aria-checked` on the individual scalable SVG stars (e.g., `lucide-react` icons). Ensure native inputs are also properly linked via `id` and `htmlFor`.
