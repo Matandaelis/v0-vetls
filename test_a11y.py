@@ -69,17 +69,27 @@ if not check_file("components/host/product-management.tsx", [
 ]):
     all_passed = False
 
-if all_passed:
-    print("\nAll accessibility checks passed!")
-else:
-    print("\nSome accessibility checks failed.")
-    exit(1)
 
 print("\nChecking components/clip-card.tsx...")
 if not check_file("components/clip-card.tsx", [
     'aria-label="Like"',
     'aria-label="Chat"',
     'aria-label="Share"'
+]):
+    all_passed = False
+
+
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={score === star}',
+    'aria-label={`${star} star${star === 1 ? "" : "s"}`}',
+    'aria-busy={isSubmitting}',
+    'htmlFor="review-title"',
+    'id="review-title"',
+    'htmlFor="review-comment"',
+    'id="review-comment"'
 ]):
     all_passed = False
 

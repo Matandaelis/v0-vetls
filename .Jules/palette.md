@@ -28,3 +28,7 @@
 ## 2024-05-18 - Added ARIA labels to host product management icons
 **Learning:** Found that when creating list-based UI with action buttons like in `ProductManagement`, developers frequently use generic icon-only buttons without `aria-label`s. Furthermore, even when fixing these, we must ensure dynamic strings (like `product.name`) are used to give screen readers full context of *which* item is being acted upon (e.g. "Edit Wireless Headphones" instead of just "Edit"). Additionally, sighted users benefit from these dynamic descriptions via `title` attributes that act as native tooltips.
 **Action:** Always verify loop structures and available item properties (like `product.name`) before adding dynamic ARIA labels. Pair `aria-label` with `title` for tooltip support and add `aria-hidden="true"` to inner SVG/Lucide icons.
+
+## 2025-03-05 - Star Rating and Form Label Accessibility
+**Learning:** Custom interactive elements like a star rating input built with multiple buttons are not accessible by default. They lack semantic grouping and state communication. Furthermore, even basic forms often neglect proper `htmlFor` and `id` linkage between labels and inputs, relying solely on visual proximity.
+**Action:** When building interactive rating inputs, use individual scalable SVG icons with native `role="radiogroup"` on the container and `role="radio"` with `aria-checked` on the individual options. Group the section with `<fieldset>` and `<legend>`. Always ensure native form elements use explicitly linked `<label htmlFor="id">` and `<input id="id">`.
