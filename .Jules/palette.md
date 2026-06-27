@@ -28,3 +28,6 @@
 ## 2024-05-18 - Added ARIA labels to host product management icons
 **Learning:** Found that when creating list-based UI with action buttons like in `ProductManagement`, developers frequently use generic icon-only buttons without `aria-label`s. Furthermore, even when fixing these, we must ensure dynamic strings (like `product.name`) are used to give screen readers full context of *which* item is being acted upon (e.g. "Edit Wireless Headphones" instead of just "Edit"). Additionally, sighted users benefit from these dynamic descriptions via `title` attributes that act as native tooltips.
 **Action:** Always verify loop structures and available item properties (like `product.name`) before adding dynamic ARIA labels. Pair `aria-label` with `title` for tooltip support and add `aria-hidden="true"` to inner SVG/Lucide icons.
+## 2024-05-24 - Screen Reader Support for Live React Quantity Changes
+**Learning:** When building interfaces that update numbers dynamically on the client side without page reloads (like a shopping cart quantity or viewer counts), screen readers won't announce the change if the element only contains text.
+**Action:** Add `aria-live="polite"` and `aria-atomic="true"` to the wrapper element containing the dynamic number so the screen reader correctly announces the new value upon update.
