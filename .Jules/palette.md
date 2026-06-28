@@ -28,3 +28,7 @@
 ## 2024-05-18 - Added ARIA labels to host product management icons
 **Learning:** Found that when creating list-based UI with action buttons like in `ProductManagement`, developers frequently use generic icon-only buttons without `aria-label`s. Furthermore, even when fixing these, we must ensure dynamic strings (like `product.name`) are used to give screen readers full context of *which* item is being acted upon (e.g. "Edit Wireless Headphones" instead of just "Edit"). Additionally, sighted users benefit from these dynamic descriptions via `title` attributes that act as native tooltips.
 **Action:** Always verify loop structures and available item properties (like `product.name`) before adding dynamic ARIA labels. Pair `aria-label` with `title` for tooltip support and add `aria-hidden="true"` to inner SVG/Lucide icons.
+
+## 2025-03-05 - Live Engagement Poll and Reaction Accessibility
+**Learning:** Found that custom interactive polls in `live-engagement-panel.tsx` lacked semantic roles for mutually exclusive options (`radiogroup` and `radio`), and icon-only reaction buttons lacked `aria-label`s, rendering them inaccessible to screen readers.
+**Action:** Always implement `role="radiogroup"` on poll containers and `role="radio"` with `aria-checked` on individual options. Ensure all emoji/icon buttons have dynamic `aria-label`s describing the specific reaction action.
