@@ -69,6 +69,14 @@ if not check_file("components/host/product-management.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label={isMuted ? "Unmute stream" : "Mute stream"}',
+    'aria-label="Share stream"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
