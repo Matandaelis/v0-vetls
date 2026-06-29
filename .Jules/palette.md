@@ -28,3 +28,6 @@
 ## 2024-05-18 - Added ARIA labels to host product management icons
 **Learning:** Found that when creating list-based UI with action buttons like in `ProductManagement`, developers frequently use generic icon-only buttons without `aria-label`s. Furthermore, even when fixing these, we must ensure dynamic strings (like `product.name`) are used to give screen readers full context of *which* item is being acted upon (e.g. "Edit Wireless Headphones" instead of just "Edit"). Additionally, sighted users benefit from these dynamic descriptions via `title` attributes that act as native tooltips.
 **Action:** Always verify loop structures and available item properties (like `product.name`) before adding dynamic ARIA labels. Pair `aria-label` with `title` for tooltip support and add `aria-hidden="true"` to inner SVG/Lucide icons.
+## 2024-06-21 - Custom Poll Input Accessibility
+**Learning:** For custom interactive interfaces acting as mutually exclusive choices (like polls), standard div/button combinations aren't semantically meaningful enough. Screen readers need explicitly assigned standard ARIA roles to interpret these effectively.
+**Action:** Always implement `role="radiogroup"` on the poll container and `role="radio"` combined with `aria-checked` on the individual option buttons to ensure proper accessibility mirroring native `<input type="radio">` components.
