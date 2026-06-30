@@ -47,13 +47,16 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
     <form onSubmit={handleSubmit} className="bg-secondary/50 rounded-lg p-6">
       <h3 className="text-lg font-semibold mb-4">Leave a Review</h3>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Rating</label>
-        <div className="flex gap-2">
+      <fieldset className="mb-4">
+        <legend className="block text-sm font-medium mb-2">Rating</legend>
+        <div className="flex gap-2" role="radiogroup">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
+              role="radio"
+              aria-checked={score === star}
+              aria-label={`${star} star`}
               onClick={() => setScore(star as 1 | 2 | 3 | 4 | 5)}
               className="focus:outline-none"
             >
@@ -61,16 +64,17 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
             </button>
           ))}
         </div>
+      </fieldset>
+
+      <div className="mb-4">
+        <label htmlFor="title" className="block text-sm font-medium mb-2">Title</label>
+        <Input id="title" placeholder="What did you think?" value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Title</label>
-        <Input placeholder="What did you think?" value={title} onChange={(e) => setTitle(e.target.value)} required />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Review</label>
+        <label htmlFor="comment" className="block text-sm font-medium mb-2">Review</label>
         <textarea
+          id="comment"
           placeholder="Share your experience..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -80,7 +84,7 @@ export function ReviewForm({ productId, showId }: ReviewFormProps) {
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
         {isSubmitting ? "Submitting..." : "Submit Review"}
       </Button>
     </form>
