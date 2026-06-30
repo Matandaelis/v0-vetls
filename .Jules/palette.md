@@ -31,3 +31,7 @@
 ## 2024-06-21 - Custom Poll Input Accessibility
 **Learning:** For custom interactive interfaces acting as mutually exclusive choices (like polls), standard div/button combinations aren't semantically meaningful enough. Screen readers need explicitly assigned standard ARIA roles to interpret these effectively.
 **Action:** Always implement `role="radiogroup"` on the poll container and `role="radio"` combined with `aria-checked` on the individual option buttons to ensure proper accessibility mirroring native `<input type="radio">` components.
+
+## 2025-03-05 - Custom Rating Inputs and Form Labels
+**Learning:** Found an interactive rating component composed of a map of `<button>`s without a semantic container or context, making it inaccessible to screen readers. Form inputs (`<Input>`, `<textarea>`) were missing the explicit association (`id` and `htmlFor`) to their visual `<label>`s. Finally, the form's submit button lacked a programmatic indication of the loading state.
+**Action:** Always group custom, mutually exclusive selections (like star ratings) inside `<fieldset>`/`<legend>` with `role="radiogroup"` on the container and `role="radio"`, `aria-checked`, and descriptive `aria-label`s on the choices. Ensure explicit association between `<label>` and inputs using `htmlFor` and `id`. Add `aria-busy` to submit buttons when an async submission is taking place.
