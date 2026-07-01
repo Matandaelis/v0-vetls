@@ -85,6 +85,17 @@ if not check_file("components/live-engagement-panel.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/show-sidebar.tsx...")
+if not check_file("components/show-sidebar.tsx", [
+    'aria-label={`Like comment from ${comment.userName}${comment.likes > 0 ? `, ${comment.likes} likes` : \'\'}`}',
+    'title={`Like comment from ${comment.userName}`}',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded',
+    'aria-label="Send message"',
+    'aria-label="Chat message"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:

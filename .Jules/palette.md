@@ -31,3 +31,6 @@
 ## 2024-06-21 - Custom Poll Input Accessibility
 **Learning:** For custom interactive interfaces acting as mutually exclusive choices (like polls), standard div/button combinations aren't semantically meaningful enough. Screen readers need explicitly assigned standard ARIA roles to interpret these effectively.
 **Action:** Always implement `role="radiogroup"` on the poll container and `role="radio"` combined with `aria-checked` on the individual option buttons to ensure proper accessibility mirroring native `<input type="radio">` components.
+## 2025-03-12 - List Focus and Dynamic ARIA in Native Buttons
+**Learning:** Found that when creating list-based UI with interactive elements (like liking comments in `show-sidebar.tsx`), native HTML `<button>` elements inside map loops are frequently overlooked. They often lack custom focus states (`focus-visible`), making them inaccessible to keyboard users, and they miss dynamic `aria-label`s, rendering them meaningless to screen readers without context (e.g., just saying "Like" instead of "Like comment from [User]").
+**Action:** Always add custom focus states (e.g., `focus-visible:ring-2 focus-visible:ring-primary rounded`) and dynamic `aria-label`/`title` attributes to native HTML buttons used in loops to ensure full keyboard visibility and screen reader context. Hide internal icons with `aria-hidden="true"`.
