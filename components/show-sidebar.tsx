@@ -73,8 +73,12 @@ export function ShowSidebar({ hostName, hostAvatar, initialComments = [] }: Show
                     </span>
                   </div>
                   <p className="text-xs text-foreground/80 break-words">{comment.content}</p>
-                  <button className="mt-1 text-xs text-muted-foreground hover:text-primary flex items-center gap-1">
-                    <Heart className="w-3 h-3" />
+                  <button
+                    className="mt-1 text-xs text-muted-foreground hover:text-primary flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                    aria-label={`Like comment from ${comment.userName}${comment.likes > 0 ? `, ${comment.likes} likes` : ''}`}
+                    title={`Like comment from ${comment.userName}`}
+                  >
+                    <Heart className="w-3 h-3" aria-hidden="true" />
                     {comment.likes > 0 && comment.likes}
                   </button>
                 </div>
@@ -89,13 +93,20 @@ export function ShowSidebar({ hostName, hostAvatar, initialComments = [] }: Show
         <div className="flex gap-2">
           <Input
             placeholder="Say something..."
+            aria-label="Chat message"
             className="text-sm bg-gray-900 border-gray-800 h-9"
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <Button size="icon" className="h-9 w-9" onClick={handleSendMessage} disabled={!messageText.trim()}>
-            <Send className="w-4 h-4" />
+          <Button
+            size="icon"
+            className="h-9 w-9"
+            onClick={handleSendMessage}
+            disabled={!messageText.trim()}
+            aria-label="Send message"
+          >
+            <Send className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
