@@ -37,26 +37,35 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
   return (
     <div className="relative w-full h-full">
       {/* Hotspot Markers */}
-      {hotspots.map((hotspot) => (
-        <button
-          key={`hotspot-${hotspot.productId}`}
-          onClick={() => setSelectedProduct(hotspot.productId)}
-          className="absolute w-12 h-12 -translate-x-1/2 -translate-y-1/2 group"
-          style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
-        >
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0 bg-pink-500 rounded-full opacity-70 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute inset-0 bg-pink-500 rounded-full animate-pulse" />
-            <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
-              <ShoppingCart className="w-4 h-4 text-pink-500" />
+      {hotspots.map((hotspot) => {
+        const hotspotProductData = products.find(p => p.id === hotspot.productId)
+        return (
+          <button
+            key={`hotspot-${hotspot.productId}`}
+            onClick={() => setSelectedProduct(hotspot.productId)}
+            className="absolute w-12 h-12 -translate-x-1/2 -translate-y-1/2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded-full"
+            style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
+            aria-label={hotspotProductData ? `View product details for ${hotspotProductData.name}` : "View product details"}
+            aria-expanded={selectedProduct === hotspot.productId}
+            aria-controls="product-preview"
+          >
+            <div className="relative w-full h-full">
+              <div className="absolute inset-0 bg-pink-500 rounded-full opacity-70 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-pink-500 rounded-full animate-pulse" />
+              <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
+                <ShoppingCart className="w-4 h-4 text-pink-500" aria-hidden="true" />
+              </div>
             </div>
-          </div>
-        </button>
-      ))}
+          </button>
+        )
+      })}
 
       {/* Product Preview Card */}
       {selectedProduct && selectedProductData && (
-        <div className="absolute bottom-4 left-4 z-50 w-80 animate-in fade-in slide-in-from-bottom-2">
+        <div
+          id="product-preview"
+          className="absolute bottom-4 left-4 z-50 w-80 animate-in fade-in slide-in-from-bottom-2"
+        >
           <Card className="overflow-hidden shadow-2xl border-0">
             <div className="relative">
               <img
@@ -69,8 +78,10 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                 size="icon"
                 className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full"
                 onClick={() => setSelectedProduct(null)}
+                aria-label={`Close product preview for ${selectedProductData.name}`}
+                title={`Close product preview for ${selectedProductData.name}`}
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </Button>
             </div>
 
@@ -97,7 +108,7 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                     setSelectedProduct(null)
                   }}
                 >
-                  <ShoppingCart className="w-4 h-4" />
+                  <ShoppingCart className="w-4 h-4" aria-hidden="true" />
                   Add to Cart
                 </Button>
                 <Button
@@ -105,11 +116,15 @@ export function ProductHotspotOverlay({ products, hotspots, isLive = true }: Pro
                   size="icon"
                   className="h-9 w-9 bg-transparent"
                   onClick={() => toggleLike(selectedProductData.id)}
+                  aria-label={likedProducts.has(selectedProductData.id) ? `Unlike ${selectedProductData.name}` : `Like ${selectedProductData.name}`}
+                  title={likedProducts.has(selectedProductData.id) ? `Unlike ${selectedProductData.name}` : `Like ${selectedProductData.name}`}
+                  aria-pressed={likedProducts.has(selectedProductData.id)}
                 >
                   <Heart
                     className={`w-4 h-4 ${
                       likedProducts.has(selectedProductData.id) ? "fill-red-500 text-red-500" : ""
                     }`}
+                    aria-hidden="true"
                   />
                 </Button>
               </div>
