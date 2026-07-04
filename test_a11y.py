@@ -96,6 +96,20 @@ if not check_file("components/show-sidebar.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/product-hotspot.tsx...")
+if not check_file("components/product-hotspot.tsx", [
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded-full',
+    'aria-label={hotspotProductData ? `View product details for ${hotspotProductData.name}` : "View product details"}',
+    'aria-expanded={selectedProduct === hotspot.productId}',
+    'aria-controls="product-preview"',
+    'id="product-preview"',
+    'aria-label={`Close product preview for ${selectedProductData.name}`}',
+    'aria-label={likedProducts.has(selectedProductData.id) ? `Unlike ${selectedProductData.name}` : `Like ${selectedProductData.name}`}',
+    'aria-pressed={likedProducts.has(selectedProductData.id)}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
