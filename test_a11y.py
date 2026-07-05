@@ -96,6 +96,12 @@ if not check_file("components/show-sidebar.tsx", [
 ]):
     all_passed = False
 
+if not check_file('components/host/stream-control-panel.tsx', [
+    'aria-label="Toggle audio"',
+    'aria-label="Share stream"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
