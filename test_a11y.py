@@ -42,6 +42,13 @@ if not check_file("components/header.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/notification-panel.tsx...")
+if not check_file("components/notification-panel.tsx", [
+    'aria-label="Delete notification"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 print("\nChecking components/show-chat.tsx...")
 if not check_file("components/show-chat.tsx", [
     'aria-label="Chat message"'

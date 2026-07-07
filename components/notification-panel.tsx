@@ -34,8 +34,10 @@ export function NotificationPanel() {
         onClick={() => setIsOpen(!isOpen)}
         className="relative"
         aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
+        aria-expanded={isOpen}
+        aria-controls="notification-dropdown"
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="w-5 h-5" aria-hidden="true" />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -44,7 +46,7 @@ export function NotificationPanel() {
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-96 bg-background border border-border rounded-lg shadow-lg z-50">
+        <div id="notification-dropdown" className="absolute right-0 top-full mt-2 w-96 bg-background border border-border rounded-lg shadow-lg z-50">
           <div className="p-4 border-b border-border flex items-center justify-between">
             <h3 className="font-semibold">Notifications</h3>
             {unreadCount > 0 && (
@@ -57,7 +59,7 @@ export function NotificationPanel() {
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
-                <Bell className="w-12 h-12 mx-auto mb-2 opacity-20" />
+                <Bell className="w-12 h-12 mx-auto mb-2 opacity-20" aria-hidden="true" />
                 <p>No notifications yet</p>
               </div>
             ) : (
@@ -71,7 +73,7 @@ export function NotificationPanel() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1">
-                      <span className="text-2xl">{getNotificationIcon(notification.type)}</span>
+                      <span className="text-2xl" aria-hidden="true">{getNotificationIcon(notification.type)}</span>
                       <div className="flex-1">
                         <p className="font-medium text-sm">{notification.title}</p>
                         <p className="text-xs text-muted-foreground">{notification.message}</p>
@@ -85,12 +87,13 @@ export function NotificationPanel() {
                       size="icon"
                       className="w-6 h-6"
                       aria-label="Delete notification"
+                      title="Delete notification"
                       onClick={(e) => {
                         e.stopPropagation()
                         deleteNotification(notification.id)
                       }}
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>
