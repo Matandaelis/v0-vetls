@@ -34,3 +34,7 @@
 ## 2025-03-12 - List Focus and Dynamic ARIA in Native Buttons
 **Learning:** Found that when creating list-based UI with interactive elements (like liking comments in `show-sidebar.tsx`), native HTML `<button>` elements inside map loops are frequently overlooked. They often lack custom focus states (`focus-visible`), making them inaccessible to keyboard users, and they miss dynamic `aria-label`s, rendering them meaningless to screen readers without context (e.g., just saying "Like" instead of "Like comment from [User]").
 **Action:** Always add custom focus states (e.g., `focus-visible:ring-2 focus-visible:ring-primary rounded`) and dynamic `aria-label`/`title` attributes to native HTML buttons used in loops to ensure full keyboard visibility and screen reader context. Hide internal icons with `aria-hidden="true"`.
+
+## 2024-05-30 - Accessible Interactive Rating Inputs
+**Learning:** When building interactive rating inputs, wrapping the selector in a `<fieldset>` with a `<legend>` provides better structural context than generic generic wrappers. Additionally, using `role="radiogroup"` on the container and `role="radio"` with `aria-checked` on the individual star buttons is critical for accurate screen reader announcements compared to non-semantic clickable divs.
+**Action:** Always group related mutually exclusive choices like star ratings inside a `<fieldset>`, explicitly mark them up as radiogroups, and ensure native SVG icons are used instead of wrapper components that generate repetitive duplicate text.
