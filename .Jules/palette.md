@@ -34,3 +34,7 @@
 ## 2025-03-12 - List Focus and Dynamic ARIA in Native Buttons
 **Learning:** Found that when creating list-based UI with interactive elements (like liking comments in `show-sidebar.tsx`), native HTML `<button>` elements inside map loops are frequently overlooked. They often lack custom focus states (`focus-visible`), making them inaccessible to keyboard users, and they miss dynamic `aria-label`s, rendering them meaningless to screen readers without context (e.g., just saying "Like" instead of "Like comment from [User]").
 **Action:** Always add custom focus states (e.g., `focus-visible:ring-2 focus-visible:ring-primary rounded`) and dynamic `aria-label`/`title` attributes to native HTML buttons used in loops to ensure full keyboard visibility and screen reader context. Hide internal icons with `aria-hidden="true"`.
+
+## 2024-07-09 - Accessible Rating Component with Raw SVGs
+**Learning:** Using an array of static display components (like `<RatingDisplay>`) for interactive rating selection creates duplicate screen reader output and lacks semantic grouping. Custom interactive choices need to explicitly manage screen reader roles, independent of their visual representation.
+**Action:** Replaced the static display wrapper with individual scalable SVG icons directly. Applied native `role="radiogroup"` to the container (`<fieldset>`) and `role="radio"` with `aria-checked` to each individual SVG to properly reflect the mutually exclusive selection to assistive tech without redundancy.
