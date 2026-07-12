@@ -34,3 +34,8 @@
 ## 2025-03-12 - List Focus and Dynamic ARIA in Native Buttons
 **Learning:** Found that when creating list-based UI with interactive elements (like liking comments in `show-sidebar.tsx`), native HTML `<button>` elements inside map loops are frequently overlooked. They often lack custom focus states (`focus-visible`), making them inaccessible to keyboard users, and they miss dynamic `aria-label`s, rendering them meaningless to screen readers without context (e.g., just saying "Like" instead of "Like comment from [User]").
 **Action:** Always add custom focus states (e.g., `focus-visible:ring-2 focus-visible:ring-primary rounded`) and dynamic `aria-label`/`title` attributes to native HTML buttons used in loops to ensure full keyboard visibility and screen reader context. Hide internal icons with `aria-hidden="true"`.
+
+## 2024-07-12 - Pseudo-Element Block Links
+
+**Learning:** When attempting to make an entire complex card component clickable using a wrapping Next.js `<Link>` tag (e.g., `<Link><Card>...</Card></Link>`), it frequently causes invalid HTML nesting issues (such as `<a>` containing `<button>` or block elements), which breaks accessibility and semantic structure.
+**Action:** Implement the "pseudo-element block link pattern" instead. Apply `relative group` to the wrapper `<Card>`, place the `<Link>` inside the heading (`<h3>`) with `className="before:absolute before:inset-0 before:z-0"`, and ensure independent interactive elements inside the card (like "Add to Cart" buttons) have `relative z-10` so they are not blocked by the link's invisible overlay.
