@@ -34,3 +34,7 @@
 ## 2025-03-12 - List Focus and Dynamic ARIA in Native Buttons
 **Learning:** Found that when creating list-based UI with interactive elements (like liking comments in `show-sidebar.tsx`), native HTML `<button>` elements inside map loops are frequently overlooked. They often lack custom focus states (`focus-visible`), making them inaccessible to keyboard users, and they miss dynamic `aria-label`s, rendering them meaningless to screen readers without context (e.g., just saying "Like" instead of "Like comment from [User]").
 **Action:** Always add custom focus states (e.g., `focus-visible:ring-2 focus-visible:ring-primary rounded`) and dynamic `aria-label`/`title` attributes to native HTML buttons used in loops to ensure full keyboard visibility and screen reader context. Hide internal icons with `aria-hidden="true"`.
+
+## 2025-03-12 - Dynamic ARIA on Toggle Controls
+**Learning:** In streaming interfaces, state-toggling buttons (like turning a camera on/off or muting/unmuting a microphone) often lack context-aware `aria-label` attributes. Using a generic label like "Microphone" does not tell screen reader users what action the button will perform in its current state.
+**Action:** Always use a dynamic `aria-label` that reflects the exact *action* resulting from the interaction (e.g., `aria-label={isMicEnabled ? "Mute microphone" : "Unmute microphone"}`). Additionally, ensure the visual state indicators (like `<Mic>` and `<MicOff>` icons) are explicitly hidden with `aria-hidden="true"` to prevent redundant reading.

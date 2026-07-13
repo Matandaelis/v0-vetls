@@ -96,6 +96,22 @@ if not check_file("components/show-sidebar.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label="Mute audio"',
+    'aria-label="Share stream"',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
+print("\nChecking components/livekit-broadcaster.tsx...")
+if not check_file("components/livekit-broadcaster.tsx", [
+    'aria-label={isMicEnabled ? "Mute microphone" : "Unmute microphone"}',
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:

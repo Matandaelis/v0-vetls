@@ -309,8 +309,9 @@ function BroadcasterControls({
             size="icon"
             onClick={toggleMic}
             className="rounded-full"
+            aria-label={isMicEnabled ? "Mute microphone" : "Unmute microphone"}
           >
-            {isMicEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+            {isMicEnabled ? <Mic className="w-5 h-5" aria-hidden="true" /> : <MicOff className="w-5 h-5" aria-hidden="true" />}
           </Button>
 
           <Button
@@ -318,8 +319,9 @@ function BroadcasterControls({
             size="icon"
             onClick={toggleCamera}
             className="rounded-full"
+            aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}
           >
-            {isCameraEnabled ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+            {isCameraEnabled ? <Video className="w-5 h-5" aria-hidden="true" /> : <VideoOff className="w-5 h-5" aria-hidden="true" />}
           </Button>
 
           <Button
