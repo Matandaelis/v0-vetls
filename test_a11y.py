@@ -96,6 +96,23 @@ if not check_file("components/show-sidebar.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/host/stream-control-panel.tsx...")
+if not check_file("components/host/stream-control-panel.tsx", [
+    'aria-label="Toggle mute"',
+    'title="Toggle mute"',
+    'aria-label="Share stream"',
+    'title="Share stream"'
+]):
+    all_passed = False
+
+print("\nChecking components/product-hotspot.tsx...")
+if not check_file("components/product-hotspot.tsx", [
+    'aria-label="View product details"',
+    'aria-label="Close product preview"',
+    'aria-label={likedProducts.has(selectedProductData.id) ? "Unlike product" : "Like product"}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
