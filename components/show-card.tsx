@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import type { Show } from "@/lib/types"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -14,8 +15,14 @@ export function ShowCard({ show }: ShowCardProps) {
   return (
     <Link href={`/shows/${show.id}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
-        <div className="relative">
-          <img src={show.image || "/placeholder.svg"} alt={show.title} className="w-full h-48 object-cover" />
+        <div className="relative w-full h-48">
+          <Image
+            src={show.image || "/placeholder.svg"}
+            alt={show.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
           {isLive && <Badge className="absolute top-2 right-2 bg-destructive">LIVE</Badge>}
           {show.featured && !isLive && <Badge className="absolute top-2 right-2 bg-primary">Featured</Badge>}
         </div>
@@ -24,10 +31,12 @@ export function ShowCard({ show }: ShowCardProps) {
           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{show.description}</p>
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
-              <img
+              <Image
                 src={show.hostAvatar || "/placeholder.svg"}
                 alt={show.hostName}
-                className="w-6 h-6 rounded-full object-cover"
+                width={24}
+                height={24}
+                className="rounded-full object-cover"
               />
               <span className="font-medium">{show.hostName}</span>
             </div>
