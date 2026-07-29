@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import type { ShowComment } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Heart, Send, Users } from 'lucide-react'
 import { formatDistanceToNow } from "date-fns"
+import { useVirtualizer } from "@/hooks/use-virtualizer"
 
 interface ShowChatProps {
   hostName: string
@@ -14,17 +15,62 @@ interface ShowChatProps {
   viewerCount?: number
 }
 
+function VirtualComment({
+  children,
+  index,
+  style,
+  observeElement
+}: {
+  children: React.ReactNode
+  index: number
+  style: React.CSSProperties
+  observeElement: (el: HTMLElement) => () => void
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      return observeElement(ref.current)
+    }
+  }, [observeElement])
+
+  return (
+    <div
+      ref={ref}
+      data-index={index}
+      className="text-sm animate-fadeIn"
+      style={style}
+    >
+       {children}
+    </div>
+  )
+}
+
 export function ShowChat({ hostName, hostAvatar, initialComments = [], viewerCount = 1250 }: ShowChatProps) {
   const [comments, setComments] = useState<ShowComment[]>(initialComments)
   const [messageText, setMessageText] = useState("")
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const [scrollElement, setScrollElement] = useState<HTMLElement | null>(null)
+  const prevCommentsLengthRef = useRef(0)
+
+  const getScrollElement = useCallback(() => scrollElement, [scrollElement])
+  const estimateSize = useCallback(() => 80, [])
+
+  const { virtualItems, totalSize, observeElement, scrollToIndex } = useVirtualizer({
+    count: comments.length,
+    getScrollElement,
+    estimateSize,
+    overscan: 5,
+  })
 
   useEffect(() => {
-    // Auto-scroll to bottom
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    // Auto-scroll to bottom only when new comments are added
+    if (comments.length > prevCommentsLengthRef.current) {
+      scrollToIndex(comments.length - 1, "end")
+      prevCommentsLengthRef.current = comments.length
+    } else if (comments.length !== prevCommentsLengthRef.current) {
+        prevCommentsLengthRef.current = comments.length
     }
-  }, [comments])
+  }, [comments.length, scrollToIndex])
 
   const handleSendMessage = () => {
     if (!messageText.trim()) return
@@ -73,41 +119,65 @@ export function ShowChat({ hostName, hostAvatar, initialComments = [], viewerCou
 
       {/* Messages Section */}
       <div 
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-3"
+        ref={setScrollElement}
+        className="flex-1 overflow-y-auto p-4"
       >
         {comments.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500 text-sm">
             <p className="text-center">No messages yet.<br/>Be the first to chat!</p>
           </div>
         ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="text-sm space-y-1 animate-fadeIn">
-              <div className="flex items-start gap-2">
-                <img
-                  src={comment.userAvatar || "/placeholder.svg"}
-                  alt={comment.userName}
-                  className="w-6 h-6 rounded-full object-cover flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-xs text-gray-900">{comment.userName}</span>
-                    <span className="text-xs text-gray-500">
-                      {formatDistanceToNow(comment.timestamp, { addSuffix: true })}
-                    </span>
+          <div
+            style={{
+              height: `${totalSize}px`,
+              width: '100%',
+              position: 'relative'
+            }}
+          >
+            {virtualItems.map((virtualItem) => {
+              const comment = comments[virtualItem.index]
+              return (
+                <VirtualComment
+                  key={comment.id}
+                  index={virtualItem.index}
+                  observeElement={observeElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                >
+                  <div className="pb-3">
+                    <div className="flex items-start gap-2">
+                      <img
+                        src={comment.userAvatar || "/placeholder.svg"}
+                        alt={comment.userName}
+                        className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-xs text-gray-900">{comment.userName}</span>
+                          <span className="text-xs text-gray-500">
+                            {formatDistanceToNow(comment.timestamp, { addSuffix: true })}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 break-words">{comment.content}</p>
+                        <button
+                          className="mt-1 text-xs text-gray-500 hover:text-pink-600 flex items-center gap-1 transition"
+                          aria-label="Like comment"
+                        >
+                          <Heart className="w-3 h-3" />
+                          {comment.likes > 0 && <span>{comment.likes}</span>}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-700 break-words">{comment.content}</p>
-                  <button
-                    className="mt-1 text-xs text-gray-500 hover:text-pink-600 flex items-center gap-1 transition"
-                    aria-label="Like comment"
-                  >
-                    <Heart className="w-3 h-3" />
-                    {comment.likes > 0 && <span>{comment.likes}</span>}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
+                </VirtualComment>
+              )
+            })}
+          </div>
         )}
       </div>
 
