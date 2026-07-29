@@ -59,11 +59,11 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold mb-2">Live Now</h2>
               <p className="text-muted-foreground">Tune in to live shows happening right now</p>
             </div>
-            <Link href="/live">
-              <Button variant="outline" className="gap-2 bg-transparent">
+            <Button variant="outline" className="gap-2 bg-transparent" asChild>
+              <Link href="/live">
                 View All <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
           {liveShows.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -87,11 +87,11 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold mb-2">Upcoming Shows</h2>
               <p className="text-muted-foreground">Don't miss out on upcoming events</p>
             </div>
-            <Link href="/shows">
-              <Button variant="outline" className="gap-2 bg-transparent">
+            <Button variant="outline" className="gap-2 bg-transparent" asChild>
+              <Link href="/shows">
                 View All <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {shows
@@ -112,11 +112,11 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
               <p className="text-muted-foreground">Trending products from our top sellers</p>
             </div>
-            <Link href="/products">
-              <Button variant="outline" className="gap-2 bg-transparent">
+            <Button variant="outline" className="gap-2 bg-transparent" asChild>
+              <Link href="/products">
                 View All <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
@@ -132,14 +132,16 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-8">Shop by Category</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {categories.map((category) => (
-              <Link key={category} href={`/category/${category.toLowerCase()}`}>
-                <Button
-                  variant="outline"
-                  className="w-full h-24 text-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-colors bg-transparent"
-                >
+              <Button
+                key={category}
+                variant="outline"
+                className="w-full h-24 text-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-colors bg-transparent"
+                asChild
+              >
+                <Link href={`/category/${category.toLowerCase()}`}>
                   {category}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ))}
           </div>
         </div>

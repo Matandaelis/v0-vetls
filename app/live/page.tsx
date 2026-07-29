@@ -36,9 +36,9 @@ export default function LivePage() {
           <div className="text-center py-20 border rounded-xl bg-secondary/20">
             <h3 className="text-2xl font-semibold mb-2">No shows are live right now</h3>
             <p className="text-muted-foreground mb-6">Check back later or browse our upcoming scheduled shows.</p>
-            <Link href="/shows">
-              <Button size="lg">Browse Upcoming Shows</Button>
-            </Link>
+            <Button size="lg" asChild>
+              <Link href="/shows">Browse Upcoming Shows</Link>
+            </Button>
           </div>
         )}
       </main>
