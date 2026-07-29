@@ -1,12 +1,13 @@
 "use client"
 
-import type { Clip } from "@/lib/types"
+import type { Clip, Product } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Heart, MessageCircle, Share2, Play } from "lucide-react"
 import Image from "next/image"
 import { useCart } from "@/contexts/cart-context"
 import { useProducts } from "@/contexts/product-context"
 import { toast } from "@/hooks/use-toast"
+import { useEffect, useState } from "react"
 
 interface ClipCardProps {
   clip: Clip
@@ -14,8 +15,18 @@ interface ClipCardProps {
 
 export function ClipCard({ clip }: ClipCardProps) {
   const { addItem } = useCart()
-  const { products } = useProducts()
-  const product = products.find((p) => p.id === clip.productId)
+  const { products, fetchProductById } = useProducts()
+  const [product, setProduct] = useState<Product | undefined>(products.find((p) => p.id === clip.productId))
+
+  useEffect(() => {
+    if (product) return
+
+    const fetch = async () => {
+      const p = await fetchProductById(clip.productId)
+      if (p) setProduct(p)
+    }
+    fetch()
+  }, [clip.productId, product, fetchProductById])
 
   const handleAddToCart = () => {
     if (product) {
@@ -79,7 +90,7 @@ export function ClipCard({ clip }: ClipCardProps) {
           {product && (
             <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 flex items-center gap-3">
               <div className="relative w-10 h-10 rounded bg-white overflow-hidden shrink-0">
-                <Image src={product.images[0] || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
+                <Image src={product.image || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white text-xs font-medium truncate">{product.name}</p>

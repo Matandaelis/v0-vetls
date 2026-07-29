@@ -18,7 +18,8 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [viewers, setViewers] = useState(show.viewerCount || 0)
   const [showProductOverlay, setShowProductOverlay] = useState(false)
-  const { getProductById } = useProducts()
+  const { getProductById, fetchProductById } = useProducts()
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
 
   // Simulate viewer count changes
   useEffect(() => {
@@ -31,7 +32,19 @@ export function LiveShowPlayer({ show, isLive = true }: LiveShowPlayerProps) {
     return () => clearInterval(interval)
   }, [isLive])
 
-  const featuredProducts = show.products.map((productId) => getProductById(productId)).filter(Boolean) as Product[]
+  useEffect(() => {
+    const loadProducts = async () => {
+      const products = await Promise.all(
+        show.products.map(async (id) => {
+          const existing = getProductById(id)
+          if (existing) return existing
+          return await fetchProductById(id)
+        }),
+      )
+      setFeaturedProducts(products.filter((p): p is Product => !!p))
+    }
+    loadProducts()
+  }, [show.products, getProductById, fetchProductById])
 
   return (
     <div className="relative w-full bg-black rounded-lg overflow-hidden">
