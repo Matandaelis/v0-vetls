@@ -17,7 +17,8 @@ interface ShowContextType {
   initializeShow: (showId: string) => Promise<void>
   getStreamingMetrics: (streamId: string) => Promise<StreamingMetrics | null>
   updateShowStream: (showId: string, streamData: Partial<Show>) => void
-  loadShows: () => Promise<void>
+  loadShows: (page?: number, limit?: number) => Promise<void>
+  hasMore: boolean
 }
 
 const ShowContext = createContext<ShowContextType | undefined>(undefined)
@@ -25,16 +26,21 @@ const ShowContext = createContext<ShowContextType | undefined>(undefined)
 export function ShowProvider({ children }: { children: React.ReactNode }) {
   const [shows, setShows] = useState<Show[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [hasMore, setHasMore] = useState(true)
   const supabase = createClient()
 
   // Load shows from Supabase on mount
   useEffect(() => {
-    loadShows()
+    loadShows(0, 50)
   }, [])
 
-  const loadShows = async () => {
+  const loadShows = async (page = 0, limit = 50) => {
     try {
-      setIsLoading(true)
+      if (page === 0) setIsLoading(true)
+
+      const from = page * limit
+      const to = from + limit - 1
+
       // Join with profiles to get host information
       const { data, error } = await supabase
         .from("shows")
@@ -42,6 +48,10 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
           *,
           host:profiles!host_id(username, display_name, avatar_url)
         `)
+        .order("start_time", { ascending: false })
+        .order("id", { ascending: true })
+        .range(from, to)
+
       if (error) throw error
       
       // Map database rows to UI Show models
@@ -51,7 +61,20 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
         return mapShow(row as DbShow, hostName, hostAvatar)
       })
       
-      setShows(mappedShows)
+      if (mappedShows.length < limit) {
+        setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
+
+      if (page === 0) {
+        setShows(mappedShows)
+      } else {
+        setShows((prev) => {
+          const newShows = mappedShows.filter((s) => !prev.some((p) => p.id === s.id))
+          return [...prev, ...newShows]
+        })
+      }
     } catch (error) {
       console.error("[v0] Error loading shows:", error)
     } finally {
@@ -118,6 +141,7 @@ export function ShowProvider({ children }: { children: React.ReactNode }) {
     getStreamingMetrics,
     updateShowStream,
     loadShows,
+    hasMore,
   }
 
   return <ShowContext.Provider value={value}>{children}</ShowContext.Provider>
