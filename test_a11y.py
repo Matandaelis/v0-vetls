@@ -111,6 +111,15 @@ if not check_file("components/review-form.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/product-hotspot.tsx...")
+if not check_file("components/product-hotspot.tsx", [
+    'aria-controls="product-preview-card"',
+    'aria-expanded={selectedProduct === hotspot.productId}',
+    'focus-visible:ring-pink-500',
+    '"View details for " + (hotspotProduct?.name || "product")'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
