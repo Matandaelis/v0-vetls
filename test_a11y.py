@@ -96,6 +96,21 @@ if not check_file("components/show-sidebar.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/review-form.tsx...")
+if not check_file("components/review-form.tsx", [
+    '<fieldset className="mb-4">',
+    '<legend className="block text-sm font-medium mb-2">',
+    'role="radiogroup"',
+    'role="radio"',
+    'aria-checked={score === star}',
+    'htmlFor="review-title"',
+    'id="review-title"',
+    'htmlFor="review-comment"',
+    'id="review-comment"',
+    'aria-busy={isSubmitting}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
