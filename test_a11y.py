@@ -111,6 +111,16 @@ if not check_file("components/review-form.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/live-shopping-video-conference.tsx...")
+if not check_file("components/live-shopping-video-conference.tsx", [
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'title={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'aria-label={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}',
+    'title={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
