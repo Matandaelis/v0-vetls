@@ -41,3 +41,7 @@
 ## 2023-10-27 - Product Hotspot Accessibility
 **Learning:** Found that when mapping over an array of data coordinates to produce interactive native `<button>` hotspot markers on an image, the buttons were completely lacking context for screen readers and keyboard visibility. They needed to find the specific item data during the map loop to populate dynamic `aria-label`s. Furthermore, since clicking the hotspot acts as a toggle that opens a product preview popover card, it requires semantic linking via `aria-expanded` and `aria-controls` to the specific ID of the preview card container. Finally, the inner generic SVG icons within the hotspot need `aria-hidden="true"`.
 **Action:** When implementing spatial mapping interfaces (like hotspots or pins) using native `<button>` tags, always perform a data lookup within the map callback to generate a dynamic `aria-label` describing the specific item the pin relates to. Apply specific focus styles (e.g. `focus-visible:ring-2`) and utilize `aria-expanded`/`aria-controls` to associate the pin with the detail popover it triggers.
+
+## 2025-05-10 - Connecting Inputs to Helper Text
+**Learning:** Explanatory helper text below inputs is often not announced by screen readers when focusing the input, leaving users without crucial context (like max limits).
+**Action:** When an input has helper text below it, link them using `aria-describedby="helper-id"` on the input and `id="helper-id"` on the helper text element. Use `htmlFor` on the label to connect it to the input's `id`.
