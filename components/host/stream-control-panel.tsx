@@ -4,12 +4,13 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Radio, Volume2, Share2 } from "lucide-react"
+import { Radio, Volume2, Share2, VolumeX } from "lucide-react"
 import { LiveKitBroadcaster } from "@/components/livekit-broadcaster"
 import { StreamMetrics } from "@/components/stream-metrics"
 
 export function StreamControlPanel() {
   const [isStreaming, setIsStreaming] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
 
   const handleMetricsUpdate = (metrics: any) => {
     // Metrics are being tracked in real-time
@@ -63,15 +64,30 @@ export function StreamControlPanel() {
         <div className="flex gap-3">
           {!isStreaming && (
             <Button onClick={() => setIsStreaming(true)} className="flex-1 gap-2">
-              <Radio className="w-4 h-4" />
+              <Radio className="w-4 h-4" aria-hidden="true" />
               Go Live
             </Button>
           )}
-          <Button variant="outline" size="icon">
-            <Volume2 className="w-4 h-4" />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsMuted(!isMuted)}
+            aria-label={isMuted ? "Unmute stream" : "Mute stream"}
+            title={isMuted ? "Unmute stream" : "Mute stream"}
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4" aria-hidden="true" />
+            ) : (
+              <Volume2 className="w-4 h-4" aria-hidden="true" />
+            )}
           </Button>
-          <Button variant="outline" size="icon">
-            <Share2 className="w-4 h-4" />
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Share stream"
+            title="Share stream"
+          >
+            <Share2 className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
