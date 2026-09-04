@@ -98,9 +98,7 @@ function BroadcasterVideoView() {
         const screenTracks = Array.from(localParticipant.videoTracks.values())
           .filter(pub => pub.track?.source === Track.Source.ScreenShare)
         
-        for (const publication of screenTracks) {
-          await publication.unpublish()
-        }
+        await Promise.all(screenTracks.map(publication => publication.unpublish()))
         setIsScreenSharing(false)
         setCurrentView('camera')
       } else {
