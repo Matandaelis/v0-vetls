@@ -120,6 +120,18 @@ if not check_file("components/product-hotspot.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/host/live-chat-moderation.tsx...")
+if not check_file("components/host/live-chat-moderation.tsx", [
+    'aria-pressed={filter === "all"}',
+    'aria-pressed={filter === "pending"}',
+    'aria-label={"Approve message from " + msg.user}',
+    'title={"Approve message from " + msg.user}',
+    'aria-label={"Delete message from " + msg.user}',
+    'title={"Delete message from " + msg.user}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
