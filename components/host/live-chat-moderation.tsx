@@ -1,31 +1,39 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { AlertCircle, Trash2, CheckCircle } from 'lucide-react'
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Trash2, CheckCircle } from "lucide-react";
 
 const mockMessages = [
   { id: 1, user: "Sarah K.", message: "Love this product!", approved: true },
   { id: 2, user: "Mike T.", message: "When does it ship?", approved: true },
-  { id: 3, user: "Unknown User", message: "Check out my site...", approved: false },
+  {
+    id: 3,
+    user: "Unknown User",
+    message: "Check out my site...",
+    approved: false,
+  },
   { id: 4, user: "Emma J.", message: "Perfect for my needs!", approved: true },
   { id: 5, user: "Spam Account", message: "BUY NOW CHEAP!!!", approved: false },
-]
+];
 
 export function LiveChatModeration() {
-  const [messages, setMessages] = useState(mockMessages)
-  const [filter, setFilter] = useState("all")
+  const [messages, setMessages] = useState(mockMessages);
+  const [filter, setFilter] = useState("all");
 
-  const filteredMessages = filter === "pending" ? messages.filter((m) => !m.approved) : messages
+  const filteredMessages =
+    filter === "pending" ? messages.filter((m) => !m.approved) : messages;
 
   const approveMessage = (id: number) => {
-    setMessages(messages.map((m) => (m.id === id ? { ...m, approved: true } : m)))
-  }
+    setMessages(
+      messages.map((m) => (m.id === id ? { ...m, approved: true } : m)),
+    );
+  };
 
   const deleteMessage = (id: number) => {
-    setMessages(messages.filter((m) => m.id !== id))
-  }
+    setMessages(messages.filter((m) => m.id !== id));
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -38,6 +46,7 @@ export function LiveChatModeration() {
                 variant={filter === "all" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFilter("all")}
+                aria-pressed={filter === "all"}
               >
                 All
               </Button>
@@ -45,6 +54,7 @@ export function LiveChatModeration() {
                 variant={filter === "pending" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFilter("pending")}
+                aria-pressed={filter === "pending"}
               >
                 Pending ({messages.filter((m) => !m.approved).length})
               </Button>
@@ -56,13 +66,17 @@ export function LiveChatModeration() {
               <div
                 key={msg.id}
                 className={`p-3 rounded-lg border ${
-                  msg.approved ? "bg-secondary/30 border-border" : "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-900"
+                  msg.approved
+                    ? "bg-secondary/30 border-border"
+                    : "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-900"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm">{msg.user}</p>
-                    <p className="text-sm text-foreground/80 mt-1">{msg.message}</p>
+                    <p className="text-sm text-foreground/80 mt-1">
+                      {msg.message}
+                    </p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     {!msg.approved && (
@@ -71,8 +85,10 @@ export function LiveChatModeration() {
                         variant="ghost"
                         onClick={() => approveMessage(msg.id)}
                         className="text-green-600 hover:text-green-700"
+                        aria-label={"Approve message from " + msg.user}
+                        title={"Approve message from " + msg.user}
                       >
-                        <CheckCircle className="w-4 h-4" />
+                        <CheckCircle className="w-4 h-4" aria-hidden="true" />
                       </Button>
                     )}
                     <Button
@@ -80,8 +96,10 @@ export function LiveChatModeration() {
                       variant="ghost"
                       onClick={() => deleteMessage(msg.id)}
                       className="text-destructive hover:text-destructive/80"
+                      aria-label={"Delete message from " + msg.user}
+                      title={"Delete message from " + msg.user}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>
@@ -96,9 +114,12 @@ export function LiveChatModeration() {
           <div className="flex items-start gap-2">
             <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-sm text-blue-900 dark:text-blue-100">Moderation Tips</h4>
+              <h4 className="font-medium text-sm text-blue-900 dark:text-blue-100">
+                Moderation Tips
+              </h4>
               <p className="text-xs text-blue-800 dark:text-blue-200 mt-1">
-                Review pending messages before they appear in chat. Mark spam as inappropriate to improve quality.
+                Review pending messages before they appear in chat. Mark spam as
+                inappropriate to improve quality.
               </p>
             </div>
           </div>
@@ -123,5 +144,5 @@ export function LiveChatModeration() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
