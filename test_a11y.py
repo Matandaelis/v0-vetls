@@ -120,6 +120,13 @@ if not check_file("components/product-hotspot.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/review-card.tsx...")
+if not check_file("components/review-card.tsx", [
+    'aria-pressed={hasVoted}',
+    'aria-label={hasVoted ? "Remove helpful mark, " + helpful + " people found this helpful" : "Mark as helpful, " + helpful + " people found this helpful"}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
