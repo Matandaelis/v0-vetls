@@ -98,10 +98,11 @@ export function ShowChat({ hostName, hostAvatar, initialComments = [], viewerCou
                   </div>
                   <p className="text-sm text-gray-700 break-words">{comment.content}</p>
                   <button
-                    className="mt-1 text-xs text-gray-500 hover:text-pink-600 flex items-center gap-1 transition"
-                    aria-label="Like comment"
+                    className="mt-1 text-xs text-gray-500 hover:text-pink-600 flex items-center gap-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded"
+                    aria-label={`Like comment from ${comment.userName}${comment.likes > 0 ? `, ${comment.likes} likes` : ''}`}
+                    title={`Like comment from ${comment.userName}`}
                   >
-                    <Heart className="w-3 h-3" />
+                    <Heart className="w-3 h-3" aria-hidden="true" />
                     {comment.likes > 0 && <span>{comment.likes}</span>}
                   </button>
                 </div>
