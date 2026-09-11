@@ -44,6 +44,10 @@ if not check_file("components/header.tsx", [
 
 print("\nChecking components/show-chat.tsx...")
 if not check_file("components/show-chat.tsx", [
+    'aria-label={`Like comment from ${comment.userName}${comment.likes > 0 ? `, ${comment.likes} likes` : \'\'}`}',
+    'title={`Like comment from ${comment.userName}`}',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded',
+    'aria-hidden="true"',
     'aria-label="Chat message"'
 ]):
     all_passed = False
