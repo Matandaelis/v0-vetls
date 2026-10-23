@@ -120,6 +120,17 @@ if not check_file("components/product-hotspot.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/live-shopping-video-conference.tsx...")
+if not check_file("components/live-shopping-video-conference.tsx", [
+    'aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}',
+    'aria-label={isMicEnabled ? "Turn off microphone" : "Turn on microphone"}',
+    'aria-label={isPinned ? "Unpin " + product.name : "Pin " + product.name}',
+    'aria-pressed={isPinned}',
+    'aria-label={liked ? "Unlike " + product.name : "Like " + product.name}',
+    'aria-pressed={liked}'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
