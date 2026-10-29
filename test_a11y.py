@@ -111,6 +111,14 @@ if not check_file("components/review-form.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking components/review-card.tsx...")
+if not check_file("components/review-card.tsx", [
+    'aria-pressed={hasVoted}',
+    'aria-label={hasVoted ? "Remove helpful mark" : "Mark as helpful"}',
+    'aria-hidden="true"'
+]):
+    all_passed = False
+
 print("\nChecking components/product-hotspot.tsx...")
 if not check_file("components/product-hotspot.tsx", [
     'aria-controls="product-preview-card"',
