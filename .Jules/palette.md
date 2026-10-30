@@ -44,3 +44,7 @@
 ## 2024-11-20 - Accessible Toggles for Video Conference Controls
 **Learning:** Native `<button>` elements (or UI library equivalents like Shadcn's `<Button>`) used for mutually exclusive or toggle states (e.g., camera on/off, microphone on/off, pinning a product, liking a product) need both dynamic `aria-label`s and, where appropriate, `aria-pressed` to be fully accessible. While an icon visually communicates the state to sighted users, screen readers require explicit text describing the action ("Turn off camera" vs "Turn on camera") and the state (`aria-pressed={true|false}`).
 **Action:** When implementing toggle controls or interactive icons without text labels, ensure dynamic `aria-label`s are applied that describe the *action* that will occur when clicked based on the current state. Furthermore, if it acts as a pressed/unpressed toggle (like a 'like' or 'pin' button), include `aria-pressed` bound to the state variable.
+
+## 2024-05-18 - Pseudo-element Block Links for Next.js
+**Learning:** Next.js `<Link>` components cannot wrap interactive elements like `<button>` or Shadcn `<Button>` without causing invalid HTML and accessibility issues, but making the whole card a link breaks independent button clicks.
+**Action:** Use the pseudo-element block link pattern to make the entire card clickable while allowing independent interactive elements. Wrap the parent container in `relative group`, place the `<Link>` inside the heading with `before:absolute before:inset-0 before:z-0`, and add `relative z-10` to independent buttons.
