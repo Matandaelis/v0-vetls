@@ -44,3 +44,7 @@
 ## 2024-11-20 - Accessible Toggles for Video Conference Controls
 **Learning:** Native `<button>` elements (or UI library equivalents like Shadcn's `<Button>`) used for mutually exclusive or toggle states (e.g., camera on/off, microphone on/off, pinning a product, liking a product) need both dynamic `aria-label`s and, where appropriate, `aria-pressed` to be fully accessible. While an icon visually communicates the state to sighted users, screen readers require explicit text describing the action ("Turn off camera" vs "Turn on camera") and the state (`aria-pressed={true|false}`).
 **Action:** When implementing toggle controls or interactive icons without text labels, ensure dynamic `aria-label`s are applied that describe the *action* that will occur when clicked based on the current state. Furthermore, if it acts as a pressed/unpressed toggle (like a 'like' or 'pin' button), include `aria-pressed` bound to the state variable.
+
+## 2024-11-01 - Title for Tooltips on Icon-Only Buttons
+**Learning:** When making icon-only action buttons accessible (especially in repeating list interfaces or stream control panels), pairing dynamic `aria-label`s with matching `title` attributes serves as native tooltips for sighted users while providing context for screen readers.
+**Action:** Always consider using `title` alongside `aria-label` (e.g., `aria-label="Toggle audio"` and `title="Toggle audio"`) for icon-only buttons to improve UX for all users. Also ensure the inner SVG/icon element has `aria-hidden="true"` to prevent redundant screen reader announcements.
