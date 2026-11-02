@@ -131,6 +131,16 @@ if not check_file("components/live-shopping-video-conference.tsx", [
 ]):
     all_passed = False
 
+print("\nChecking app/products/[id]/page.tsx...")
+if not check_file("app/products/[id]/page.tsx", [
+    'aria-label="Decrease quantity"',
+    'aria-label="Increase quantity"',
+    'aria-live="polite"',
+    'aria-atomic="true"',
+    'aria-label="Share product"'
+]):
+    all_passed = False
+
 if all_passed:
     print("\nAll accessibility checks passed!")
 else:
