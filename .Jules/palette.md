@@ -44,3 +44,6 @@
 ## 2024-11-20 - Accessible Toggles for Video Conference Controls
 **Learning:** Native `<button>` elements (or UI library equivalents like Shadcn's `<Button>`) used for mutually exclusive or toggle states (e.g., camera on/off, microphone on/off, pinning a product, liking a product) need both dynamic `aria-label`s and, where appropriate, `aria-pressed` to be fully accessible. While an icon visually communicates the state to sighted users, screen readers require explicit text describing the action ("Turn off camera" vs "Turn on camera") and the state (`aria-pressed={true|false}`).
 **Action:** When implementing toggle controls or interactive icons without text labels, ensure dynamic `aria-label`s are applied that describe the *action* that will occur when clicked based on the current state. Furthermore, if it acts as a pressed/unpressed toggle (like a 'like' or 'pin' button), include `aria-pressed` bound to the state variable.
+## 2025-02-12 - Prevent Double-Voting on Toggle Buttons
+**Learning:** Using `disabled` on toggle buttons (like "Helpful" feedback) prevents users from changing their minds (un-voting) which is a functional regression.
+**Action:** Implement full toggle logic (`!hasVoted` ? vote : unvote), use `aria-pressed={state}`, and dynamically update `aria-label` to reflect the current state instead of disabling the button.
