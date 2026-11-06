@@ -15,7 +15,10 @@ export function ReviewCard({ review }: ReviewCardProps) {
   const [hasVoted, setHasVoted] = useState(false)
 
   const handleHelpful = () => {
-    if (!hasVoted) {
+    if (hasVoted) {
+      setHelpful(helpful - 1)
+      setHasVoted(false)
+    } else {
       setHelpful(helpful + 1)
       setHasVoted(true)
     }
@@ -44,8 +47,15 @@ export function ReviewCard({ review }: ReviewCardProps) {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button variant={hasVoted ? "default" : "ghost"} size="sm" onClick={handleHelpful} className="gap-2 text-xs">
-          <ThumbsUp className="w-3 h-3" />
+        <Button
+          variant={hasVoted ? "default" : "ghost"}
+          size="sm"
+          onClick={handleHelpful}
+          className="gap-2 text-xs"
+          aria-pressed={hasVoted}
+          aria-label={hasVoted ? `Remove helpful mark, ${helpful} votes` : `Mark as helpful, ${helpful} votes`}
+        >
+          <ThumbsUp className="w-3 h-3" aria-hidden="true" />
           Helpful ({helpful})
         </Button>
       </div>
